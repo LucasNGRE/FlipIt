@@ -101,8 +101,12 @@ const Header = () => {
 
         {/* Icônes de connexion et panier */}
         <div className='flex space-x-4'>
-          <User className='text-2xl cursor-pointer' />
-          <ShoppingCart className='text-2xl cursor-pointer' />
+          <Link href="/login" passHref>
+            <User className='text-2xl cursor-pointer'/>
+          </Link>
+          <Link href="/cart" passHref>
+            <ShoppingCart className='text-2xl cursor-pointer' />
+          </Link>
         </div>
       </div>
 
