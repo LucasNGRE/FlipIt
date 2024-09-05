@@ -1,57 +1,70 @@
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import React from 'react'
-import Link from 'next/link'
-import { login } from '../action/user'
+import { login } from '../action/user';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { IconBrandGoogle } from '@tabler/icons-react';
+import { signIn } from '@/auth';
+import Link from 'next/link';
+import React from 'react';
+import { redirect } from 'next/navigation';
+import { getSession } from '@/lib/getSession';
+import { Button } from '@/components/ui/button';
 
-const Page = () => {
-  return (
-    <div className='mt-10 max-w-md w-full mx-auto rounded-none 2xl p-4 md:p-8 shadow-input'>
-      <Card className="w-[350px]">
-        <CardHeader>
-          <CardTitle className='text-center'>LOGIN</CardTitle>
-          <CardDescription>Please enter your email and password to signin</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form action={login}>
-            <div className="grid w-full items-center gap-4">
-              <div className="flex flex-col space-y-1.5">
-                <Label htmlFor="email">Email</Label>
-                <Input 
-                  id="email"
-                  type="email"
-                  name='email'
-                  placeholder="exemple@gmail.com" 
-                  required
+const Login = async () => {
+    const session = await getSession();
+    const user = session?.user;
+    if (user) redirect('/');
+
+    return (
+        <div className="mt-10 max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white border border-[#121212] dark:bg-black">
+            <form className="my-8" action={login}>
+                <Label htmlFor="email">Email Address</Label>
+                <Input
+                    id="email"
+                    placeholder="exemple@gmail.com"
+                    type="email"
+                    name="email"
                 />
-              </div>
-              <div className="flex flex-col space-y-1.5">
+
                 <Label htmlFor="password">Password</Label>
-                <Input 
-                  id="password"
-                  type="password"
-                  name='password'
-                  placeholder="**********" 
-                  required
+                <Input
+                    id="password"
+                    placeholder="*************"
+                    type="password"
+                    name="password"
+                    className="mb-6"
                 />
-                <p className="text-sm text-gray-600">
-                  Pas encore de compte? <Link href="/register" className="text-blue-500">Créer un compte</Link>
-                </p>
-              </div>
-              <div className="flex items-center justify-between">
-                <Link href="/" passHref>
-                  <Button type="button" className='flex-shrink-0'>Back</Button>
-                </Link>
-                <Button type="submit" className='flex-shrink-0'>Signin</Button>
-              </div>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
-  )
-}
 
-export default Page
+                {/* Boutons alignés : Back et Login */}
+                <div className="flex justify-between items-center">
+                    <Link href="/" passHref>
+                        <Button type="button" variant="outline" className="w-24">
+                            Back
+                        </Button>
+                    </Link>
+                    <Button type="submit" className="w-24">
+                        Login &rarr;
+                    </Button>
+                </div>
+
+                <p className="text-right text-neutral-600 text-sm max-w-sm mt-4 dark:text-neutral-300">
+                    Do not have an account? <Link href="/register" className="text-blue-500">Register</Link>
+                </p>
+
+                <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-8 h-[1px] w-full" />
+            </form>
+
+            <form action={async () => {
+                'use server';
+                await signIn('google');
+            }}>
+                <Button className="relative group/btn flex space-x-2 items-center justify-start px-4 w-full rounded-md h-10 font-medium shadow-input "
+                    type="submit">
+                    <IconBrandGoogle className="h-4 w-4 " />
+                    <span className=" text-sm">Login with Google</span>
+                </Button>
+            </form>
+        </div>
+    );
+};
+
+export default Login;
