@@ -8,9 +8,7 @@ import { Button } from "@/components/ui/button";
 const Register = async () => {
   return (
     <div className="relative mt-10 max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white border border-[#121212] dark:bg-black">
-      {/* ModeToggle positioned at the top right */}
       <div className="absolute top-4 right-4">
-        <ModeToggle />
       </div>
 
       <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
