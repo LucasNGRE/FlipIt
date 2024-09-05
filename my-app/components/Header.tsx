@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/menubar";
 import { Input } from './ui/input';
 import { Search, ShoppingCart, User } from 'lucide-react';
+import { ModeToggle } from './toggle.mode';
 
 const Header = () => {
   const handleSearchClick = () => {
@@ -107,6 +108,7 @@ const Header = () => {
           <Link href="/cart" passHref>
             <ShoppingCart className='text-2xl cursor-pointer' />
           </Link>
+          <ModeToggle />
         </div>
       </div>
 
