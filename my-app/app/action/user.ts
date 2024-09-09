@@ -3,7 +3,7 @@
 import prisma from "@/lib/db";
 import { hash } from "bcryptjs";
 import { CredentialsSignin } from "next-auth";
-import { signIn } from "@/auth"; // Assurez-vous d'importer depuis 'next-auth/react'
+import { signIn, signOut } from "@/auth"; // Assurez-vous d'importer depuis 'next-auth/react'
 import { redirect } from "next/navigation";
 
 const login = async (formData: FormData) => {
@@ -60,4 +60,9 @@ const fetchAllUsers = async () => {
   return users;
 };
 
-export { register, login, fetchAllUsers };
+const performSignOut = async () => {
+  await signOut({ redirect: false });
+};
+
+
+export { register, login, fetchAllUsers, performSignOut };

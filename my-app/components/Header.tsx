@@ -14,10 +14,18 @@ import {
 import { Input } from './ui/input';
 import { Search, ShoppingCart, User } from 'lucide-react';
 import { ModeToggle } from './toggle.mode';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { performSignOut } from '@/app/action/user';
 
 const Header = () => {
   const handleSearchClick = () => {
     console.log('Search clicked');
+  };
+
+  const handleLogout = async () => {
+    await performSignOut();
+    // Rediriger l'utilisateur vers la page d'accueil après la déconnexion
+    window.location.href = '/';
   };
 
   return (
@@ -115,11 +123,30 @@ const Header = () => {
       </div>
 
       {/* Icônes de connexion, panier et mode */}
-      <div className='flex items-center space-x-4'>
-        <Link href="/login" passHref>
-          <User className='text-2xl cursor-pointer'/>
-        </Link>
-        <Link href="/cart" passHref>
+      <div className='relative flex items-center space-x-4'>
+        <DropdownMenu>
+          <DropdownMenuTrigger>
+            <User className='text-2xl cursor-pointer' />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className='w-48 bg-white border border-gray-200 rounded-lg shadow-lg'>
+            <DropdownMenuItem asChild>
+              <Link href="/login">Login</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/settings">Settings</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className='w-full text-gray-800 hover:bg-gray-100 text-left'
+              >
+                Logout
+              </button>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <Link href="/cart">
           <ShoppingCart className='text-2xl cursor-pointer' />
         </Link>
         <ModeToggle />
