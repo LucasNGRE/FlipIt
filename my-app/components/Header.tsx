@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import React from 'react';
 import Image from 'next/image';
@@ -18,13 +18,29 @@ import { ModeToggle } from './toggle.mode';
 const Header = () => {
   const handleSearchClick = () => {
     console.log('Search clicked');
-    // Ajoute ici la logique pour le clic sur l'icône de recherche
   };
 
   return (
-    <div className='h-full w-full p-10 flex items-center'>
-      {/* Logo à gauche */}
-      <div className='flex-shrink-0'>
+    <div className='h-full w-full p-4 flex items-center justify-between'>
+      {/* Icône burger pour petits écrans */}
+      <div className='lg:hidden flex items-center'>
+        <Menubar>
+          <MenubarMenu>
+            <MenubarTrigger>
+              <div className='text-2xl cursor-pointer'>☰</div>
+            </MenubarTrigger>
+            <MenubarContent>
+              <MenubarItem>Vêtements</MenubarItem>
+              <MenubarItem>Chaussures</MenubarItem>
+              <MenubarItem>Accessoires</MenubarItem>
+              <MenubarItem>Skateboard</MenubarItem>
+            </MenubarContent>
+          </MenubarMenu>
+        </Menubar>
+      </div>
+
+      {/* Logo à gauche pour grands écrans */}
+      <div className='hidden lg:flex flex-shrink-0'>
         <Link href="/" passHref>
           <Image 
             src="/logo.png" 
@@ -36,8 +52,8 @@ const Header = () => {
         </Link>
       </div>
 
-      {/* Navbar centrée */}
-      <div className='flex-grow flex justify-center'>
+      {/* Navbar pour grands écrans */}
+      <div className='hidden lg:flex flex-grow justify-center'>
         <Menubar>
           <MenubarMenu>
             <MenubarTrigger>Vêtements</MenubarTrigger>
@@ -85,34 +101,29 @@ const Header = () => {
         </Menubar>
       </div>
 
-      {/* Barre de recherche et icônes à droite du logo */}
-      <div className='flex-grow flex items-center justify-between mx-10'>
-        {/* Barre de recherche */}
-        <div className='flex flex-grow items-center space-x-2'>
-          <Input
-            type="text"
-            placeholder="Rechercher..."
-            className="border p-2 rounded-lg w-full max-w-md"
-          />
-          <Search
-            className='text-2xl cursor-pointer ml-2' 
-            onClick={handleSearchClick}
-          />
-        </div>
-
-        {/* Icônes de connexion et panier */}
-        <div className='flex space-x-4'>
-          <Link href="/login" passHref>
-            <User className='text-2xl cursor-pointer'/>
-          </Link>
-          <Link href="/cart" passHref>
-            <ShoppingCart className='text-2xl cursor-pointer' />
-          </Link>
-          <ModeToggle />
-        </div>
+      {/* Barre de recherche centrée */}
+      <div className='flex-grow flex items-center justify-center mx-4'>
+        <Input
+          type="text"
+          placeholder="Rechercher..."
+          className="border p-2 rounded-lg w-full max-w-md"
+        />
+        <Search
+          className='text-2xl cursor-pointer ml-2' 
+          onClick={handleSearchClick}
+        />
       </div>
 
-      
+      {/* Icônes de connexion, panier et mode */}
+      <div className='flex items-center space-x-4'>
+        <Link href="/login" passHref>
+          <User className='text-2xl cursor-pointer'/>
+        </Link>
+        <Link href="/cart" passHref>
+          <ShoppingCart className='text-2xl cursor-pointer' />
+        </Link>
+        <ModeToggle />
+      </div>
     </div>
   );
 };
