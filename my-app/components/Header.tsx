@@ -128,7 +128,7 @@ const Header = () => {
           <DropdownMenuTrigger>
             <User className='text-2xl cursor-pointer' />
           </DropdownMenuTrigger>
-          <DropdownMenuContent className='w-48 bg-white border border-gray-200 rounded-lg shadow-lg'>
+          <DropdownMenuContent className='w-48 rounded-lg shadow-lg'>
             <DropdownMenuItem asChild>
               <Link href="/login">Login</Link>
             </DropdownMenuItem>
@@ -139,7 +139,7 @@ const Header = () => {
               <button
                 type="button"
                 onClick={handleLogout}
-                className='w-full text-gray-800 hover:bg-gray-100 text-left'
+                className='w-full text-left'
               >
                 Logout
               </button>
