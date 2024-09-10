@@ -1,0 +1,78 @@
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  orders    Order[]
+  cart      Cart?
+
+  createdAt DateTime @default(now())
+}
+
+model Order {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  items     OrderItem[]
+  total     Float
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Cart {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int      @unique   // Make this unique to enforce the one-to-one relationship
+  items     CartItem[]
+}
+
+
+model OrderItem {
+  id        Int    @id @default(autoincrement())
+  order     Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId   Int
+  item      Item   @relation(fields: [itemId], references: [id])
+  itemId    Int
+  quantity  Int
+}
+
+model CartItem {
+  id        Int    @id @default(autoincrement())
+  cart      Cart   @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  cartId    Int
+  item      Item   @relation(fields: [itemId], references: [id])
+  itemId    Int
+  quantity  Int
+}
+
+model Item {
+  id        Int      @id @default(autoincrement())
+  title     String
+  description String
+  price     Float
+  imageUrl  String  
+  brand     String
+  category  String
+  condition String
+  createdAt DateTime @default(now())
+
+  cartItems CartItem[]
+  orderItems OrderItem[]
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native"]
+}
+
+generator erd {
+  provider = "prisma-erd-generator"
+  output   = "./prisma/ERD"
+  theme    = "simple"  // Optional: choose "simple" or "graphviz"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
