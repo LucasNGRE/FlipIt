@@ -68,8 +68,8 @@ generator client {
 
 generator erd {
   provider = "prisma-erd-generator"
-  output   = "./prisma/ERD"
-  theme    = "simple"  // Optional: choose "simple" or "graphviz"
+  output   = "./ERD"
+  theme    = "simple"
 }
 
 datasource db {
