@@ -1,12 +1,22 @@
 model User {
   id        Int      @id @default(autoincrement())
-  username  String   @unique
+  firstName String
+  lastName  String
+  // username?
   email     String   @unique
-  password  String
+  password  String?
+  image     String?
   orders    Order[]
   cart      Cart?
-
+  items     Item?
+  emailVerified DateTime?
+  authProviderId String?
+  accounts      Account[]
+  sessions      Session[]
+  // Optional for WebAuthn support
+  Authenticator Authenticator[]
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Order {
@@ -48,6 +58,8 @@ model CartItem {
 
 model Item {
   id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id]) // Item posted by the user
+  userId    Int      @unique
   title     String
   description String
   price     Float
@@ -74,5 +86,58 @@ generator erd {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DB_URL")
+  url      = env("DATABASE_URL")
+}
+ 
+model Account {
+  userId            Int
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+ 
+  @@id([provider, providerAccountId])
+}
+ 
+model Session {
+  sessionToken String   @unique
+  userId       Int
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+ 
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+ 
+  @@id([identifier, token])
+}
+ 
+// Optional for WebAuthn support
+model Authenticator {
+  credentialID         String  @unique
+  user                 User   @relation(fields: [userId], references: [id])
+  userId               Int
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+ 
+  @@id([userId, credentialID])
 }
