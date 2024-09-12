@@ -5,6 +5,7 @@ import { hash } from "bcryptjs";
 import { CredentialsSignin } from "next-auth";
 import { signIn, signOut } from "@/auth"; // Assurez-vous d'importer depuis 'next-auth/react'
 import { redirect } from "next/navigation";
+import { use } from "react";
 
 const login = async (formData: FormData) => {
   const email = formData.get("email") as string;
@@ -45,8 +46,8 @@ const register = async (formData: FormData) => {
 
   await prisma.user.create({
     data: {
-      firstName,
-      lastName,
+      firstName: firstName,
+      last_name: lastName,
       email,
       password: hashedPassword,
     },

@@ -24,7 +24,6 @@ const Header = () => {
 
   const handleLogout = async () => {
     await performSignOut();
-    // Rediriger l'utilisateur vers la page d'accueil après la déconnexion
     window.location.href = '/';
   };
 
@@ -64,7 +63,7 @@ const Header = () => {
       <div className='hidden lg:flex flex-grow justify-center'>
         <Menubar>
           <MenubarMenu>
-            <MenubarTrigger>Vêtements</MenubarTrigger>
+            <MenubarTrigger className='hover:scale-105 hover:text-gray-500 transition-all duration-300 ease-out transform-gpu will-change-transform'>Vêtements</MenubarTrigger>
             <MenubarContent>
               <MenubarItem>T-shirts</MenubarItem>
               <MenubarItem>Hoodies</MenubarItem>
@@ -77,7 +76,7 @@ const Header = () => {
           </MenubarMenu>
 
           <MenubarMenu>
-            <MenubarTrigger>Chaussures</MenubarTrigger>
+            <MenubarTrigger className='hover:scale-105 hover:text-gray-500 transition-all duration-300 ease-out transform-gpu will-change-transform'>Chaussures</MenubarTrigger>
             <MenubarContent>
               <MenubarItem>Skate shoes</MenubarItem>
               <MenubarItem>Sneakers</MenubarItem>
@@ -85,7 +84,7 @@ const Header = () => {
           </MenubarMenu>
           
           <MenubarMenu>
-            <MenubarTrigger>Accessoires</MenubarTrigger>
+            <MenubarTrigger className='hover:scale-105 hover:text-gray-500 transition-all duration-300 ease-out transform-gpu will-change-transform'>Accessoires</MenubarTrigger>
             <MenubarContent>
               <MenubarItem>Casquette</MenubarItem>
               <MenubarItem>Bonnet</MenubarItem>
@@ -96,7 +95,7 @@ const Header = () => {
           </MenubarMenu>
 
           <MenubarMenu>
-            <MenubarTrigger>Skateboard</MenubarTrigger>
+            <MenubarTrigger className='hover:scale-105 hover:text-gray-500 transition-all duration-300 ease-out transform-gpu will-change-transform'>Skateboard</MenubarTrigger>
             <MenubarContent>
               <MenubarItem>Planches de skate</MenubarItem>
               <MenubarItem>Trucks</MenubarItem>
@@ -110,7 +109,7 @@ const Header = () => {
       </div>
 
       {/* Barre de recherche centrée */}
-      <div className='flex-grow flex items-center justify-center mx-4'>
+      <div className='flex-grow flex items-center justify-center mx-4 hover:scale-105 hover:text-gray-500 transition-all duration-300 ease-out'>
         <Input
           type="text"
           placeholder="Rechercher..."
@@ -123,10 +122,10 @@ const Header = () => {
       </div>
 
       {/* Icônes de connexion, panier et mode */}
-      <div className='relative flex items-center space-x-4'>
+      <div className='relative flex items-center space-x-4 '>
         <DropdownMenu>
           <DropdownMenuTrigger>
-            <User className='text-2xl cursor-pointer' />
+            <User className='text-2xl cursor-pointer hover:scale-105 hover:text-gray-500 transition-all duration-300 ease-out' />
           </DropdownMenuTrigger>
           <DropdownMenuContent className='w-48 rounded-lg shadow-lg'>
             <DropdownMenuItem asChild>
@@ -147,7 +146,7 @@ const Header = () => {
           </DropdownMenuContent>
         </DropdownMenu>
         <Link href="/cart">
-          <ShoppingCart className='text-2xl cursor-pointer' />
+          <ShoppingCart className='text-2xl cursor-pointer hover:scale-105 hover:text-gray-500 transition-all duration-300 ease-out' />
         </Link>
         <ModeToggle />
       </div>

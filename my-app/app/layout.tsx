@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { SessionProvider } from "next-auth/react"; // Importer SessionProvider
+import { SessionProvider } from "next-auth/react";
+import Footer from '@/components/Footer';
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className="flex flex-col min-h-screen">
         <SessionProvider>
           <ThemeProvider
             attribute="class"
@@ -26,7 +27,11 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {children}
+            <main className="flex-grow">
+              {children}
+            </main>
+            {/* Include Footer here */}
+            <Footer />
           </ThemeProvider>
         </SessionProvider>
       </body>
