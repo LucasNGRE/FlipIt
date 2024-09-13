@@ -112,6 +112,12 @@ callbacks: {
   
       return false; // Connexion échouée pour les autres fournisseurs
     },
+    async session({ session, token }) {
+      if (session.user && token.sub) {
+        session.user.id = token.sub; // Ajoute l'ID utilisateur dans la session
+      }
+      return session;
+    },
   },
   
   
