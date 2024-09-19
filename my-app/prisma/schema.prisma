@@ -2,18 +2,17 @@ model User {
   id        Int      @id @default(autoincrement())
   firstName String
   lastName  String
-  // username?
   email     String   @unique
   password  String?
   image     String?
   orders    Order[]
   cart      Cart?
-  items     Item?
+  items     String?
+  itemId    Int?     @unique
   emailVerified DateTime?
   authProviderId String?
   accounts      Account[]
   sessions      Session[]
-  // Optional for WebAuthn support
   Authenticator Authenticator[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -38,40 +37,51 @@ model Cart {
 }
 
 
-model OrderItem {
-  id        Int    @id @default(autoincrement())
-  order     Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  orderId   Int
-  item      Item   @relation(fields: [itemId], references: [id])
-  itemId    Int
-  quantity  Int
+model Item {
+  id          Int      @id @default(autoincrement())
+  userId      Int      @unique
+  title       String
+  description String
+  price       Float
+  isNegotiable Boolean
+  imageUrl    String
+  brand       String
+  category    String
+  condition   String
+  createdAt   DateTime @default(now())
+  
+  cartItems   CartItem[]
+  orderItems  OrderItem[]
 }
 
 model CartItem {
-  id        Int    @id @default(autoincrement())
-  cart      Cart   @relation(fields: [cartId], references: [id], onDelete: Cascade)
-  cartId    Int
-  item      Item   @relation(fields: [itemId], references: [id])
-  itemId    Int
-  quantity  Int
+  id             Int      @id @default(autoincrement())
+  cart           Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  cartId         Int
+  item           Item     @relation(fields: [itemId], references: [id])
+  itemId         Int
+  quantity       Int
+  price          Float    // Store the price at the time the item is added to the cart
+  negotiatedPrice Float?  // If the price is negotiated, store the agreed price here
+
+  // Additional fields for tracking the price negotiation
+  priceNegotiationStatus String? // For example: 'Pending', 'Accepted', 'Rejected'
 }
 
-model Item {
-  id        Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [id]) // Item posted by the user
-  userId    Int      @unique
-  title     String
-  description String
-  price     Float
-  imageUrl  String  
-  brand     String
-  category  String
-  condition String
-  createdAt DateTime @default(now())
+model OrderItem {
+  id             Int      @id @default(autoincrement())
+  order          Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId        Int
+  item           Item     @relation(fields: [itemId], references: [id])
+  itemId         Int
+  quantity       Int
+  price          Float    // Store the final price at the time of order placement (copied from CartItem or Item)
+  negotiatedPrice Float?  // If a price was negotiated, store the agreed price here
 
-  cartItems CartItem[]
-  orderItems OrderItem[]
+  // In case we want to track the original price for reference, we can keep the original
+  originalPrice Float     // This can store the non-negotiated price from Item
 }
+
 
 generator client {
   provider      = "prisma-client-js"
