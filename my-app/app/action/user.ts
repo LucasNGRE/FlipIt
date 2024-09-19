@@ -16,13 +16,14 @@ const login = async (formData: FormData) => {
         callbackUrl: "/",
         email,
         password,
-        });
+      });
+      return true;
     } catch (error) {
     // handle the error
     const someError = error as CredentialsSignin;
+    console.error(error);
     return someError.cause;
   };
-  redirect("/");
 };
 
 const register = async (formData: FormData) => {

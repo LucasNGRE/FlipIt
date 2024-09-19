@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -18,7 +18,26 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { signOut, useSession } from 'next-auth/react';
 
 const Header = () => {
-  const { data: session, status } = useSession();
+  
+  const [userData, setUserData] = React.useState(null)
+  const [isConnected, setIsConnected] = React.useState(false)
+  // Fetch user data on component mount
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch('/api/user')
+        if (!response.ok) return;
+        const data = await response.json()
+        setUserData(data);
+        setIsConnected(true);
+
+        console.log('User data:', data)
+      } catch (error) {
+        console.error('Erreur lors de la récupération des données utilisateur:', error)
+      }
+    }
+    fetchUserData()
+  }, [])
 
   const handleSearchClick = () => {
     console.log('Search clicked');
@@ -131,7 +150,7 @@ const Header = () => {
             <User className='text-2xl cursor-pointer' />
           </DropdownMenuTrigger>
           <DropdownMenuContent className='w-48 rounded-lg shadow-lg'>
-            {status === 'authenticated' ? (
+            {isConnected ? (
               <>
                 <DropdownMenuItem asChild>
                   <Link href="/settings">Settings</Link>

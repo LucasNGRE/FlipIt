@@ -1,9 +1,10 @@
 import { auth } from '@/auth';
-import { cache } from 'react';
 
-export const getSession = cache(async () => {
+
+export const getSession = async () => {
   try {
     const session = await auth(); // Appelle la fonction d'auth pour obtenir la session
+    console.log('Session:', session);
     if (!session) {
       console.log('Aucune session trouvée');
     } else {
@@ -14,4 +15,4 @@ export const getSession = cache(async () => {
     console.error('Erreur lors de la récupération de la session:', error);
     return null;
   }
-});
+};
