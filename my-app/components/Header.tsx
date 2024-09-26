@@ -12,7 +12,7 @@ import {
   MenubarTrigger,
 } from "@/components/ui/menubar";
 import { Input } from './ui/input';
-import { Search, ShoppingCart, User } from 'lucide-react';
+import { Mail, Search, ShoppingCart, User } from 'lucide-react';
 import { ModeToggle } from './toggle.mode';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { signOut, useSession } from 'next-auth/react';
@@ -174,6 +174,9 @@ const Header = () => {
         </DropdownMenu>
         <Link href="/cart">
           <ShoppingCart className='text-2xl cursor-pointer' />
+        </Link>
+        <Link href="/inbox">
+          <Mail className='text-2xl cursor-pointer' />
         </Link>
         <ModeToggle />
       </div>
