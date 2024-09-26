@@ -33,6 +33,7 @@ export function OfferDialog({ onOfferSubmit }: OfferDialogProps) {
           <Input
             type="number"
             placeholder="Entrez votre prix"
+            min="0"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
           />

@@ -27,11 +27,10 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <Header />
-            <main>
-              
-            </main>
+          <Header />
+          <main className="flex-grow bg-background">
             {children}
+          </main>
           </ThemeProvider>
         </SessionProvider>
       </body>
