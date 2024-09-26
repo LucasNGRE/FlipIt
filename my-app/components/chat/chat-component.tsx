@@ -7,7 +7,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Truck, DollarSign, ShoppingCart } from 'lucide-react';
-import { OfferDialog } from '@/components/offer-dialog'; // Importe le composant
+import { OfferDialog } from '@/components/chat/offer-dialog'; // Importe le composant
 
 type Message = {
   sender: 'buyer' | 'seller';
