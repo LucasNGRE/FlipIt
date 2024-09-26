@@ -6,7 +6,7 @@ const Inbox = () => {
   return (
     <div className="flex flex-col h-screen lg:flex-row p-2">
       {/* Liste de conversations (côté gauche) */}
-      <div className="w-full lg:w-1/4 bg-background border-b lg:border-r border-gray-300 overflow-y-auto">
+      <div className="w-full h-full lg:w-1/4 bg-background border-b lg:border-r border-gray-300 overflow-y-auto">
         <ConversationList />
       </div>
 

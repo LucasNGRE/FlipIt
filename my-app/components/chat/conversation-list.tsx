@@ -25,7 +25,7 @@ export default function ConversationList() {
   const [activeConversation, setActiveConversation] = useState<string | null>(null)
 
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <Card className="w-full h-full max-w-md mx-auto">
       <CardHeader className="bg-primary text-white">
         <CardTitle className="flex items-center">
           <MessageCircle className="mr-2" />
