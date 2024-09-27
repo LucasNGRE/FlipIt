@@ -83,7 +83,7 @@ footer {
   }
 
     .banner {
-      height: 5px; /* You can adjust the height */
+      height: 5px;
       width: 100%;
       background-color: rgba(var(--primary-banner-color), 1); /* Default to light mode */
     }
