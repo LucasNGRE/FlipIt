@@ -15,9 +15,11 @@ import { Input } from './ui/input';
 import { Search, ShoppingCart, User } from 'lucide-react';
 import { ModeToggle } from './toggle.mode';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { performSignOut } from '@/app/action/user';
+import { signOut, useSession } from 'next-auth/react';
 
 const Header = () => {
+  const { data: session, status } = useSession();
+
   const handleSearchClick = () => {
     console.log('Search clicked');
   };
@@ -25,6 +27,9 @@ const Header = () => {
   const handleLogout = async () =>
    {
     await performSignOut();
+  const handleLogout = async () => {
+    await signOut({ redirect: false });
+    // Rediriger l'utilisateur vers la page d'accueil après la déconnexion
     window.location.href = '/';
   };
 
@@ -129,21 +134,26 @@ const Header = () => {
             <User className='text-2xl cursor-pointer hover:scale-105 hover:text-gray-500 transition-all duration-300 ease-out' />
           </DropdownMenuTrigger>
           <DropdownMenuContent className='w-48 rounded-lg shadow-lg'>
-            <DropdownMenuItem asChild>
-              <Link href="/login">Login</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href="/settings">Settings</Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <button
-                type="button"
-                onClick={handleLogout}
-                className='w-full text-left'
-              >
-                Logout
-              </button>
-            </DropdownMenuItem>
+            {status === 'authenticated' ? (
+              <>
+                <DropdownMenuItem asChild>
+                  <Link href="/settings">Settings</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className='w-full text-left'
+                  >
+                    Logout
+                  </button>
+                </DropdownMenuItem>
+              </>
+            ) : (
+              <DropdownMenuItem asChild>
+                <Link href="/login">Login</Link>
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
         <Link href="/cart">
