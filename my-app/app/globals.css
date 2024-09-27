@@ -47,8 +47,10 @@ footer {
       --input: 179 7% 94%;
       --primary: 179 30% 14%;
       --primary-foreground: 179 30% 74%;
+      --primary-banner-color: #000000;
       --secondary: 149 30% 14%;
       --secondary-foreground: 149 30% 74%;
+      --secondary-banner-color: #4f5f47;
       --accent: 209 30% 14%;
       --accent-foreground: 209 30% 74%;
       --destructive: 16 94% 36%;
@@ -79,7 +81,17 @@ footer {
       --ring: 179 30% 14%;
     }
   }
-  
+
+    .banner {
+      height: 5px; /* You can adjust the height */
+      width: 100%;
+      background-color: rgba(var(--primary-banner-color), 1); /* Default to light mode */
+    }
+  @media (prefers-color-scheme: dark) {
+    .bandeau {
+      background-color: rgba(var(--secondary-banner-color), 1); /* Dark mode */
+    }
+  }
 
 @layer base {
   * {

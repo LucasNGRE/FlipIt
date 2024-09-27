@@ -8,6 +8,13 @@ import React from 'react';
 import { redirect } from 'next/navigation';
 import { getSession } from '@/lib/getSession';
 import { Button } from '@/components/ui/button';
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Login | FlipIt",
+  description: "Log in",
+};
+
 
 const Login = async () => {
     const session = await getSession();

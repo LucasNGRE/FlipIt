@@ -1,13 +1,17 @@
 import * as React from "react"
-import Settings from "@/components/settings/user_settings"
 import Header from "@/components/Header"
+import type { Metadata } from "next";
 
-import Footer from "@/components/Footer"
+export const metadata: Metadata = {
+  title: "FlipIt",
+  description: "Welcome home!",
+};
+
 
 export default function Home() {
   return (
     <div>
       <Header />
     </div>
-  )
+  );
 }

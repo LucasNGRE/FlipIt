@@ -22,7 +22,8 @@ const Header = () => {
     console.log('Search clicked');
   };
 
-  const handleLogout = async () => {
+  const handleLogout = async () =>
+   {
     await performSignOut();
     window.location.href = '/';
   };
@@ -52,8 +53,8 @@ const Header = () => {
           <Image 
             src="/logo.png" 
             alt="logo" 
-            width={100} 
-            height={100} 
+            width={90} 
+            height={90} 
             className="cursor-pointer"
           />
         </Link>
