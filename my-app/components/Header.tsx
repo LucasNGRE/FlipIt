@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
@@ -12,21 +12,37 @@ import {
   MenubarTrigger,
 } from "@/components/ui/menubar";
 import { Input } from './ui/input';
-import { Search, ShoppingCart, User } from 'lucide-react';
+import { Mail, Search, ShoppingCart, User } from 'lucide-react';
 import { ModeToggle } from './toggle.mode';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { signOut, useSession } from 'next-auth/react';
 
 const Header = () => {
-  const { data: session, status } = useSession();
+  
+  const [userData, setUserData] = React.useState(null)
+  const [isConnected, setIsConnected] = React.useState(false)
+  // Fetch user data on component mount
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch('/api/user')
+        if (!response.ok) return;
+        const data = await response.json()
+        setUserData(data);
+        setIsConnected(true);
+
+        console.log('User data:', data)
+      } catch (error) {
+        console.error('Erreur lors de la récupération des données utilisateur:', error)
+      }
+    }
+    fetchUserData()
+  }, [])
 
   const handleSearchClick = () => {
     console.log('Search clicked');
   };
 
-  const handleLogout = async () =>
-   {
-    await performSignOut();
   const handleLogout = async () => {
     await signOut({ redirect: false });
     // Rediriger l'utilisateur vers la page d'accueil après la déconnexion
@@ -58,8 +74,8 @@ const Header = () => {
           <Image 
             src="/logo.png" 
             alt="logo" 
-            width={90} 
-            height={90} 
+            width={100} 
+            height={100} 
             className="cursor-pointer"
           />
         </Link>
@@ -69,7 +85,7 @@ const Header = () => {
       <div className='hidden lg:flex flex-grow justify-center'>
         <Menubar>
           <MenubarMenu>
-            <MenubarTrigger className='hover:scale-105 hover:text-gray-500 transition-all duration-300 ease-out transform-gpu will-change-transform'>Vêtements</MenubarTrigger>
+            <MenubarTrigger>Vêtements</MenubarTrigger>
             <MenubarContent>
               <MenubarItem>T-shirts</MenubarItem>
               <MenubarItem>Hoodies</MenubarItem>
@@ -82,7 +98,7 @@ const Header = () => {
           </MenubarMenu>
 
           <MenubarMenu>
-            <MenubarTrigger className='hover:scale-105 hover:text-gray-500 transition-all duration-300 ease-out transform-gpu will-change-transform'>Chaussures</MenubarTrigger>
+            <MenubarTrigger>Chaussures</MenubarTrigger>
             <MenubarContent>
               <MenubarItem>Skate shoes</MenubarItem>
               <MenubarItem>Sneakers</MenubarItem>
@@ -90,7 +106,7 @@ const Header = () => {
           </MenubarMenu>
           
           <MenubarMenu>
-            <MenubarTrigger className='hover:scale-105 hover:text-gray-500 transition-all duration-300 ease-out transform-gpu will-change-transform'>Accessoires</MenubarTrigger>
+            <MenubarTrigger>Accessoires</MenubarTrigger>
             <MenubarContent>
               <MenubarItem>Casquette</MenubarItem>
               <MenubarItem>Bonnet</MenubarItem>
@@ -101,7 +117,7 @@ const Header = () => {
           </MenubarMenu>
 
           <MenubarMenu>
-            <MenubarTrigger className='hover:scale-105 hover:text-gray-500 transition-all duration-300 ease-out transform-gpu will-change-transform'>Skateboard</MenubarTrigger>
+            <MenubarTrigger>Skateboard</MenubarTrigger>
             <MenubarContent>
               <MenubarItem>Planches de skate</MenubarItem>
               <MenubarItem>Trucks</MenubarItem>
@@ -115,7 +131,7 @@ const Header = () => {
       </div>
 
       {/* Barre de recherche centrée */}
-      <div className='flex-grow flex items-center justify-center mx-4 hover:scale-105 hover:text-gray-500 transition-all duration-300 ease-out'>
+      <div className='flex-grow flex items-center justify-center mx-4'>
         <Input
           type="text"
           placeholder="Rechercher..."
@@ -128,13 +144,13 @@ const Header = () => {
       </div>
 
       {/* Icônes de connexion, panier et mode */}
-      <div className='relative flex items-center space-x-4 '>
+      <div className='relative flex items-center space-x-4'>
         <DropdownMenu>
           <DropdownMenuTrigger>
-            <User className='text-2xl cursor-pointer hover:scale-105 hover:text-gray-500 transition-all duration-300 ease-out' />
+            <User className='text-2xl cursor-pointer' />
           </DropdownMenuTrigger>
           <DropdownMenuContent className='w-48 rounded-lg shadow-lg'>
-            {status === 'authenticated' ? (
+            {isConnected ? (
               <>
                 <DropdownMenuItem asChild>
                   <Link href="/settings">Settings</Link>
@@ -157,7 +173,10 @@ const Header = () => {
           </DropdownMenuContent>
         </DropdownMenu>
         <Link href="/cart">
-          <ShoppingCart className='text-2xl cursor-pointer hover:scale-105 hover:text-gray-500 transition-all duration-300 ease-out' />
+          <ShoppingCart className='text-2xl cursor-pointer' />
+        </Link>
+        <Link href="/inbox">
+          <Mail className='text-2xl cursor-pointer' />
         </Link>
         <ModeToggle />
       </div>

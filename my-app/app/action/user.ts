@@ -5,7 +5,6 @@ import { hash } from "bcryptjs";
 import { CredentialsSignin } from "next-auth";
 import { signIn, signOut } from "@/auth"; // Assurez-vous d'importer depuis 'next-auth/react'
 import { redirect } from "next/navigation";
-import { use } from "react";
 
 const login = async (formData: FormData) => {
   const email = formData.get("email") as string;
@@ -17,13 +16,14 @@ const login = async (formData: FormData) => {
         callbackUrl: "/",
         email,
         password,
-        });
+      });
+      return true;
     } catch (error) {
     // handle the error
     const someError = error as CredentialsSignin;
+    console.error(error);
     return someError.cause;
   };
-  redirect("/");
 };
 
 const register = async (formData: FormData) => {
@@ -46,8 +46,8 @@ const register = async (formData: FormData) => {
 
   await prisma.user.create({
     data: {
-      firstName: firstName,
-      last_name: lastName,
+      firstName,
+      lastName,
       email,
       password: hashedPassword,
     },
