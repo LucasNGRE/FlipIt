@@ -9,7 +9,6 @@ const sampleArticles = [
     image: "/placeholder.svg?height=300&width=300",
     condition: "Good" as const,
     size: "8.5\"",
-    isNegotiable: false,
     seller: {
       name: "Tony H.",
       avatar: "/placeholder.svg?height=32&width=32"
@@ -22,7 +21,6 @@ const sampleArticles = [
     image: "/placeholder.svg?height=300&width=300",
     condition: "Like New" as const,
     size: "149mm",
-    isNegotiable: false,
     seller: {
       name: "Rodney M.",
       avatar: "/placeholder.svg?height=32&width=32"
@@ -35,7 +33,6 @@ const sampleArticles = [
     image: "/placeholder.svg?height=300&width=300",
     condition: "New" as const,
     size: "54mm",
-    isNegotiable: true,
     seller: {
       name: "Leticia B.",
       avatar: "/placeholder.svg?height=32&width=32"
@@ -48,7 +45,6 @@ const sampleArticles = [
     image: "/placeholder.svg?height=300&width=300",
     condition: "Good" as const,
     size: "One Size",
-    isNegotiable: true,
     seller: {
       name: "Nyjah H.",
       avatar: "/placeholder.svg?height=32&width=32"

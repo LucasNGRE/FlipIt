@@ -69,16 +69,12 @@ const Header = () => {
       </div>
 
       {/* Logo à gauche pour grands écrans */}
-      <div className='hidden lg:flex flex-shrink-0'>
-        <Link href="/" passHref>
-          <Image 
-            src="/logo.png" 
-            alt="logo" 
-            width={100} 
-            height={100} 
-            className="cursor-pointer"
-          />
-        </Link>
+      <div className="mb-4 lg:mb-0 lg:flex-1 flex justify-center lg:justify-start">
+        <span className="text-2xl lg:text-3xl font-extrabold tracking-wider">
+          <Link href="/" className="hover:scale-110 transition-transform duration-300 ease-out transform-gpu will-change-transform">
+            FlipIt
+          </Link>
+        </span>
       </div>
 
       {/* Navbar pour grands écrans */}
@@ -138,7 +134,7 @@ const Header = () => {
           className="border p-2 rounded-lg w-full max-w-md"
         />
         <Search
-          className='text-2xl cursor-pointer ml-2' 
+          className='text-2xl cursor-pointer ml-2'
           onClick={handleSearchClick}
         />
       </div>
