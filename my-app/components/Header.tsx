@@ -49,7 +49,7 @@ const Header = () => {
   };
 
   return (
-    <div className='h-full w-full p-4 flex items-center justify-between'>
+    <div className='w-full p-4 flex items-center justify-between'>
       {/* Icône burger pour petits écrans */}
       <div className='lg:hidden flex items-center'>
         <Menubar>
@@ -67,13 +67,16 @@ const Header = () => {
         </Menubar>
       </div>
 
-      {/* Logo à gauche pour grands écrans */}
-      <div className="mb-4 lg:mb-0 lg:flex-1 flex justify-center lg:justify-start">
-        <span className="text-2xl lg:text-3xl font-extrabold tracking-wider">
-          <Link href="/" className="hover:scale-110 transition-transform duration-300 ease-out transform-gpu will-change-transform">
-            FlipIt
-          </Link>
-        </span>
+      <div className='hidden lg:flex flex-shrink-0'>
+        <Link href="/" passHref>
+          <Image 
+            src="/logo.png" 
+            alt="logo" 
+            width={100} 
+            height={100} 
+            className="cursor-pointer"
+          />
+        </Link>
       </div>
 
       {/* Navbar pour grands écrans */}
