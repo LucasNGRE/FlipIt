@@ -1,6 +1,12 @@
 import ChatComponent from '@/components/chat/chat-component';
 import ConversationList from '@/components/chat/conversation-list';
 import React from 'react';
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Inbox | FlipIt",
+  description: "Un espace",
+};
 
 const Inbox = () => {
   return (

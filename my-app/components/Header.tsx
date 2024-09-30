@@ -12,7 +12,7 @@ import {
   MenubarTrigger,
 } from "@/components/ui/menubar";
 import { Input } from './ui/input';
-import { Mail, Search, ShoppingCart, User } from 'lucide-react';
+import { CirclePlus, Mail, Search, ShoppingCart, User } from 'lucide-react';
 import { ModeToggle } from './toggle.mode';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { signOut, useSession } from 'next-auth/react';
@@ -21,7 +21,7 @@ const Header = () => {
   
   const [userData, setUserData] = React.useState(null)
   const [isConnected, setIsConnected] = React.useState(false)
-  // Fetch user data on component mount
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -45,7 +45,6 @@ const Header = () => {
 
   const handleLogout = async () => {
     await signOut({ redirect: false });
-    // Rediriger l'utilisateur vers la page d'accueil après la déconnexion
     window.location.href = '/';
   };
 
@@ -128,6 +127,16 @@ const Header = () => {
             </MenubarContent>
           </MenubarMenu>
         </Menubar>
+      </div>
+
+      {/* Bouton "Poster une annonce" */}
+      <div className='mx-4'>
+        <Link href="/items/add-item">
+          <button className='flex items-center px-2 py-2 bg-secondary/60 text-white rounded-lg hover:bg-primary'>
+            <CirclePlus className='mr-2' /> {/* L'icône est toujours visible */}
+            <span className='hidden lg:block'>Ajoute un article</span> {/* Le texte est caché sur les petits écrans */}
+          </button>
+        </Link>
       </div>
 
       {/* Barre de recherche centrée */}

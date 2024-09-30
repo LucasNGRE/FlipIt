@@ -7,10 +7,10 @@ import Header from "@/components/Header";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
-  title: "FlipIt",
-  description: "Switch your style",
-};
+// export const metadata: Metadata = {
+//   title: "FlipIt",
+//   description: "Switch your style",
+// };
 
 export default function RootLayout({
   children,
