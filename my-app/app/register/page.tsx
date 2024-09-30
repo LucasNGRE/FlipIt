@@ -3,6 +3,13 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { register } from "../action/user";
 import { Button } from "@/components/ui/button";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Register | FlipIt",
+  description: "Create new account",
+};
+
 
 const Register = async () => {
   return (

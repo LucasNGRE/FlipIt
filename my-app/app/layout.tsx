@@ -1,16 +1,11 @@
-import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { SessionProvider } from "next-auth/react"; // Importer SessionProvider
-import Header from "@/components/Header";
+import { SessionProvider } from "next-auth/react";
+import Footer from '@/components/Footer';
 
 const inter = Inter({ subsets: ["latin"] });
 
-// export const metadata: Metadata = {
-//   title: "FlipIt",
-//   description: "Switch your style",
-// };
 
 export default function RootLayout({
   children,
@@ -19,7 +14,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className="flex flex-col min-h-screen">
         <SessionProvider>
           <ThemeProvider
             attribute="class"
@@ -27,10 +22,11 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-          <Header />
-          <main className="flex-grow bg-background">
-            {children}
-          </main>
+            <main className="flex-grow">
+              {children}
+            </main>
+            {/* Include Footer here */}
+            <Footer />
           </ThemeProvider>
         </SessionProvider>
       </body>
