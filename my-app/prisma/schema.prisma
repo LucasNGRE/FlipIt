@@ -2,31 +2,91 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
- 
+
 generator client {
   provider = "prisma-client-js"
 }
- 
+
+// Table User
 model User {
-  id            String          @id @default(cuid())
-  firstName     String
-  lastName      String
-  email         String          @unique
-  password      String?
-  emailVerified DateTime?
-  image         String?
+  id             Int                @id @default(autoincrement())  // Changement ici pour Int
+  firstName      String
+  lastName       String
+  email          String          @unique
+  password       String?
+  emailVerified  DateTime?
+  image          String?
   authProviderId String?
-  accounts      Account[]
-  sessions      Session[]
+  accounts       Account[]
+  sessions       Session[]
   // Optional for WebAuthn support
-  Authenticator Authenticator[]
- 
+  Authenticator  Authenticator[]
+
+  // Relations
+  products            Product[]
+  offers              Offer[]
+  transactionsBuyer   Transaction[] @relation("BuyerTransactions")
+  transactionsSeller  Transaction[] @relation("SellerTransactions")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
- 
+
+// Table Products
+model Product {
+  id          Int             @id @default(autoincrement())
+  userId      Int
+  title       String
+  description String?
+  price       Decimal          @db.Decimal(10, 2)
+  status      Status           @default(available)
+  
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  // Relations
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  images      ProductImage[]   // Chaque produit peut avoir plusieurs images
+  offers      Offer[]          // Relation inverse avec Offer
+  transactions Transaction[]   // Add this line for back-relation to Transaction
+}
+
+
+// Table Offers
+model Offer {
+  id          Int        @id @default(autoincrement())  // Changement ici pour Int
+  productId   Int
+  buyerId     Int
+  offerPrice  Decimal     @db.Decimal(10, 2)
+  status      OfferStatus      @default(pending)  // Status: pending, accepted, rejected
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  product     Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  buyer       User        @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+}
+
+// Table Transactions
+model Transaction {
+  id          Int        @id @default(autoincrement())  // Changement ici pour Int
+  productId   Int
+  sellerId    Int
+  buyerId     Int
+  finalPrice  Decimal     @db.Decimal(10, 2)
+
+  createdAt   DateTime    @default(now())
+
+  // Relations
+  product     Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  seller      User        @relation("SellerTransactions", fields: [sellerId], references: [id], onDelete: Cascade)
+  buyer       User        @relation("BuyerTransactions", fields: [buyerId], references: [id], onDelete: Cascade)
+}
+
+// Table Account (Déjà présente)
 model Account {
-  userId            String
+  userId            Int
   type              String
   provider          String
   providerAccountId String
@@ -37,45 +97,70 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
- 
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@id([provider, providerAccountId])
 }
- 
+
+// Table Session (Déjà présente)
 model Session {
   sessionToken String   @unique
-  userId       String
+  userId       Int
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
- 
+
+// Table VerificationToken (Déjà présente)
 model VerificationToken {
   identifier String
   token      String
   expires    DateTime
- 
+
   @@id([identifier, token])
 }
- 
-// Optional for WebAuthn support
+
+// Table Authenticator (Déjà présente)
 model Authenticator {
   credentialID         String  @unique
-  userId               String
+  userId               Int
   providerAccountId    String
   credentialPublicKey  String
   counter              Int
   credentialDeviceType String
   credentialBackedUp   Boolean
   transports           String?
- 
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@id([userId, credentialID])
+}
+
+// Modèle ProductImage pour gérer les images des produits
+model ProductImage {
+  id        Int      @id @default(autoincrement())  // ID auto-incrémenté
+  productId Int
+  url       String   // URL de l'image (hébergée sur un service de stockage externe)
+  altText   String?  // Texte alternatif pour l'accessibilité
+  createdAt DateTime @default(now())
+
+  // Relation avec Product
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+enum Status {
+  available
+  sold
+  pending
+}
+
+enum OfferStatus {
+  pending
+  accepted
+  rejected
 }
