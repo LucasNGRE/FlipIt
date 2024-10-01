@@ -1,9 +1,13 @@
-// pages/api/products/create.ts
+// app/api/products/create.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from '@/lib/getSession';
 import prisma from '@/lib/db'; // Instance de Prisma Client
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: "Method Not Allowed" }); // Gérer les méthodes non autorisées
+  }
+
   const session = await getSession();
 
   if (!session) {
