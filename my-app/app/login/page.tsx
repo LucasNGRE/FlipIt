@@ -7,9 +7,7 @@ import { signIn } from '@/auth';
 import Link from 'next/link';
 import React from 'react';
 import { redirect } from 'next/navigation';
-import { getSession } from '@/lib/getSession';
 import { Button } from '@/components/ui/button';
-import type { Metadata } from "next";
 
 export async function generateMetadata() {
     return {
