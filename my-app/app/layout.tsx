@@ -6,6 +6,7 @@ import { SessionProvider } from "next-auth/react"; // Importer SessionProvider
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Head from "next/head";
+import { Toaster } from 'sonner'
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,6 +25,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
+            <Toaster />
             <Header />
             {/* Le main occupe l'espace restant entre le header et le footer */}
             <main className="flex-grow bg-background">
