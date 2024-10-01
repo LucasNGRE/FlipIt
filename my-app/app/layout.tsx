@@ -4,6 +4,8 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SessionProvider } from "next-auth/react"; // Importer SessionProvider
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import Head from "next/head";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -13,8 +15,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body>
+    <html lang="en" className="h-full">
+      <body className="flex flex-col min-h-screen">
         <SessionProvider>
           <ThemeProvider
             attribute="class"
@@ -22,10 +24,13 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-          <Header />
-          <main className="flex-grow bg-background">
-            {children}
-          </main>
+            <Header />
+            {/* Le main occupe l'espace restant entre le header et le footer */}
+            <main className="flex-grow bg-background">
+              {children}
+            </main>
+            {/* Footer reste en bas */}
+            <Footer />
           </ThemeProvider>
         </SessionProvider>
       </body>

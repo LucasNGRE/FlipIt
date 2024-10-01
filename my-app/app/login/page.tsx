@@ -9,9 +9,17 @@ import React from 'react';
 import { redirect } from 'next/navigation';
 import { getSession } from '@/lib/getSession';
 import { Button } from '@/components/ui/button';
+import type { Metadata } from "next";
 
-const Login = async () => {
+export async function generateMetadata() {
+    return {
+        title: 'Login | FlipIt',
+        description: 'Login to your account',
+    };
+}
 
+
+export default async function Login() {
     async function handleLogin(e: any) {
         'use server';
         const response = await login(e);
@@ -74,5 +82,3 @@ const Login = async () => {
         </div>
     );
 };
-
-export default Login;

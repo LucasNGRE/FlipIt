@@ -1,15 +1,17 @@
-import * as React from "react";
-import { Metadata } from "next";
+import * as React from "react"
+import type { Metadata } from "next";
+import SkateArticleGrid from "@/components/Articles/ArticleGrid";
 
 export const metadata: Metadata = {
-  title: "Home | FlipIt",
-  description: "Welcome to FlipIt",
+  title: "FlipIt",
+  description: "Welcome home!",
 };
+
 
 export default function Home() {
   return (
     <div>
-      page
+        <SkateArticleGrid />
     </div>
-  )
+  );
 }

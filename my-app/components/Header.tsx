@@ -49,7 +49,7 @@ const Header = () => {
   };
 
   return (
-    <div className='h-full w-full p-4 flex items-center justify-between'>
+    <div className='w-full p-4 flex items-center justify-between'>
       {/* Icône burger pour petits écrans */}
       <div className='lg:hidden flex items-center'>
         <Menubar>
@@ -68,16 +68,12 @@ const Header = () => {
       </div>
 
       {/* Logo à gauche pour grands écrans */}
-      <div className='hidden lg:flex flex-shrink-0'>
-        <Link href="/" passHref>
-          <Image 
-            src="/logo.png" 
-            alt="logo" 
-            width={100} 
-            height={100} 
-            className="cursor-pointer"
-          />
-        </Link>
+      <div className="hidden lg:flex flex-shrink-0">
+        <span className="text-2xl lg:text-3xl font-extrabold tracking-wider">
+          <Link href="/" className="hover:scale-110 transition-transform duration-300 ease-out transform-gpu will-change-transform">
+            FlipIt
+          </Link>
+        </span>
       </div>
 
       {/* Navbar pour grands écrans */}
@@ -130,14 +126,16 @@ const Header = () => {
       </div>
 
       {/* Bouton "Poster une annonce" */}
-      <div className='mx-4'>
-        <Link href="/items/add-item">
-          <button className='flex items-center px-2 py-2 bg-secondary/60 text-white rounded-lg hover:bg-primary'>
-            <CirclePlus className='mr-2' /> {/* L'icône est toujours visible */}
-            <span className='hidden lg:block'>Ajoute un article</span> {/* Le texte est caché sur les petits écrans */}
-          </button>
-        </Link>
-      </div>
+      {isConnected && (
+        <div className='mx-4'>
+          <Link href="/items/add-item">
+            <button className='flex items-center px-2 py-2 bg-secondary/60 text-white cursor-pointer rounded-lg hover:bg-primary'>
+              <CirclePlus className='mr-2' /> {/* L'icône est toujours visible */}
+              <span className='hidden lg:block'>Ajoute un article</span> {/* Le texte est caché sur les petits écrans */}
+            </button>
+          </Link>
+        </div>
+      )}
 
       {/* Barre de recherche centrée */}
       <div className='flex-grow flex items-center justify-center mx-4'>
@@ -147,7 +145,7 @@ const Header = () => {
           className="border p-2 rounded-lg w-full max-w-md"
         />
         <Search
-          className='text-2xl cursor-pointer ml-2' 
+          className='text-2xl cursor-pointer ml-2'
           onClick={handleSearchClick}
         />
       </div>
@@ -162,13 +160,13 @@ const Header = () => {
             {isConnected ? (
               <>
                 <DropdownMenuItem asChild>
-                  <Link href="/settings">Settings</Link>
+                  <Link href="/settings" className='cursor-pointer'>Settings</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <button
                     type="button"
                     onClick={handleLogout}
-                    className='w-full text-left'
+                    className='w-full text-left cursor-pointer'
                   >
                     Logout
                   </button>
@@ -176,7 +174,7 @@ const Header = () => {
               </>
             ) : (
               <DropdownMenuItem asChild>
-                <Link href="/login">Login</Link>
+                <Link href="/login" className='cursor-pointer'>Login</Link>
               </DropdownMenuItem>
             )}
           </DropdownMenuContent>
@@ -184,9 +182,11 @@ const Header = () => {
         <Link href="/cart">
           <ShoppingCart className='text-2xl cursor-pointer' />
         </Link>
-        <Link href="/inbox">
-          <Mail className='text-2xl cursor-pointer' />
-        </Link>
+        {isConnected && (
+          <Link href="/inbox">
+            <Mail className='text-2xl cursor-pointer' />
+          </Link>
+        )}
         <ModeToggle />
       </div>
     </div>

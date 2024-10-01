@@ -1,0 +1,59 @@
+erDiagram
+
+  "User" {
+    Int id "🗝️"
+    String username 
+    String email 
+    String password 
+    DateTime createdAt 
+    }
+  
+
+  "Order" {
+    Int id "🗝️"
+    Float total 
+    DateTime createdAt 
+    }
+  
+
+  "Cart" {
+    Int id "🗝️"
+    }
+  
+
+  "OrderItem" {
+    Int id "🗝️"
+    Int quantity 
+    }
+  
+
+  "CartItem" {
+    Int id "🗝️"
+    Int quantity 
+    }
+  
+
+  "Item" {
+    Int id "🗝️"
+    String title 
+    String description 
+    Float price 
+    String imageUrl 
+    String brand 
+    String category 
+    String condition 
+    DateTime createdAt 
+    }
+  
+    "User" o{--}o "Order" : "orders"
+    "User" o{--}o "Cart" : "cart"
+    "Order" o|--|| "User" : "user"
+    "Order" o{--}o "OrderItem" : "items"
+    "Cart" o|--|| "User" : "user"
+    "Cart" o{--}o "CartItem" : "items"
+    "OrderItem" o|--|| "Order" : "order"
+    "OrderItem" o|--|| "Item" : "item"
+    "CartItem" o|--|| "Cart" : "cart"
+    "CartItem" o|--|| "Item" : "item"
+    "Item" o{--}o "CartItem" : "cartItems"
+    "Item" o{--}o "OrderItem" : "orderItems"
