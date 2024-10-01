@@ -53,14 +53,15 @@ model Product {
   images       ProductImage[] // Chaque produit peut avoir plusieurs images
   offers       Offer[] // Relation inverse avec Offer
   transactions Transaction[] // Add this line for back-relation to Transaction
+  itemImage ItemImage[]
+  cartItem CartItem[]
+  orderItem OrderItem[]
+}
 
-  ItemImage ItemImage[]
-
-  Offers Offers[]
-
-  CartItem CartItem[]
-
-  OrderItem OrderItem[]
+enum Status {
+  available
+  sold
+  pending
 }
 
 // Table Offers
@@ -77,6 +78,12 @@ model Offer {
   // Relations
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   buyer   User    @relation(fields: [buyerId], references: [id], onDelete: Cascade)
+}
+
+enum OfferStatus {
+  pending
+  accepted
+  rejected
 }
 
 // Table Transactions
@@ -165,18 +172,6 @@ model ProductImage {
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 
-enum Status {
-  available
-  sold
-  pending
-}
-
-enum OfferStatus {
-  pending
-  accepted
-  rejected
-}
-
 model Order {
   id        Int         @id @default(autoincrement())
   user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -201,16 +196,6 @@ model ItemImage {
   item      Product  @relation(fields: [itemId], references: [id], onDelete: Cascade)
   imageUrl  String
   createdAt DateTime @default(now())
-}
-
-model Offers {
-  id        Int         @id @default(autoincrement())
-  itemId    Int
-  userId    Int
-  item      Product     @relation(fields: [itemId], references: [id], onDelete: Cascade)
-  price     Float
-  status    OfferStatus @default(pending)
-  createdAt DateTime    @default(now())
 }
 
 model CartItem {
