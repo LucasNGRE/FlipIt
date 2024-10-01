@@ -68,7 +68,7 @@ const Header = () => {
       </div>
 
       {/* Logo à gauche pour grands écrans */}
-      <div className="mb-4 lg:mb-0 lg:flex-1 flex justify-center lg:justify-start">
+      <div className="hidden lg:flex flex-shrink-0">
         <span className="text-2xl lg:text-3xl font-extrabold tracking-wider">
           <Link href="/" className="hover:scale-110 transition-transform duration-300 ease-out transform-gpu will-change-transform">
             FlipIt
@@ -126,14 +126,16 @@ const Header = () => {
       </div>
 
       {/* Bouton "Poster une annonce" */}
-      <div className='mx-4'>
-        <Link href="/items/add-item">
-          <button className='flex items-center px-2 py-2 bg-secondary/60 text-white rounded-lg hover:bg-primary'>
-            <CirclePlus className='mr-2' /> {/* L'icône est toujours visible */}
-            <span className='hidden lg:block'>Ajoute un article</span> {/* Le texte est caché sur les petits écrans */}
-          </button>
-        </Link>
-      </div>
+      {isConnected && (
+        <div className='mx-4'>
+          <Link href="/items/add-item">
+            <button className='flex items-center px-2 py-2 bg-secondary/60 text-white rounded-lg hover:bg-primary'>
+              <CirclePlus className='mr-2' /> {/* L'icône est toujours visible */}
+              <span className='hidden lg:block'>Ajoute un article</span> {/* Le texte est caché sur les petits écrans */}
+            </button>
+          </Link>
+        </div>
+      )}
 
       {/* Barre de recherche centrée */}
       <div className='flex-grow flex items-center justify-center mx-4'>
@@ -180,9 +182,11 @@ const Header = () => {
         <Link href="/cart">
           <ShoppingCart className='text-2xl cursor-pointer' />
         </Link>
-        <Link href="/inbox">
-          <Mail className='text-2xl cursor-pointer' />
-        </Link>
+        {isConnected && (
+          <Link href="/inbox">
+            <Mail className='text-2xl cursor-pointer' />
+          </Link>
+        )}
         <ModeToggle />
       </div>
     </div>
