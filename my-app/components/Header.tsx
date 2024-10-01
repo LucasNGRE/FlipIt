@@ -129,7 +129,7 @@ const Header = () => {
       {isConnected && (
         <div className='mx-4'>
           <Link href="/items/add-item">
-            <button className='flex items-center px-2 py-2 bg-secondary/60 text-white rounded-lg hover:bg-primary'>
+            <button className='flex items-center px-2 py-2 bg-secondary/60 text-white cursor-pointer rounded-lg hover:bg-primary'>
               <CirclePlus className='mr-2' /> {/* L'icône est toujours visible */}
               <span className='hidden lg:block'>Ajoute un article</span> {/* Le texte est caché sur les petits écrans */}
             </button>
@@ -160,13 +160,13 @@ const Header = () => {
             {isConnected ? (
               <>
                 <DropdownMenuItem asChild>
-                  <Link href="/settings">Settings</Link>
+                  <Link href="/settings" className='cursor-pointer'>Settings</Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <button
                     type="button"
                     onClick={handleLogout}
-                    className='w-full text-left'
+                    className='w-full text-left cursor-pointer'
                   >
                     Logout
                   </button>
@@ -174,7 +174,7 @@ const Header = () => {
               </>
             ) : (
               <DropdownMenuItem asChild>
-                <Link href="/login">Login</Link>
+                <Link href="/login" className='cursor-pointer'>Login</Link>
               </DropdownMenuItem>
             )}
           </DropdownMenuContent>
