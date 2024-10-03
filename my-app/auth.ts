@@ -102,6 +102,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       return false; // Connexion échouée pour les autres fournisseurs
     },
+    async jwt({ token, user }) {
+      if (user) {
+        token.sub = user.id;
+      }
+      return token;
+    },
+
     async session({ session, token }) {
       if (session.user && token.sub) {
         session.user.id = token.sub; // Ajoute l'ID utilisateur dans la session

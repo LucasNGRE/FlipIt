@@ -3,26 +3,57 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog"; // Assurez-vous que ces composants existent dans ton projet
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { DollarSign } from "lucide-react";
 
 type OfferDialogProps = {
+  productId: number; // Assurez-vous que productId est bien passé en tant que prop
   onOfferSubmit: (price: string) => void; // Callback pour gérer la soumission du prix
 };
 
-export function OfferDialog({ onOfferSubmit }: OfferDialogProps) {
-  const [price, setPrice] = useState("");
+export function OfferDialog({ productId, onOfferSubmit }: OfferDialogProps) {
+  const [offerPrice, setOfferPrice] = useState("");
+  const [open, setOpen] = useState(false);
 
-  const handleSubmit = () => {
-    onOfferSubmit(price);
-    setPrice(""); // Reset le champ après soumission
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch("/api/offer", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ offerPrice, productId }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Échec de la soumission de l'offre");
+      }
+
+      const data = await response.json();
+      console.log("Offre soumise avec succès :", data);
+
+      // Appeler le callback pour ajouter l'offre au chat
+      onOfferSubmit(offerPrice); // Ajouté ici
+
+      setOfferPrice(""); // Réinitialiser le champ après soumission
+      setOpen(false); // Fermer le dialogue après soumission
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" className="flex-1 mr-2">
-          <DollarSign className="mr-2 h-4 w-4" /> Make an Offer
+          <DollarSign className="mr-2 h-4 w-4" /> Faire une offre
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -34,8 +65,8 @@ export function OfferDialog({ onOfferSubmit }: OfferDialogProps) {
             type="number"
             placeholder="Entrez votre prix"
             min="0"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
+            value={offerPrice}
+            onChange={(e) => setOfferPrice(e.target.value)}
           />
         </div>
         <DialogFooter>
