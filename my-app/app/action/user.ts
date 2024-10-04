@@ -2,8 +2,7 @@
 
 import prisma from "@/lib/db";
 import { hash } from "bcryptjs";
-import { CredentialsSignin } from "next-auth";
-import { signIn, signOut } from "@/auth"; // Assurez-vous d'importer depuis 'next-auth/react'
+import { signIn, signOut } from "next-auth/react";
 import { redirect } from "next/navigation";
 
 const login = async (formData: FormData) => {
@@ -11,19 +10,25 @@ const login = async (formData: FormData) => {
   const password = formData.get("password") as string;
 
   try {
-    await signIn("credentials", {
-        redirect: false,
-        callbackUrl: "/",
-        email,
-        password,
-      });
-      return true;
-    } catch (error) {
-    // handle the error
-    const someError = error as CredentialsSignin;
-    console.error(error);
-    return someError.cause;
-  };
+    const res = await signIn("credentials", {
+      redirect: false, // prevent automatic redirection
+      email,
+      password,
+    });
+
+    // Check if the login was successful
+    if (res?.error) {
+      console.error(res.error); // Handle the error
+      return res.error; // Return the error message
+    }
+
+    // If successful, manually redirect to the homepage
+    redirect("/"); // This works if you're using this on the server side
+
+  } catch (error) {
+    console.error("An unexpected error occurred:", error);
+    return "An unexpected error occurred";
+  }
 };
 
 const register = async (formData: FormData) => {

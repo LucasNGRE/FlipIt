@@ -1,8 +1,8 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
-import prisma from "@/lib/db"; // Assurez-vous d'importer correctement votre client Prisma
-import { compare } from "bcryptjs"; // Si vous utilisez bcrypt pour hacher les mots de passe
+import prisma from "@/lib/db";
+import { compare } from "bcryptjs";
 
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
@@ -22,13 +22,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       // auth.ts
 
 authorize: async (credentials) => {
-    const email = credentials?.email as string | undefined;
-    const password = credentials?.password as string | undefined;
-  
+    const { email, password } = credentials as {
+      email: string;
+      password: string;
+    };
+
     if (!email || !password) {
       throw new Error("Please provide both email & password");
     }
-  
+
     try {
       const user = await prisma.user.findUnique({
         where: { email },
@@ -40,19 +42,20 @@ authorize: async (credentials) => {
           password: true,
         },
       });
-  
+
       if (!user || !user.password) {
         throw new Error("Invalid email or password");
       }
-  
+
       const isMatched = await compare(password, user.password);
-  
+
       if (!isMatched) {
         throw new Error("Password did not match");
       }
-  
+
+      // Return the user object with the id as a string
       return {
-        id: user.id,
+        id: user.id.toString(),  // Convert id to string
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
@@ -65,10 +68,6 @@ authorize: async (credentials) => {
     }),
   ],
 
-  // Callbacks pour gérer la session et les JWT
-  // auth.ts
-
-// auth.ts
 
 callbacks: {
     async signIn({ user, account }) {

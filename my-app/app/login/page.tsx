@@ -23,7 +23,7 @@ export default async function Login() {
     async function handleLogin(e: any) {
         'use server';
         const response = await login(e);
-        if (response === true) {
+        if (response === 'success') {
             redirect('/');
         }
 
