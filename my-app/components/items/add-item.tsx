@@ -59,17 +59,45 @@ export default function AddItem() {
     updateFormData("photos", newPhotos)
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Ici, tu enverrais généralement les données à ton backend
-    console.log("Annonce postée:", formData)
-
-    // Pour l'instant, tu ne rediriges pas mais plus tard tu pourras utiliser router.push("/profil")
-    // Exemple futur: router.push("/profil")
-
-    // Ne pas réinitialiser le formulaire
-    // Tu pourras ajouter ici des actions supplémentaires comme rediriger vers une page de confirmation ou le profil
+    
+    try {
+      // Envoie des données au backend
+      const response = await fetch('/api/items', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Erreur lors de la publication de l\'annonce');
+      }
+  
+      const result = await response.json();
+      console.log('Annonce postée:', result);
+  
+      // Rediriger vers une page de confirmation ou profil
+      // router.push("/profil"); // Décommente cela lorsque tu es prêt à rediriger
+  
+      // Optionnel : réinitialiser le formulaire si nécessaire
+      // setFormData({
+      //   title: "",
+      //   brand: "",
+      //   price: "",
+      //   size: "",
+      //   condition: "",
+      //   photos: []
+      // });
+  
+    } catch (error) {
+      console.error('Erreur:', error);
+      alert('Une erreur est survenue. Veuillez réessayer.');
+    }
   }
+  
 
 
   const progress = ((step - 1) / (TOTAL_STEPS - 1)) * 100
