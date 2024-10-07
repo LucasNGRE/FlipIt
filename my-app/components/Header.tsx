@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import React, { useEffect } from 'react';
 import Image from 'next/image';
@@ -16,36 +16,22 @@ import { CirclePlus, Mail, Search, ShoppingCart, User } from 'lucide-react';
 import { ModeToggle } from './toggle.mode';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { signOut, useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 const Header = () => {
-  
-  const [userData, setUserData] = React.useState(null)
-  const [isConnected, setIsConnected] = React.useState(false)
+  const { data: session, status } = useSession();  // Use useSession to get session info
+  const isConnected = status === 'authenticated';  // Determine if user is authenticated
+  const router = useRouter();
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch('/api/user')
-        if (!response.ok) return;
-        const data = await response.json()
-        setUserData(data);
-        setIsConnected(true);
-
-        console.log('User data:', data)
-      } catch (error) {
-        console.error('Erreur lors de la récupération des données utilisateur:', error)
-      }
-    }
-    fetchUserData()
-  }, [])
-
+  // Function to handle searching
   const handleSearchClick = () => {
     console.log('Search clicked');
   };
 
+  // Function to handle user logout
   const handleLogout = async () => {
     await signOut({ redirect: false });
-    window.location.href = '/';
+    router.push('/'); // Redirect to home after logout
   };
 
   return (
