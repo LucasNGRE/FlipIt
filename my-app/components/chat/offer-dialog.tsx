@@ -29,7 +29,7 @@ export function OfferDialog({ productId, onOfferSubmit }: OfferDialogProps) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ offerPrice, productId }),
+        body: JSON.stringify({ offerPrice, productId }), // Utilise le productId passé en prop
       });
 
       if (!response.ok) {
@@ -40,7 +40,7 @@ export function OfferDialog({ productId, onOfferSubmit }: OfferDialogProps) {
       console.log("Offre soumise avec succès :", data);
 
       // Appeler le callback pour ajouter l'offre au chat
-      onOfferSubmit(offerPrice); // Ajouté ici
+      onOfferSubmit(offerPrice); // Appel du callback
 
       setOfferPrice(""); // Réinitialiser le champ après soumission
       setOpen(false); // Fermer le dialogue après soumission

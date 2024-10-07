@@ -3,7 +3,7 @@ import { useState } from 'react';
 const TestButton = () => {
   const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleClick = async () => {
     setLoading(true);
@@ -31,7 +31,7 @@ const TestButton = () => {
       setResponse(data);
     } catch (error) {
       console.error('Error:', error);
-      setError(error.message);
+      setError((error as Error).message);
     } finally {
       setLoading(false);
     }

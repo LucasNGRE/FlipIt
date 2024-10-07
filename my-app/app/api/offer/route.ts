@@ -15,7 +15,21 @@ export async function POST(req: NextRequest) {
     if (!offerPrice || !productId) {
       return NextResponse.json({ error: "Invalid input" }, { status: 400 });
     }
-    
+
+    // Récupérer le produit pour vérifier que l'utilisateur ne fait pas une offre sur son propre produit
+    const product = await prisma.product.findUnique({
+      where: { id: productId },
+      select: { userId: true } // On a juste besoin de l'ID du vendeur
+    });
+
+    if (!product) {
+      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    }
+
+    // Vérifier si l'utilisateur connecté est le propriétaire du produit
+    if (product.userId === Number(session.user.id)) {
+      return NextResponse.json({ error: "You cannot make an offer on your own product" }, { status: 403 });
+    }
 
     // Enregistrement de l'offre dans la base de données
     const offer = await prisma.offer.create({

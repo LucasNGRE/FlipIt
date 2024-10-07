@@ -1,16 +1,30 @@
-// app/api/offer/status/route.ts
 import { NextResponse } from 'next/server';
+import prisma from '@/lib/db'; // Votre instance Prisma
 
 export async function POST(request: Request) {
   try {
     const { id, accepted } = await request.json();
 
-    // Logique pour traiter l'offre ici, par exemple mettre à jour une base de données
-    console.log(`ID de l'offre : ${id}, Acceptée : ${accepted}`);
+    // Vérifier que l'ID de l'offre est valide
+    const offer = await prisma.offer.findUnique({
+      where: { id: Number(id) },
+    });
 
-    return NextResponse.json({ message: 'État de l\'offre mis à jour avec succès' });
+    if (!offer) {
+      return NextResponse.json({ error: "Offer not found" }, { status: 404 });
+    }
+
+    // Mettre à jour l'état de l'offre en fonction de la valeur de 'accepted'
+    const updatedOffer = await prisma.offer.update({
+      where: { id: Number(id) },
+      data: {
+        status: accepted ? 'accepted' : 'rejected', // Met à jour en fonction de 'accepted'
+      },
+    });
+
+    return NextResponse.json({ message: "Offer status updated successfully", offer: updatedOffer });
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ message: 'Erreur lors du traitement de la requête' }, { status: 500 });
+    return NextResponse.json({ error: "Failed to update offer status" }, { status: 500 });
   }
 }

@@ -28,6 +28,19 @@ model User {
   transactionsSeller  Transaction[] @relation("SellerTransactions")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  Message Message[]
+}
+
+model Message {
+  id        Int     @id @default(autoincrement())
+  content   String
+  timestamp DateTime @default(now())
+  sellerId  Int
+  product   Product  @relation(fields: [productId], references: [id])
+  productId Int
+  buyer     User     @relation(fields: [buyerId], references: [id])
+  buyerId   Int
 }
 
 model Product {
@@ -44,6 +57,7 @@ model Product {
   user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   images      ProductImage[]   // Chaque produit peut avoir plusieurs images
   offers      Offer[]          // Relation inverse avec Offer
+  messages     Message[]       // Add this line for back-relation to Message
   transactions Transaction[]   // Add this line for back-relation to Transaction
 }
 model Offer {

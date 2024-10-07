@@ -12,6 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import Link from 'next/link'
 
 const Setting = () => {
   const [activeSection, setActiveSection] = useState('Profil')
@@ -20,6 +21,32 @@ const Setting = () => {
     lastName: '',
     email: '',
   })
+
+  const [products, setProducts] = useState<any[]>([]);
+  const [loadingProducts, setLoadingProducts] = useState<boolean>(false);
+  const [productsError, setProductsError] = useState<string | null>(null);
+  
+  useEffect(() => {
+    if (activeSection === 'Annonces') {
+      const fetchUserProducts = async () => {
+        setLoadingProducts(true);
+        setProductsError(null);
+        try {
+          const response = await fetch('/api/products');
+          if (!response.ok) throw new Error('Failed to fetch products');
+          const data = await response.json();
+          setProducts(data);
+        } catch (error) {
+          console.error('Erreur lors de la récupération des annonces:', error);
+          setProductsError('Erreur lors de la récupération des annonces.');
+        } finally {
+          setLoadingProducts(false);
+        }
+      };
+      fetchUserProducts();
+    }
+  }, [activeSection]);
+  
 
   // Fetch user data on component mount
   useEffect(() => {
@@ -109,13 +136,46 @@ const Setting = () => {
           <Card>
             <CardHeader>
               <CardTitle>Mes Annonces</CardTitle>
-              <CardDescription>Manage your listings here.</CardDescription>
+              <CardDescription>Gère vos annonces ici.</CardDescription>
             </CardHeader>
             <CardContent>
-              {/* Add content related to your listings here */}
+              {loadingProducts ? (
+                <p>Chargement des annonces...</p>
+              ) : productsError ? (
+                <p>{productsError}</p>
+              ) : products.length > 0 ? (
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {products.map((product) => (
+                    <Card key={product.id} className="shadow-lg">
+                      <CardHeader>
+                        <CardTitle className="text-lg font-bold">{product.title}</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-gray-600 mb-2">{product.description}</p>
+                        <p className="text-xl font-semibold text-primary mb-4">Prix: {product.price} €</p>
+                      </CardContent>
+                      <CardFooter className="flex justify-between">
+                        <Link href={`/payment?amount=${product.price}&currency=EUR`}>
+                          <Button variant="default" className="mr-2">
+                            Acheter
+                          </Button>
+                        </Link>
+                        <Link href="/inbox">
+                          <Button variant="outline">
+                            Message
+                          </Button>
+                        </Link>
+                      </CardFooter>
+
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <p>Aucune annonce trouvée.</p>
+              )}
             </CardContent>
           </Card>
-        )
+        );
       case 'Transactions':
         return (
           <Card>
@@ -147,7 +207,7 @@ const Setting = () => {
 
   return (
     <div>
-      <Header />
+
       <main className="flex min-h-[calc(100vh_-_theme(spacing.16))] flex-1 flex-col gap-4 bg-muted/40 p-4 md:gap-8 md:p-10">
         <div className="mx-auto grid w-full max-w-6xl gap-2">
           <h1 className="text-3xl font-semibold">Settings</h1>
