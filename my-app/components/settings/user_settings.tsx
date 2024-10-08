@@ -26,6 +26,7 @@ const Setting = () => {
   const [loadingProducts, setLoadingProducts] = useState<boolean>(false);
   const [productsError, setProductsError] = useState<string | null>(null);
   
+  
   useEffect(() => {
     if (activeSection === 'Annonces') {
       const fetchUserProducts = async () => {

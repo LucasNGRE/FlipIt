@@ -7,7 +7,7 @@ interface SkateArticleProps {
   title: string
   price: number | null
   image: string
-  condition: 'New' | 'Like New' | 'Good' | 'Fair' | 'Poor'
+  condition: 'Neuf' | 'Comme neuf' | 'Bon état' | 'Moyen état' | 'Mauvais état'
   size: string
   seller: {
     name: string
@@ -37,7 +37,7 @@ export default function SkateArticleCard({
         <h3 className="text-lg font-semibold truncate">{title}</h3>
         <div className="flex items-center justify-between">
           <p className="text-2xl font-bold text-primary">
-            {price !== null ? `$${price.toFixed(2)}` : 'Price not available'}
+            {price !== null ? `${price.toFixed(2)} Euros` : 'Price not available'}
           </p>
         </div>
         <div className="mt-2 flex items-center space-x-2">
@@ -62,7 +62,7 @@ export default function SkateArticleCard({
           <div className="space-x-2">
             <Link href={`/buy/${id}`} >
               <Button variant="secondary" size="sm">
-                Buy
+                Acheter
               </Button>
             </Link>
             <Link href={`/inbox/${id}`}>

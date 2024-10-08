@@ -1,32 +1,32 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/router" // Pour redirection future
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Progress } from "@/components/ui/progress"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Card, CardContent } from "@/components/ui/card"
-import { ImagePlus, X } from "lucide-react"
-import Image from "next/image"
-import { useSession } from "next-auth/react"
+import { useState, useEffect } from "react"; // Import useEffect for redirection
+import { useRouter } from "next/navigation"; // Pour redirection future
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Progress } from "@/components/ui/progress";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent } from "@/components/ui/card";
+import { ImagePlus, X } from "lucide-react";
+import Image from "next/image";
+import { useSession } from "next-auth/react";
 
 type FormData = {
-  title: string
-  brand: string
-  price: string
-  size: string
-  condition: string
-  description?: string
-  photos: string[]
-}
+  title: string;
+  brand: string;
+  price: string;
+  size: string;
+  condition: string;
+  description?: string;
+  photos: string[];
+};
 
-const TOTAL_STEPS = 8
+const TOTAL_STEPS = 9;
 
 export default function AddItem() {
-  const { data: session } = useSession()
-  const [step, setStep] = useState(1)
+  const { data: session } = useSession();
+  const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<FormData>({
     title: "",
     price: "",
@@ -34,87 +34,80 @@ export default function AddItem() {
     size: "",
     condition: "",
     description: "",
-    photos: []
-  })
-//   const router = useRouter() // Ajout du hook pour redirection
+    photos: [],
+  });
+  const [isSuccess, setIsSuccess] = useState(false); // State to track success
+  const router = useRouter(); // Ajout du hook pour redirection
 
   const updateFormData = (field: keyof FormData, value: string | string[]) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
-  }
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   const handleNext = () => {
-    if (step < TOTAL_STEPS) setStep(prev => prev + 1)
-  }
+    if (step < TOTAL_STEPS) setStep((prev) => prev + 1);
+  };
 
   const handlePrevious = () => {
-    if (step > 1) setStep(prev => prev - 1)
-  }
+    if (step > 1) setStep((prev) => prev - 1);
+  };
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
+    const files = e.target.files;
     if (files) {
-      const newPhotos = Array.from(files).map(file => URL.createObjectURL(file))
-      updateFormData("photos", [...formData.photos, ...newPhotos].slice(0, 3))
+      const newPhotos = Array.from(files).map((file) => URL.createObjectURL(file));
+      updateFormData("photos", [...formData.photos, ...newPhotos].slice(0, 3));
     }
-  }
+  };
 
   const removePhoto = (index: number) => {
-    const newPhotos = formData.photos.filter((_, i) => i !== index)
-    updateFormData("photos", newPhotos)
-  }
+    const newPhotos = formData.photos.filter((_, i) => i !== index);
+    updateFormData("photos", newPhotos);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
     try {
       // Envoie des données au backend
-      const response = await fetch('/api/items', {
-        method: 'POST',
+      const response = await fetch("/api/items", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
-  
+
       if (!response.ok) {
-        throw new Error('Erreur lors de la publication de l\'annonce');
+        throw new Error("Erreur lors de la publication de l'annonce");
       }
-  
+
       const result = await response.json();
-      console.log('Annonce postée:', result);
-      console.log('User:', session?.user);
-  
-      // Rediriger vers une page de confirmation ou profil
-      // router.push("/profil"); // Décommente cela lorsque tu es prêt à rediriger
-  
-      // Optionnel : réinitialiser le formulaire si nécessaire
-      // setFormData({
-      //   title: "",
-      //   brand: "",
-      //   price: "",
-      //   size: "",
-      //   condition: "",
-      //   photos: []
-      // });
-  
+      console.log("Annonce postée:", result);
+      console.log("User:", session?.user);
+
+      setIsSuccess(true); // Set success state
+      setStep(TOTAL_STEPS); // Go to the success step
+
+      setTimeout(() => {
+        router.push(`/settings?section=Annonces`);
+      }, 3000);
+
     } catch (error) {
-      console.error('Erreur:', error);
-      alert('Une erreur est survenue. Veuillez réessayer.');
+      console.error("Erreur:", error);
+      alert("Une erreur est survenue. Veuillez réessayer.");
     }
-  }
-  
+  };
 
-
-  const progress = ((step - 1) / (TOTAL_STEPS - 1)) * 100
+  const progress = ((step - 1) / (TOTAL_STEPS - 1)) * 100;
 
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-card rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-4">Déposer votre annonce</h2>
+      <h2 className="text-2xl font-bold mb-4 text-center">Déposer votre annonce</h2>
       <Progress value={progress} className="mb-4" />
       <form onSubmit={handleSubmit}>
         <Card>
           <CardContent className="pt-6">
-          {step === 1 && (
+            {step === 1 && (
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="title">Titre</Label>
@@ -122,7 +115,7 @@ export default function AddItem() {
                     id="title"
                     value={formData.title}
                     onChange={(e) => updateFormData("title", e.target.value)}
-                    placeholder="Entrez le titre de l&apos;annonce"
+                    placeholder="Entrez le titre de l'annonce"
                     required
                   />
                 </div>
@@ -152,7 +145,7 @@ export default function AddItem() {
                     id="description"
                     value={formData.description}
                     onChange={(e) => updateFormData("description", e.target.value)}
-                    placeholder="Description de l&apos;article (Optionnel)"
+                    placeholder="Description de l'article (Optionnel)"
                   />
                 </div>
               </div>
@@ -201,7 +194,7 @@ export default function AddItem() {
                     <SelectContent>
                       <SelectItem value="Neuf">Neuf</SelectItem>
                       <SelectItem value="Comme_neuf">Comme neuf</SelectItem>
-                      <SelectItem value="Bon_tat">Bon état</SelectItem>
+                      <SelectItem value="Bon_etat">Bon état</SelectItem>
                       <SelectItem value="Moyen_etat">Moyen état</SelectItem>
                       <SelectItem value="Mauvais_etat">Mauvais état</SelectItem>
                     </SelectContent>
@@ -234,8 +227,8 @@ export default function AddItem() {
                         <Image
                           src={photo}
                           alt={`Photo ${index + 1}`}
-                          width={96} 
-                          height={96} 
+                          width={96}
+                          height={96}
                           objectFit="cover"
                           className="rounded-lg"
                         />
@@ -280,22 +273,40 @@ export default function AddItem() {
                 </div>
               </div>
             )}
+
+            {step === TOTAL_STEPS && isSuccess && (
+              <div className="space-y-4 text-center">
+                <h3 className="text-lg font-semibold">Annonce postée avec succès !</h3>
+                <p>Vous allez être redirigé vers vos annonces</p>
+              </div>
+            )}
           </CardContent>
         </Card>
 
         <div className="mt-6 flex justify-between">
-          <Button type="button" onClick={handlePrevious} disabled={step === 1}>
-            Précédent
-          </Button>
-          {step < TOTAL_STEPS ? (
-            <Button type="button" onClick={handleNext}>
-              Suivant
-            </Button>
-          ) : (
-            <Button type="submit">Publier l&apos;annonce</Button>
+          {/* Show "Précédent" and "Suivant" buttons for steps less than TOTAL_STEPS - 1 */}
+          {step < TOTAL_STEPS - 1 && (
+            <>
+              <Button type="button" onClick={handlePrevious} disabled={step === 1}>
+                Précédent
+              </Button>
+              <Button type="button" onClick={handleNext}>
+                Suivant
+              </Button>
+            </>
+          )}
+
+          {/* Show "Précédent" and "Publier l'annonce" at step TOTAL_STEPS - 1 */}
+          {step === TOTAL_STEPS - 1 && (
+            <>
+              <Button type="button" onClick={handlePrevious}>
+                Précédent
+              </Button>
+              <Button type="submit">Publier l&apos;annonce</Button>
+            </>
           )}
         </div>
       </form>
     </div>
-  )
+  );
 }
