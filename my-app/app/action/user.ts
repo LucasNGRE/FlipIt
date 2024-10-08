@@ -10,25 +10,18 @@ const login = async (formData: FormData) => {
   const password = formData.get("password") as string;
 
   try {
-    const res = await signIn("credentials", {
-      redirect: false, // prevent automatic redirection
-      email,
-      password,
-    });
-
-    // Check if the login was successful
-    if (res?.error) {
-      console.error(res.error); // Handle the error
-      return res.error; // Return the error message
-    }
-
-    // If successful, manually redirect to the homepage
-    redirect("/"); // This works if you're using this on the server side
-
-  } catch (error) {
-    console.error("An unexpected error occurred:", error);
-    return "An unexpected error occurred";
-  }
+    await signIn("credentials", {
+        redirect: false,
+        email,
+        password,
+      });
+      return true;
+    } catch (error) {
+    // handle the error
+    const someError = error as CredentialsSignin;
+    console.error(error);
+    return someError.cause;
+  };
 };
 
 const register = async (formData: FormData) => {

@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { Facebook, Instagram, Twitter } from 'lucide-react';
+import TestButton from './TestButtonApi';
 
 const Footer = () => {
   const { theme } = useTheme();
@@ -26,6 +27,9 @@ const Footer = () => {
               FlipIt
             </Link>
           </span>
+        </div>
+        <div>
+          <TestButton />
         </div>
 
         {/* Center Section: Social Media Links */}
