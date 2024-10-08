@@ -15,7 +15,7 @@ import { useSession } from "next-auth/react";
 type FormData = {
   title: string;
   brand: string;
-  price: string;
+  price: number;
   size: string;
   condition: string;
   description?: string;
@@ -29,7 +29,7 @@ export default function AddItem() {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<FormData>({
     title: "",
-    price: "",
+    price: 0,
     brand: "",
     size: "",
     condition: "",
