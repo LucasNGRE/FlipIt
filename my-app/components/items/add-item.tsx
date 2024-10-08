@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent } from "@/components/ui/card"
 import { ImagePlus, X } from "lucide-react"
 import Image from "next/image"
+import { useSession } from "next-auth/react"
 
 type FormData = {
   title: string
@@ -17,19 +18,22 @@ type FormData = {
   price: string
   size: string
   condition: string
+  description?: string
   photos: string[]
 }
 
-const TOTAL_STEPS = 7
+const TOTAL_STEPS = 8
 
 export default function AddItem() {
+  const { data: session } = useSession()
   const [step, setStep] = useState(1)
   const [formData, setFormData] = useState<FormData>({
     title: "",
-    brand: "",
     price: "",
+    brand: "",
     size: "",
     condition: "",
+    description: "",
     photos: []
   })
 //   const router = useRouter() // Ajout du hook pour redirection
@@ -59,17 +63,46 @@ export default function AddItem() {
     updateFormData("photos", newPhotos)
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Ici, tu enverrais généralement les données à ton backend
-    console.log("Annonce postée:", formData)
-
-    // Pour l'instant, tu ne rediriges pas mais plus tard tu pourras utiliser router.push("/profil")
-    // Exemple futur: router.push("/profil")
-
-    // Ne pas réinitialiser le formulaire
-    // Tu pourras ajouter ici des actions supplémentaires comme rediriger vers une page de confirmation ou le profil
+    
+    try {
+      // Envoie des données au backend
+      const response = await fetch('/api/items', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Erreur lors de la publication de l\'annonce');
+      }
+  
+      const result = await response.json();
+      console.log('Annonce postée:', result);
+      console.log('User:', session?.user);
+  
+      // Rediriger vers une page de confirmation ou profil
+      // router.push("/profil"); // Décommente cela lorsque tu es prêt à rediriger
+  
+      // Optionnel : réinitialiser le formulaire si nécessaire
+      // setFormData({
+      //   title: "",
+      //   brand: "",
+      //   price: "",
+      //   size: "",
+      //   condition: "",
+      //   photos: []
+      // });
+  
+    } catch (error) {
+      console.error('Erreur:', error);
+      alert('Une erreur est survenue. Veuillez réessayer.');
+    }
   }
+  
 
 
   const progress = ((step - 1) / (TOTAL_STEPS - 1)) * 100
@@ -114,6 +147,20 @@ export default function AddItem() {
             {step === 3 && (
               <div className="space-y-4">
                 <div>
+                  <Label htmlFor="brand">Description</Label>
+                  <Input
+                    id="description"
+                    value={formData.description}
+                    onChange={(e) => updateFormData("description", e.target.value)}
+                    placeholder="Description de l&apos;article (Optionnel)"
+                  />
+                </div>
+              </div>
+            )}
+
+            {step === 4 && (
+              <div className="space-y-4">
+                <div>
                   <Label htmlFor="price">Prix</Label>
                   <Input
                     id="price"
@@ -128,7 +175,7 @@ export default function AddItem() {
               </div>
             )}
 
-            {step === 4 && (
+            {step === 5 && (
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="size">Taille</Label>
@@ -143,7 +190,7 @@ export default function AddItem() {
               </div>
             )}
 
-            {step === 5 && (
+            {step === 6 && (
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="condition">État</Label>
@@ -152,18 +199,18 @@ export default function AddItem() {
                       <SelectValue placeholder="Sélectionnez l'état" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="new">Neuf</SelectItem>
-                      <SelectItem value="like-new">Comme neuf</SelectItem>
-                      <SelectItem value="good">Bon état</SelectItem>
-                      <SelectItem value="fair">État correct</SelectItem>
-                      <SelectItem value="poor">Mauvais état</SelectItem>
+                      <SelectItem value="Neuf">Neuf</SelectItem>
+                      <SelectItem value="Comme_neuf">Comme neuf</SelectItem>
+                      <SelectItem value="Bon_tat">Bon état</SelectItem>
+                      <SelectItem value="Moyen_etat">Moyen état</SelectItem>
+                      <SelectItem value="Mauvais_etat">Mauvais état</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
               </div>
             )}
 
-            {step === 6 && (
+            {step === 7 && (
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="photo-upload">Télécharger des photos (Max 3)</Label>
@@ -207,7 +254,7 @@ export default function AddItem() {
               </div>
             )}
 
-            {step === 7 && (
+            {step === 8 && (
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold">Vérifiez votre annonce</h3>
                 <div>
