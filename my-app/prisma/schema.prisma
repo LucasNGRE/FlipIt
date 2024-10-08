@@ -9,7 +9,7 @@ generator client {
 
 // Table User
 model User {
-  id             Int                @id @default(autoincrement())  // Changement ici pour Int
+  id             Int                @id @default(autoincrement())  
   firstName      String
   lastName       String
   email          String          @unique
@@ -17,31 +17,58 @@ model User {
   emailVerified  DateTime?
   image          String?
   authProviderId String?
-  accounts       Account[]
-  sessions       Session[]
-  // Optional for WebAuthn support
-  Authenticator  Authenticator[]
+  
   // Relations
-  products            Product[]
-  offers              Offer[]
-  transactionsBuyer   Transaction[] @relation("BuyerTransactions")
-  transactionsSeller  Transaction[] @relation("SellerTransactions")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  accounts            Account[]
+  sessions            Session[]
+  Authenticator       Authenticator[] // WebAuthn support
+  
+  products            Product[]       // Produits créés par l'utilisateur
+  offers              Offer[]         // Offres faites par l'utilisateur
+  
+  // Conversations où l'utilisateur est un participant
+  conversations       Conversation[]  @relation("UserConversations")
 
-  Message Message[]
+  // Messages envoyés par l'utilisateur (relation corrigée)
+  sentMessages        Message[]       @relation("SentMessages")
+
+  // Transactions où l'utilisateur est acheteur ou vendeur
+  transactionsBuyer   Transaction[]   @relation("BuyerTransactions")
+  transactionsSeller  Transaction[]   @relation("SellerTransactions")
+  
+  // Timestamps
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+}
+
+model Conversation {
+  id           Int        @id @default(autoincrement())
+  
+  // Participants à la conversation
+  participants User[]     @relation("UserConversations")
+  
+  // Messages envoyés dans cette conversation
+  messages     Message[]  @relation("ConversationMessages")
+  
+  // Timestamps
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 }
 
 model Message {
-  id        Int     @id @default(autoincrement())
-  content   String
-  timestamp DateTime @default(now())
-  sellerId  Int
-  product   Product  @relation(fields: [productId], references: [id])
-  productId Int
-  buyer     User     @relation(fields: [buyerId], references: [id])
-  buyerId   Int
+  id             Int        @id @default(autoincrement())
+  content        String
+  productId      Int        // ID du produit auquel ce message est lié
+  userId         Int        // ID de l'utilisateur qui envoie le message
+  conversationId Int        // ID de la conversation à laquelle ce message est lié
+  createdAt      DateTime   @default(now())
+
+  // Relations
+  product        Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user           User        @relation("SentMessages", fields: [userId], references: [id], onDelete: Cascade)
+  conversation   Conversation @relation("ConversationMessages", fields: [conversationId], references: [id], onDelete: Cascade)
 }
+
 
 model Product {
   id          Int             @id @default(autoincrement())
@@ -106,13 +133,15 @@ model Account {
 
 // Table Session (Déjà présente)
 model Session {
+  id           Int      @id @default(autoincrement())
   sessionToken String   @unique
   userId       Int
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
+
 
 // Table VerificationToken (Déjà présente)
 model VerificationToken {
