@@ -89,7 +89,7 @@ export default function AddItem() {
       setStep(TOTAL_STEPS); // Go to the success step
 
       setTimeout(() => {
-        router.push(`/settings?section=Annonces`);
+        router.push(`/`);
       }, 3000);
 
     } catch (error) {
@@ -277,7 +277,7 @@ export default function AddItem() {
             {step === TOTAL_STEPS && isSuccess && (
               <div className="space-y-4 text-center">
                 <h3 className="text-lg font-semibold">Annonce postée avec succès !</h3>
-                <p>Vous allez être redirigé vers vos annonces</p>
+                <p>Vous allez être redirigé vers la page d'accueil</p>
               </div>
             )}
           </CardContent>
