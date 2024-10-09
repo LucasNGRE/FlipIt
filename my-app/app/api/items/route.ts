@@ -49,7 +49,7 @@ export async function PUT(req: NextRequest) { // Fonction pour mettre à jour un
 
     const updatedProduct = await prisma.product.update({
       where: { id: Number(id), userId: Number(session.user.id) },
-      data: { title, description, price, status },
+      data: { title, description, price },
     });
 
     return NextResponse.json(updatedProduct, { status: 200 });
