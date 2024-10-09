@@ -6,7 +6,7 @@ interface SkateArticleProps {
   id: string;
   title: string;
   price: number;
-  image: string;
+  images: { url: string; altText: string | null }[];
   condition: 'Neuf' | 'Comme neuf' | 'Bon état' | 'Moyen état' | 'Mauvais état';
   size: string;
   user: {
@@ -20,7 +20,7 @@ export default function SkateArticleCard({
   id,
   title,
   price,
-  image,
+  images, // Array of image objects
   condition,
   size,
   user,
@@ -28,11 +28,15 @@ export default function SkateArticleCard({
   return (
     <div className="overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all duration-300 hover:shadow-lg">
       <div className="aspect-square overflow-hidden">
-        <img
-          src={image}
-          alt={title}
-          className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
-        />
+        {images.length > 0 ? (
+          <img
+            src={images[0].url} // Use the first image's URL
+            alt={images[0].altText || title} // Use altText if available, or the title as a fallback
+            className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+          />
+        ) : (
+          <p>Aucune image disponible</p> // Fallback if no images are available
+        )}
       </div>
       <div className="p-4">
         <h3 className="text-lg font-semibold truncate" title={title}>{title}</h3>

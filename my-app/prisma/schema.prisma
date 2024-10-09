@@ -148,6 +148,7 @@ model ProductImage {
    // Relation avec Product
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
+
 enum Condition {
   Neuf
   Comme_neuf
