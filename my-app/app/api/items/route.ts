@@ -10,18 +10,26 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
-    const { title, description, price, status } = await req.json();
+    const { title, brand, price, size, condition, photos, description } = await req.json();
 
-    // Création du produit avec l'ID utilisateur
+    // Creating the product
     const product = await prisma.product.create({
       data: {
         title,
+        brand,
+        price: parseFloat(price),
+        size,
+        condition: condition,
         description,
-        price,
-        status,
-        userId: Number(session.user.id), // Conversion de l'ID utilisateur en nombre
+        userId: Number(session.user.id),
+        images: {
+          create: photos.map((url: string) => ({
+            url, // Storing the URL of each image
+          })),
+        },
       },
     });
+
 
     return NextResponse.json(product, { status: 201 });
   } catch (error) {

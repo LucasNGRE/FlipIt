@@ -28,9 +28,6 @@ const Footer = () => {
             </Link>
           </span>
         </div>
-        <div>
-          <TestButton />
-        </div>
 
         {/* Center Section: Social Media Links */}
         <div className="lg:flex-1 flex justify-center">
