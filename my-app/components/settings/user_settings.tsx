@@ -50,7 +50,7 @@ const Setting = () => {
         setLoadingProducts(true);
         setProductsError(null);
         try {
-          const response = await fetch('/api/products');
+          const response = await fetch('/api/products/user');
           if (!response.ok) throw new Error('Failed to fetch products');
           const data = await response.json();
           setProducts(data);
@@ -175,7 +175,7 @@ const Setting = () => {
                         <p className="text-gray-600 mb-2">{product.description}</p>
                         <p className="text-xl font-semibold text-primary mb-4">Prix: {product.price} €</p>
                       </CardContent>
-                      <CardFooter className="flex justify-between">
+                      {/* <CardFooter className="flex justify-between">
                         <Link href={`/payment?amount=${product.price}&currency=EUR`}>
                           <Button variant="default" className="mr-2">
                             Acheter
@@ -186,7 +186,7 @@ const Setting = () => {
                             Message
                           </Button>
                         </Link>
-                      </CardFooter>
+                      </CardFooter> */}
 
                     </Card>
                   ))}

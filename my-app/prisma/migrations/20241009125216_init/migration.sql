@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "Status" AS ENUM ('available', 'sold', 'pending');
+CREATE TYPE "Condition" AS ENUM ('Neuf', 'Comme_neuf', 'Bon_etat', 'Moyen_etat', 'Mauvais_etat');
 
 -- CreateEnum
 CREATE TYPE "OfferStatus" AS ENUM ('pending', 'accepted', 'rejected');
@@ -21,13 +21,36 @@ CREATE TABLE "User" (
 );
 
 -- CreateTable
+CREATE TABLE "Conversation" (
+    "id" SERIAL NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Conversation_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Message" (
+    "id" SERIAL NOT NULL,
+    "content" TEXT NOT NULL,
+    "productId" INTEGER NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "conversationId" INTEGER NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Message_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Product" (
     "id" SERIAL NOT NULL,
     "userId" INTEGER NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT,
     "price" DECIMAL(10,2) NOT NULL,
-    "status" "Status" NOT NULL DEFAULT 'available',
+    "condition" "Condition" NOT NULL DEFAULT 'Neuf',
+    "brand" TEXT,
+    "size" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -80,11 +103,14 @@ CREATE TABLE "Account" (
 
 -- CreateTable
 CREATE TABLE "Session" (
+    "id" SERIAL NOT NULL,
     "sessionToken" TEXT NOT NULL,
     "userId" INTEGER NOT NULL,
     "expires" TIMESTAMP(3) NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Session_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -120,6 +146,12 @@ CREATE TABLE "ProductImage" (
     CONSTRAINT "ProductImage_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "_UserConversations" (
+    "A" INTEGER NOT NULL,
+    "B" INTEGER NOT NULL
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
@@ -128,6 +160,21 @@ CREATE UNIQUE INDEX "Session_sessionToken_key" ON "Session"("sessionToken");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Authenticator_credentialID_key" ON "Authenticator"("credentialID");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "_UserConversations_AB_unique" ON "_UserConversations"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_UserConversations_B_index" ON "_UserConversations"("B");
+
+-- AddForeignKey
+ALTER TABLE "Message" ADD CONSTRAINT "Message_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Message" ADD CONSTRAINT "Message_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Message" ADD CONSTRAINT "Message_conversationId_fkey" FOREIGN KEY ("conversationId") REFERENCES "Conversation"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Product" ADD CONSTRAINT "Product_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -158,3 +205,9 @@ ALTER TABLE "Authenticator" ADD CONSTRAINT "Authenticator_userId_fkey" FOREIGN K
 
 -- AddForeignKey
 ALTER TABLE "ProductImage" ADD CONSTRAINT "ProductImage_productId_fkey" FOREIGN KEY ("productId") REFERENCES "Product"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_UserConversations" ADD CONSTRAINT "_UserConversations_A_fkey" FOREIGN KEY ("A") REFERENCES "Conversation"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "_UserConversations" ADD CONSTRAINT "_UserConversations_B_fkey" FOREIGN KEY ("B") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
