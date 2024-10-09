@@ -65,12 +65,12 @@ export default function SkateArticleCard({
             <span className="text-sm text-muted-foreground">{user.firstName}</span>
           </div>
           <div className="space-x-2">
-            <Link href={`/buy/${id}`}>
+          <Link href={`/payment?amount=${price}&currency=EUR`}>
               <Button variant="secondary" size="sm" aria-label={`Acheter ${title}`}>
                 Acheter
               </Button>
             </Link>
-            <Link href={`/inbox/${id}`}>
+            <Link href='/inbox'>
               <Button variant="default" size="sm" aria-label={`Message à ${user.firstName}`}>
                 Message
               </Button>

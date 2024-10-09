@@ -75,29 +75,29 @@ export default function PaymentForm({ amount = 50, currency = 'EUR' }: PaymentFo
   }
 
   const handleExpiryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const input = e.target.value.replace(/[^0-9]/g, '');
-    let formattedInput = input;
+  const input = e.target.value.replace(/[^0-9]/g, '');
+  let formattedInput = input;
 
-    if (input.length >= 2) {
-      formattedInput = `${input.slice(0, 2)}/${input.slice(2, 4)}`;
-    } else if (input.length === 1) {
-      formattedInput = input;
-    }
-
-    setExpiryDate(formattedInput);
+  if (input.length >= 4) {
+    formattedInput = `${input.slice(0, 2)}/${input.slice(2, 4)}`;
+  } else if (input.length >= 2) {
+    formattedInput = `${input.slice(0, 2)}/${input.slice(2, 4)}`;
   }
+
+  setExpiryDate(formattedInput);
+}
 
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
-        <CardTitle>Complete Your Purchase</CardTitle>
-        <CardDescription>Enter your payment details to finish your transaction</CardDescription>
+        <CardTitle>Paiement</CardTitle>
+        <CardDescription>Entre ta carte pour finaliser ton achat</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="cardNumber">Card Number</Label>
+              <Label htmlFor="cardNumber">Numéro de carte</Label>
               <Input
                 id="cardNumber"
                 placeholder="1234 5678 9012 3456"
@@ -110,7 +110,7 @@ export default function PaymentForm({ amount = 50, currency = 'EUR' }: PaymentFo
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="expiryDate">Expiry Date</Label>
+                <Label htmlFor="expiryDate">Date d&apos;expiration</Label>
                 <Input
                   id="expiryDate"
                   placeholder="MM/YY"
@@ -151,7 +151,7 @@ export default function PaymentForm({ amount = 50, currency = 'EUR' }: PaymentFo
               <span className="text-lg font-bold">{amount} {currency}</span>
             </div>
             <Button className="w-full" type="submit">
-              <LockIcon className="mr-2 h-4 w-4" /> Pay Securely
+              <LockIcon className="mr-2 h-4 w-4" /> Paiement sécurisée
             </Button>
           </CardFooter>
         </form>
