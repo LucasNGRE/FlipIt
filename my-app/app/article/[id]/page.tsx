@@ -163,7 +163,7 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ params }) => {
 
           <Card>
             <CardHeader>
-              <CardTitle>Product Details</CardTitle>
+              <CardTitle>Détails de l'article</CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-2 gap-4">
               <div><span className="font-semibold">Size:</span> {article.size}</div>
@@ -194,7 +194,7 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ params }) => {
 
           <Card>
             <CardHeader>
-              <CardTitle>Seller Information</CardTitle>
+              <CardTitle>Information du vendeur</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex items-center space-x-4">
@@ -208,15 +208,15 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ params }) => {
               </div>
               <Button className="w-full mt-4" variant="outline">
                 <MessageCircle className="mr-2 h-4 w-4" />
-                Contact Seller
+                Contacter le vendeur
               </Button>
             </CardContent>
           </Card>
 
 
           <div className="space-y-4">
-            <Button className="w-full" size="lg">Buy Now</Button>
-            <Button variant="outline" className="w-full" size="lg">Make an Offer</Button>
+            <Button className="w-full" size="lg">Acheter maintenant</Button>
+            <Button variant="outline" className="w-full" size="lg">Faire une offre</Button>
           </div>
         </div>
       </div>
