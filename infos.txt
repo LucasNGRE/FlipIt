@@ -12,3 +12,5 @@ npm install multer @types/multer
 npm install multer next-connect
 
 
+# PostgreSQL server start
+sudo service postgresql start

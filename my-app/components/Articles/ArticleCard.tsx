@@ -29,11 +29,13 @@ export default function SkateArticleCard({
     <div className="overflow-hidden rounded-lg border bg-card text-card-foreground shadow-sm transition-all duration-300 hover:shadow-lg">
       <div className="aspect-square overflow-hidden">
         {images.length > 0 ? (
-          <img
-            src={images[0].url} // Use the first image's URL
-            alt={images[0].altText || title} // Use altText if available, or the title as a fallback
-            className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
-          />
+          <Link href={`/article/${id}`}>
+            <img
+              src={images[0].url} // Use the first image's URL
+              alt={images[0].altText || title} // Use altText if available, or the title as a fallback
+              className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+            />
+          </Link>
         ) : (
           <p>Aucune image disponible</p> // Fallback if no images are available
         )}

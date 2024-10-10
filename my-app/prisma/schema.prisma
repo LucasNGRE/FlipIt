@@ -9,7 +9,7 @@ generator client {
 
 // Table User
 model User {
-  id             Int                @id @default(autoincrement())  
+  id             Int             @id @default(autoincrement())  
   firstName      String
   lastName       String
   email          String          @unique
@@ -134,7 +134,6 @@ model Account {
   @@id([provider, providerAccountId])
 }
 
-// Table Session (Déjà présente)
 model Session {
   id           Int      @id @default(autoincrement())
   sessionToken String   @unique
