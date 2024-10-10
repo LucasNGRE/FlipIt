@@ -25,7 +25,7 @@ interface Article {
   color?: string;
   material?: string;
   location?: string;
-  userId: string; // Store user ID to fetch user data
+  userId: string;
   tags?: string[];
 }
 
@@ -49,17 +49,19 @@ async function fetchArticle(id: string): Promise<Article | null> {
 }
 
 // Fetch user by ID
-async function fetchUser(id: string): Promise<User | null> {
-  const res = await fetch(`/api/user/${id}`);
+// Fetch user by ID (the seller)
+async function fetchUser(userId: string): Promise<User | null> {
+  const res = await fetch(`/api/user/${userId}`);
 
   if (!res.ok) {
-    console.log(`Error fetching user with ID: ${id}`);
+    console.log(`Error fetching user with ID: ${userId}`);
     return null;
   }
 
   const user: User = await res.json();
   return user;
 }
+
 
 const ArticlePage: React.FC<ArticlePageProps> = ({ params }) => {
   const [article, setArticle] = useState<Article | null>(null);
@@ -210,6 +212,7 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ params }) => {
               </Button>
             </CardContent>
           </Card>
+
 
           <div className="space-y-4">
             <Button className="w-full" size="lg">Buy Now</Button>
