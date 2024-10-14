@@ -10,26 +10,44 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
-    const { title, brand, price, size, condition, photos, description } = await req.json();
+    const formData = await req.formData();
+    const title = formData.get('title') as string;
+    const brand = formData.get('brand') as string;
+    const price = parseFloat(formData.get('price') as string);
+    const size = formData.get('size') as string;
+    const condition = formData.get('condition') as string;
+    const description = formData.get('description') as string;
+    const photos = formData.getAll('photos') as File[];
+
+
+    // convert photos to base64
+    const photosBase64 = await Promise.all(photos.map(async (photo) => {
+      const buffer = await photo.arrayBuffer();
+      return Buffer.from(buffer).toString('base64');
+    }));
+
+    console.log('photosBase64:', photosBase64[0]);
+
 
     // Creating the product
     const product = await prisma.product.create({
       data: {
-        title,
-        brand,
-        price: parseFloat(price),
-        size,
-        condition: condition,
-        description,
-        userId: Number(session.user.id),
-        images: {
-          create: photos.map((url: string) => ({
-            url, // Storing the URL of each image
-          })),
+      title,
+      brand,
+      price,
+      size,
+      condition: condition as any,
+      description,
+      userId: Number(session.user.id),
+      images: {
+        createMany: {
+        data: photosBase64.map((photo) => {
+          return { url: 'data:image/jpeg;base64,' + photo };
+        }),
         },
       },
+      },
     });
-
 
     return NextResponse.json(product, { status: 201 });
   } catch (error) {

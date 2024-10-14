@@ -11,6 +11,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ImagePlus, X } from "lucide-react";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
+import { title } from "process";
 
 type FormData = {
   title: string;
@@ -19,7 +20,7 @@ type FormData = {
   size: string;
   condition: string;
   description?: string;
-  photos: string[];
+  photos: File[];
 };
 
 const TOTAL_STEPS = 9;
@@ -39,7 +40,7 @@ export default function AddItem() {
   const [isSuccess, setIsSuccess] = useState(false); // State to track success
   const router = useRouter(); // Ajout du hook pour redirection
 
-  const updateFormData = (field: keyof FormData, value: string | string[]) => {
+  const updateFormData = (field: keyof FormData, value: string | File[]) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -53,9 +54,10 @@ export default function AddItem() {
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
+
     if (files) {
-      const newPhotos = Array.from(files).map((file) => URL.createObjectURL(file));
-      updateFormData("photos", [...formData.photos, ...newPhotos].slice(0, 3));
+      const newPhotos = Array.from(files);
+      updateFormData("photos", [...formData.photos, ...newPhotos]);
     }
   };
 
@@ -68,13 +70,21 @@ export default function AddItem() {
     e.preventDefault();
 
     try {
-      // Envoie des données au backend
+      const formDataToSend = new FormData();
+      formDataToSend.append("title", formData.title);
+      formDataToSend.append("brand", formData.brand);
+      formDataToSend.append("price", formData.price.toString());
+      formDataToSend.append("size", formData.size);
+      formDataToSend.append("condition", formData.condition);
+      formDataToSend.append("description", formData.description || "");
+      formData.photos.forEach((photo) => formDataToSend.append("photos", photo));
+      
+
+
+
       const response = await fetch("/api/items", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
+        body: formDataToSend,
       });
 
       if (!response.ok) {
@@ -225,21 +235,14 @@ export default function AddItem() {
                     {formData.photos.map((photo, index) => (
                       <div key={index} className="relative">
                         <Image
-                          src={photo}
-                          alt={`Photo ${index + 1}`}
-                          width={96}
-                          height={96}
-                          objectFit="cover"
-                          className="rounded-lg"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => removePhoto(index)}
-                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
+                          src={URL.createObjectURL(photo)}
+                          alt={`Photo ${title}`}
+                          width={80}
+                          height={80}
+                          className="w-24 h-24"
                           aria-label={`Supprimer la photo ${index + 1}`}
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
+                        />
+                        <X className="w-6 h-6 rounded-full absolute right-0 top-0 bg-red-500 " />
                       </div>
                     ))}
                   </div>
@@ -262,7 +265,7 @@ export default function AddItem() {
                   {formData.photos.map((photo, index) => (
                     <Image
                       key={index}
-                      src={photo}
+                      src={URL.createObjectURL(photo)}
                       alt={`Photo ${index + 1}`}
                       width={80}
                       height={80}
@@ -277,7 +280,7 @@ export default function AddItem() {
             {step === TOTAL_STEPS && isSuccess && (
               <div className="space-y-4 text-center">
                 <h3 className="text-lg font-semibold">Annonce postée avec succès !</h3>
-                <p>Vous allez être redirigé vers la page d'accueil</p>
+                <p>Vous allez être redirigé vers la page d&apos;accueil</p>
               </div>
             )}
           </CardContent>
