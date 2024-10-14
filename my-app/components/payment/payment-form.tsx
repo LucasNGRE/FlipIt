@@ -22,15 +22,15 @@ export default function PaymentForm({ amount = 50, currency = 'EUR' }: PaymentFo
   const router = useRouter()
 
   const validateCardNumber = (number: string): boolean => {
-    return /^\d{4} \d{4} \d{4} \d{4}$/.test(number);
+    return /^\d{4} \d{4} \d{4} \d{4}$/.test(number)
   }
 
   const validateExpiryDate = (date: string): boolean => {
-    return /^(0[1-9]|1[0-2])\/\d{2}$/.test(date);
+    return /^(0[1-9]|1[0-2])\/\d{2}$/.test(date)
   }
 
   const validateCvv = (cvv: string): boolean => {
-    return /^\d{3}$/.test(cvv);
+    return /^\d{3}$/.test(cvv)
   }
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -38,17 +38,17 @@ export default function PaymentForm({ amount = 50, currency = 'EUR' }: PaymentFo
 
     if (!validateCardNumber(cardNumber)) {
       setError('Numéro de carte invalide. Doit contenir 16 chiffres.')
-      return;
+      return
     }
 
     if (!validateExpiryDate(expiryDate)) {
       setError('Date d\'expiration invalide. Utilisez le format MM/YY.')
-      return;
+      return
     }
 
     if (!validateCvv(cvv)) {
       setError('CVV invalide. Doit contenir 3 chiffres.')
-      return;
+      return
     }
 
     setError('')
@@ -64,28 +64,16 @@ export default function PaymentForm({ amount = 50, currency = 'EUR' }: PaymentFo
   }
 
   const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const input = e.target.value.replace(/[^0-9]/g, '');
-    let formattedInput = '';
-
-    for (let i = 0; i < input.length; i += 4) {
-      formattedInput += input.substring(i, i + 4) + ' ';
-    }
-
-    setCardNumber(formattedInput.trim());
+    const input = e.target.value.replace(/[^0-9]/g, '').substring(0, 16);
+    const formattedInput = input.match(/.{1,4}/g)?.join(' ') || ''
+    setCardNumber(formattedInput)
   }
 
   const handleExpiryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const input = e.target.value.replace(/[^0-9]/g, '');
-  let formattedInput = input;
-
-  if (input.length >= 4) {
-    formattedInput = `${input.slice(0, 2)}/${input.slice(2, 4)}`;
-  } else if (input.length >= 2) {
-    formattedInput = `${input.slice(0, 2)}/${input.slice(2, 4)}`;
+    const input = e.target.value.replace(/[^0-9]/g, '')
+    const formattedInput = input.length > 2 ? `${input.slice(0, 2)}/${input.slice(2, 4)}` : input
+    setExpiryDate(formattedInput)
   }
-
-  setExpiryDate(formattedInput);
-}
 
   return (
     <Card className="w-full max-w-md mx-auto">
@@ -151,7 +139,7 @@ export default function PaymentForm({ amount = 50, currency = 'EUR' }: PaymentFo
               <span className="text-lg font-bold">{amount} {currency}</span>
             </div>
             <Button className="w-full" type="submit">
-              <LockIcon className="mr-2 h-4 w-4" /> Paiement sécurisée
+              <LockIcon className="mr-2 h-4 w-4" /> Paiement sécurisé
             </Button>
           </CardFooter>
         </form>
