@@ -12,6 +12,7 @@ interface SkateArticleProps {
   size: string;
   user: {
     userId: number;
+    userName: string;
     firstName: string;
     image: string;
   };
@@ -66,13 +67,10 @@ export default function SkateArticleCard({
       <div className="px-4 py-3 border-t">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            {/* Avatar Component */}
             <Avatar>
               <AvatarImage src={user?.image} alt={user?.firstName} />
               <AvatarFallback>{user?.firstName?.charAt(0)}</AvatarFallback>
             </Avatar>
-
-            {/* User's first name */}
             <span className="text-sm text-muted-foreground">{user?.firstName}</span>
           </div>
         </div>
