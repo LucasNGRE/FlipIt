@@ -12,7 +12,6 @@ interface SkateArticleProps {
   size: string;
   user: {
     userId: number;
-    userName: string;
     firstName: string;
     image: string;
   };
