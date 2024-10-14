@@ -1,6 +1,13 @@
 "use client";
-import React, { useEffect, useState } from 'react';
-import SkateArticleCard from './ArticleCard';
+import React, { useEffect, useState } from "react";
+import SkateArticleCard from "./ArticleCard";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+} from "@/components/ui/carousel"; // Adjust the import path if needed
 
 export default function SkateArticleGrid() {
   const [articles, setArticles] = useState<any[]>([]);
@@ -10,13 +17,19 @@ export default function SkateArticleGrid() {
   useEffect(() => {
     const fetchArticles = async () => {
       try {
-        const response = await fetch('/api/products'); // Fetch from the public articles API
-        if (!response.ok) throw new Error('Failed to fetch articles');
+        const response = await fetch("/api/products"); // Fetch from the public articles API
+        if (!response.ok) throw new Error("Failed to fetch articles");
         const data = await response.json();
-        setArticles(data);
+
+        // Sort articles by createdAt (newest first)
+        const sortedArticles = data.sort(
+          (a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+
+        setArticles(sortedArticles);
       } catch (error) {
-        console.error('Error fetching articles:', error);
-        setError('Could not load articles.');
+        console.error("Error fetching articles:", error);
+        setError("Could not load articles.");
       } finally {
         setLoading(false);
       }
@@ -26,7 +39,7 @@ export default function SkateArticleGrid() {
   }, []);
 
   if (loading) {
-    return <p>Loading articles...</p>;
+    return <p>Chargement des articles...</p>;
   }
 
   if (error) {
@@ -36,12 +49,21 @@ export default function SkateArticleGrid() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h2 className="text-2xl font-bold mb-6">Derniers Ajouts</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {articles.map((product) => (
-          <SkateArticleCard key={product.id} {...product} user={product.user} />
-        ))}
 
-      </div>
+      {/* Implement Carousel */}
+      <Carousel className="relative">
+        <CarouselContent>
+          {articles.map((product) => (
+            <CarouselItem key={product.id} className="min-w-[250px]"> {/* Adjust width if necessary */}
+              <SkateArticleCard {...product} user={product.user} />
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+
+        {/* Navigation Buttons */}
+        <CarouselPrevious />
+        <CarouselNext />
+      </Carousel>
     </div>
   );
 }
