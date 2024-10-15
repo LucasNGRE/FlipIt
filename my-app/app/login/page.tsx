@@ -1,23 +1,17 @@
 "use client";
-import { login } from '../action/user';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { IconBrandGoogle } from '@tabler/icons-react';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
-import React from 'react';
-import { redirect } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { sign } from 'crypto';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-
 
 export default function Login() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') || '/';
+  const callbackUrl = searchParams.get('callbackUrl') || '/'; // Get callback URL from search params
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -27,21 +21,21 @@ export default function Login() {
       redirect: false,
       email,
       password,
-      callbackUrl: "/",
-      
+      callbackUrl, // Use the callback URL here
     });
 
     if (!response.error) {
-      return window.location.replace(callbackUrl) // if login successful
+      // Redirect to the callback URL if login is successful
+      window.location.replace(callbackUrl); 
+    } else {
+      toast.error("Ton mot de passe ou ton email est incorrecte");
     }
-
-    toast.error("Ton mot de passe ou ton email est incorrecte");
-  }
+  };
 
   return (
     <div className="mt-10 max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white border border-[#121212] dark:bg-black">
       <div className="my-8">
-        <Label htmlFor="email">Email Address</Label>
+        <Label htmlFor="email">Adresse Email</Label>
         <Input
           id="email"
           placeholder="exemple@gmail.com"
@@ -50,7 +44,7 @@ export default function Login() {
           onChange={(e: any) => setEmail(e.target.value)}
         />
 
-        <Label htmlFor="password">Password</Label>
+        <Label htmlFor="password">Mot de passe</Label>
         <Input
           id="password"
           placeholder="*************"
@@ -72,11 +66,15 @@ export default function Login() {
         </div>
 
         <p className="text-right text-neutral-600 text-sm max-w-sm mt-4 dark:text-neutral-300">
-          Do not have an account? <Link href="/register" className="text-blue-500">Register</Link>
+          Don't have an account?{' '}
+          {/* Pass the callbackUrl to the Register page */}
+          <Link href={`/register?callbackUrl=${encodeURIComponent(callbackUrl)}`} className="text-blue-500">
+            Register
+          </Link>
         </p>
 
         <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-8 h-[1px] w-full" />
       </div>
     </div>
   );
-};
+}

@@ -2,6 +2,8 @@ import React from 'react';
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 interface SkateArticleProps {
   id: string;
@@ -26,6 +28,29 @@ export default function SkateArticleCard({
   size,
   user,
 }: SkateArticleProps) {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  const handleBuyClick = () => {
+    if (status === "loading") return;
+    if (session) {
+      router.push(`/payment?amount=${price}&currency=EUR`);
+    } else {
+      const callbackUrl = encodeURIComponent(`/payment?amount=${price}&currency=EUR`);
+      router.push(`/login?callbackUrl=${callbackUrl}`);
+    }
+  };
+
+  const handleMessageClick = () => {
+    if (session) {
+      // User is logged in, proceed to inbox
+      router.push('/inbox');
+    } else {
+      // User is not logged in, redirect to login page
+      router.push('/login?callbackUrl=/inbox'); // Pass the desired callback URL
+    }
+  };
+
   return (
     <div className="max-w-xs overflow-hidden rounded-lg border border-gray-300 bg-gray-100 text-card-foreground shadow-sm transition-all duration-300 hover:shadow-lg">
       <div className="aspect-square overflow-hidden">
@@ -77,16 +102,22 @@ export default function SkateArticleCard({
 
       {/* Action Buttons */}
       <div className="px-4 py-3 space-x-2">
-        <Link href={`/payment?amount=${price}&currency=EUR`}>
-          <Button variant="secondary" size="sm" aria-label={`Acheter ${title}`}>
-            Acheter
-          </Button>
-        </Link>
-        <Link href="/inbox">
-          <Button variant="default" size="sm" aria-label={`Message à ${user.firstName}`}>
-            Message
-          </Button>
-        </Link>
+        <Button
+          variant="secondary"
+          size="sm"
+          aria-label={`Acheter ${title}`}
+          onClick={handleBuyClick} // Handle click event
+        >
+          Acheter
+        </Button>
+        <Button
+          variant="default"
+          size="sm"
+          aria-label={`Message à ${user.firstName}`}
+          onClick={handleMessageClick} // Handle click event
+        >
+          Message
+        </Button>
       </div>
     </div>
   );
