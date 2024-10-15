@@ -21,8 +21,11 @@ export default function SkateArticleGrid() {
         if (!response.ok) throw new Error("Failed to fetch articles");
         const data = await response.json();
 
-        // Sort articles by createdAt (newest first)
-        const sortedArticles = data.sort(
+        // Filter articles that are priced under 20 euros
+        const filteredArticles = data.filter((article: any) => article.price <= 20);
+
+        // Sort the filtered articles by updatedAt (newest first)
+        const sortedArticles = filteredArticles.sort(
           (a: any, b: any) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
         );
 
@@ -38,27 +41,23 @@ export default function SkateArticleGrid() {
     fetchArticles();
   }, []);
 
-  if (loading) {
-    return <p>Chargement des articles...</p>;
-  }
-
   if (error) {
     return <p>{error}</p>;
   }
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h2 className="text-3xl font-bold mb-6">Derniers Ajouts</h2>
+      <h2 className="text-3xl font-bold mb-6">Moins de 20 euros !</h2>
       <Carousel className="relative w-full overflow-hidden">
-        <CarouselContent className="flex"> {/* Ensure items are aligned horizontally */}
-          <CarouselPrevious />
+        <CarouselContent className="flex">
           {articles.map((product) => (
-            <CarouselItem key={product.id} className="min-w-[25%] p-center"> {/* Ensure 4 items per view */}
+            <CarouselItem key={product.id} className="min-w-[25%] p-center">
               <SkateArticleCard {...product} user={product.user} />
             </CarouselItem>
           ))}
-          <CarouselNext />
         </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
       </Carousel>
     </div>
   );

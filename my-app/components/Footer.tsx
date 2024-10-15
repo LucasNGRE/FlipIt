@@ -4,15 +4,14 @@ import React from 'react';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { Facebook, Instagram, Twitter } from 'lucide-react';
-import TestButton from './TestButtonApi';
 
 const Footer = () => {
   const { theme } = useTheme();
 
   // Define banner colors based on the current theme
   const bannerStyle = {
-    backgroundColor: theme === 'dark' ? '#9ea09d' : '#000000',
-    height: '1px',
+    backgroundColor: theme === 'dark' ? '#9ea09d' : '#000000', // Dark banner color
+    height: '1px', // Increased height for visibility
     width: '100%',
   };
 
