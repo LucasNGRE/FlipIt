@@ -79,7 +79,7 @@ export default function SkateArticleCard({
       </div>
 
       <div className="px-4 py-3 space-x-2">
-        <Link href={`/payment?amount=${price}&currency=EUR`}>
+        <Link href={`/payment?amount=${price}&currency=EUR&productId=${id}`}>
           <Button variant="secondary" size="sm" aria-label={`Acheter ${title}`}>
             Acheter
           </Button>

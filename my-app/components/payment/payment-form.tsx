@@ -11,15 +11,21 @@ import { LockIcon, EyeIcon, EyeOffIcon } from 'lucide-react'
 interface PaymentFormProps {
   amount?: number
   currency?: string
+  productId: number
 }
 
-export default function PaymentForm({ amount = 50, currency = 'EUR' }: PaymentFormProps) {
+export default function PaymentForm({ amount = 50, currency = 'EUR', productId = 0 }: PaymentFormProps) {
   const [cardNumber, setCardNumber] = useState<string>('')
   const [expiryDate, setExpiryDate] = useState<string>('')
   const [cvv, setCvv] = useState<string>('')
   const [error, setError] = useState<string>('')
   const [showCvv, setShowCvv] = useState<boolean>(false)
   const router = useRouter()
+
+  if (productId <= 0) {
+    console.error('ID du produit invalide:', productId);
+    return <div>Erreur: ID du produit invalide.</div>;
+  }
 
   const validateCardNumber = (number: string): boolean => {
     return /^\d{4} \d{4} \d{4} \d{4}$/.test(number)
@@ -33,7 +39,36 @@ export default function PaymentForm({ amount = 50, currency = 'EUR' }: PaymentFo
     return /^\d{3}$/.test(cvv)
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleDeleteProduct = async (productId: number) => {
+    // Vérification de l'ID du produit
+    if (!productId || isNaN(productId)) {
+      console.error('ID du produit invalide:', productId);
+      return;
+    }
+    
+    try {
+      // Suppression fictive du produit via une API
+      const response = await fetch(`/api/items/${productId}`, {
+        method: 'DELETE',
+      });
+  
+      console.log('Réponse de l\'API:', response); // Log de la réponse de l'API
+  
+      if (!response.ok) {
+        const errorData = await response.json(); // Récupérer le message d'erreur
+        console.error('Erreur lors de la suppression du produit:', errorData); // Log des erreurs
+        throw new Error('Erreur lors de la suppression du produit.');
+      }
+      
+      const data = await response.json(); // Récupération des données de la réponse
+      console.log('Données de la réponse:', data); // Log des données retournées par l'API
+      console.log('Produit supprimé avec succès.');
+    } catch (error) {
+      console.error('Erreur capturée:', error);
+    }
+  };
+  
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     if (!validateCardNumber(cardNumber)) {
@@ -54,7 +89,10 @@ export default function PaymentForm({ amount = 50, currency = 'EUR' }: PaymentFo
     setError('')
     console.log('Traitement du paiement...')
 
-    // Rediriger vers une page fictive de remerciement
+    // Simulation d'un paiement réussi et suppression du produit
+    await handleDeleteProduct(productId)
+
+    // Redirection vers une page de remerciement
     router.push('/thank-you')
 
     // Optionnel : redirection vers la page d'accueil après un court délai
@@ -64,7 +102,7 @@ export default function PaymentForm({ amount = 50, currency = 'EUR' }: PaymentFo
   }
 
   const handleCardNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const input = e.target.value.replace(/[^0-9]/g, '').substring(0, 16);
+    const input = e.target.value.replace(/[^0-9]/g, '').substring(0, 16)
     const formattedInput = input.match(/.{1,4}/g)?.join(' ') || ''
     setCardNumber(formattedInput)
   }
