@@ -8,7 +8,9 @@ export const metadata: Metadata = {
 
 const aboutUs = () => {
   return (
-    <div>About Us</div>
+    <div>
+      <img src="/public/about_us.png" alt="About us" />
+    </div>
   )
 }
 

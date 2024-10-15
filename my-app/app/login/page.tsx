@@ -10,12 +10,14 @@ import { redirect } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { sign } from 'crypto';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 
 
 export default function Login() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl') || '/';
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -30,7 +32,7 @@ export default function Login() {
     });
 
     if (!response.error) {
-      return window.location.replace("/") // if login successful
+      return window.location.replace(callbackUrl) // if login successful
     }
 
     toast.error("Ton mot de passe ou ton email est incorrecte");
