@@ -59,7 +59,7 @@ export default function SkateArticleCard({
             <img
               src={images[0].url}
               alt={images[0].altText || title}
-              className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
+              className="h-full w-full object-cover transition-transform duration-300"
             />
           </Link>
         ) : (
