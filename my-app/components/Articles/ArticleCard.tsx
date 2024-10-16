@@ -52,7 +52,7 @@ export default function SkateArticleCard({
   };
 
   return (
-    <div className="max-w-xs overflow-hidden rounded-lg border border-gray-300 bg-gray-100 text-card-foreground shadow-sm transition-all duration-300 hover:shadow-lg">
+    <div className="max-w-xs overflow-hidden hover:scale-105 rounded-lg border border-gray-300 bg-gray-100 text-card-foreground shadow-sm transition-all duration-300 hover:shadow-lg">
       <div className="aspect-square overflow-hidden">
         {images.length > 0 ? (
           <Link href={`/article/${id}`}>

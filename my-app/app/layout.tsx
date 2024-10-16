@@ -5,7 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { SessionProvider } from "next-auth/react"; // Importer SessionProvider
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import Head from "next/head";
+import FooterBanner from "@/components/FooterBanner";
 import { Toaster } from 'sonner'
 
 const inter = Inter({ subsets: ["latin"] });
@@ -29,6 +29,7 @@ export default function RootLayout({
               <main className="flex-grow bg-background">
                 {children}
               </main>
+            <FooterBanner />
             <Footer />
           </ThemeProvider>
         </SessionProvider>
