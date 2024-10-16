@@ -34,9 +34,9 @@ export default function SkateArticleCard({
   const handleBuyClick = () => {
     if (status === "loading") return;
     if (session) {
-      router.push(`/payment?amount=${price}&currency=EUR`);
+      router.push(`/payment?amount=${price}&currency=EUR&productId=${id}`);
     } else {
-      const callbackUrl = encodeURIComponent(`/payment?amount=${price}&currency=EUR`);
+      const callbackUrl = encodeURIComponent(`/payment?amount=${price}&currency=EUR&productId=${id}`);
       router.push(`/login?callbackUrl=${callbackUrl}`);
     }
   };
@@ -106,7 +106,7 @@ export default function SkateArticleCard({
           variant="secondary"
           size="sm"
           aria-label={`Acheter ${title}`}
-          onClick={handleBuyClick} // Handle click event
+          onClick={handleBuyClick}
         >
           Acheter
         </Button>
@@ -114,7 +114,7 @@ export default function SkateArticleCard({
           variant="default"
           size="sm"
           aria-label={`Message à ${user.firstName}`}
-          onClick={handleMessageClick} // Handle click event
+          onClick={handleMessageClick}
         >
           Message
         </Button>

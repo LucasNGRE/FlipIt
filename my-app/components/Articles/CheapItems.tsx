@@ -48,16 +48,20 @@ export default function SkateArticleGrid() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h2 className="text-3xl font-bold mb-6">Moins de 20 euros !</h2>
+      
+      {/* Keep everything inside the Carousel component */}
       <Carousel className="relative w-full overflow-hidden">
-        <CarouselContent className="flex">
+        <CarouselPrevious className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10" />
+        
+        <CarouselContent className="flex"> {/* Ensure items are aligned horizontally */}
           {articles.map((product) => (
-            <CarouselItem key={product.id} className="min-w-[25%] p-center">
+            <CarouselItem key={product.id} className="min-w-[25%] p-4"> {/* Ensure 4 items per view */}
               <SkateArticleCard {...product} user={product.user} />
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
+        
+        <CarouselNext className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10" />
       </Carousel>
     </div>
   );

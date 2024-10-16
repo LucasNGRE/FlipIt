@@ -11,7 +11,7 @@ const Footer = () => {
   // Define banner colors based on the current theme
   const bannerStyle = {
     backgroundColor: theme === 'dark' ? '#9ea09d' : '#000000', // Dark banner color
-    height: '1px', // Increased height for visibility
+    height: '1px',
     width: '100%',
   };
 

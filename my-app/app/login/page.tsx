@@ -53,27 +53,24 @@ export default function Login() {
           className="mb-6"
           onChange={(e: any) => setPassword(e.target.value)}
         />
-
+        <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-8 h-[1px] w-full" />
         <div className="flex justify-between items-center">
           <Link href="/" passHref>
             <Button type="button" variant="outline" className="w-24">
-              Back
+              Retour
             </Button>
           </Link>
-          <Button className="w-24" onClick={credentialsAction}>
-            Login &rarr;
+          <Button className="w-36" onClick={credentialsAction}>
+            Se connecter &rarr;
           </Button>
         </div>
-
         <p className="text-right text-neutral-600 text-sm max-w-sm mt-4 dark:text-neutral-300">
-          Don't have an account?{' '}
+          Vous ne possédez pas de compte ?{' '}
           {/* Pass the callbackUrl to the Register page */}
           <Link href={`/register?callbackUrl=${encodeURIComponent(callbackUrl)}`} className="text-blue-500">
-            Register
+            S'enregistrer
           </Link>
         </p>
-
-        <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-8 h-[1px] w-full" />
       </div>
     </div>
   );
