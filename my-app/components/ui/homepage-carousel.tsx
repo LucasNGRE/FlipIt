@@ -176,7 +176,7 @@ const CarouselItem = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => {
-  const { orientation } = useCarousel()
+  const { orientation } = useCarousel();
 
   return (
     <div
@@ -184,14 +184,15 @@ const CarouselItem = React.forwardRef<
       role="group"
       aria-roledescription="slide"
       className={cn(
-        "min-w-0 shrink-0 grow-0 basis-full",
+        "min-w-[25%] shrink-0 grow-0", // Each item takes 25% of the container
         orientation === "horizontal" ? "pl-4" : "pt-4",
         className
       )}
       {...props}
     />
-  )
-})
+  );
+});
+
 CarouselItem.displayName = "CarouselItem"
 
 const CarouselPrevious = React.forwardRef<
@@ -206,17 +207,17 @@ const CarouselPrevious = React.forwardRef<
       variant={variant}
       size={size}
       className={cn(
-        "absolute z-10 h-8 w-8 rounded-full",
+        "absolute  h-10 w-10 rounded-full",
         orientation === "horizontal"
-          ? "left-2 top-1/2 -translate-y-1/2"
-          : "top-2 left-1/2 -translate-x-1/2 rotate-90",
+          ? "-left-12 top-1/2 -translate-y-1/2"
+          : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
         className
       )}
       disabled={!canScrollPrev}
       onClick={scrollPrev}
       {...props}
     >
-      <ArrowLeftIcon className="h-4 w-4" />
+      <ArrowLeftIcon className="h-6 w-6" />
       <span className="sr-only">Previous slide</span>
     </Button>
   )
@@ -235,17 +236,17 @@ const CarouselNext = React.forwardRef<
       variant={variant}
       size={size}
       className={cn(
-        "absolute z-10 h-8 w-8 rounded-full",
+        "absolute h-10 w-10 rounded-full",
         orientation === "horizontal"
-          ? "right-2 top-1/2 -translate-y-1/2"
-          : "bottom-2 left-1/2 -translate-x-1/2 rotate-90",
+          ? "-right-12 top-1/2 -translate-y-1/2"
+          : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90",
         className
       )}
       disabled={!canScrollNext}
       onClick={scrollNext}
       {...props}
     >
-      <ArrowRightIcon className="h-4 w-4" />
+      <ArrowRightIcon className="h-6 w-6" />
       <span className="sr-only">Next slide</span>
     </Button>
   )

@@ -23,15 +23,12 @@ export default function RootLayout({
             attribute="class"
             defaultTheme="system"
             enableSystem
-            disableTransitionOnChange
-          >
+            disableTransitionOnChange>
             <Toaster />
             <Header />
-            {/* Le main occupe l'espace restant entre le header et le footer */}
-            <main className="flex-grow bg-background">
-              {children}
-            </main>
-            {/* Footer reste en bas */}
+              <main className="flex-grow bg-background">
+                {children}
+              </main>
             <Footer />
           </ThemeProvider>
         </SessionProvider>

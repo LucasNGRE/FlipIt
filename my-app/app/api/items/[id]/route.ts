@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/db'; // Vérifie que tu as le bon chemin d'importation
+import prisma from '@/lib/db';
 
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   const productId = parseInt(params.id, 10); // Vérifie que l'ID est récupéré correctement

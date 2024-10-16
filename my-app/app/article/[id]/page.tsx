@@ -9,12 +9,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Heart, MessageCircle, Share2 } from 'lucide-react';
+import Link from 'next/link';
+import { OfferDialog } from '@/components/chat/offer-dialog';
 
 interface ArticlePageProps {
   params: { id: string };
 }
 
 interface Article {
+  id: number;
   title: string;
   price: number;
   description: string;
@@ -88,7 +91,7 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ params }) => {
   }, [params.id]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div>Chargement...</div>;
   }
 
   if (!article) {
@@ -206,17 +209,24 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ params }) => {
                   <p className="font-semibold">{user?.firstName}</p>
                 </div>
               </div>
-              <Button className="w-full mt-4" variant="outline">
-                <MessageCircle className="mr-2 h-4 w-4" />
-                Contacter le vendeur
-              </Button>
+              <Link href="/inbox">
+                <Button className="w-full mt-4" variant="outline">
+                  <MessageCircle className="mr-2 h-4 w-4" />
+                  Contacter le vendeur
+                </Button>
+              </Link>
             </CardContent>
           </Card>
 
 
           <div className="space-y-4">
-            <Button className="w-full" size="lg">Acheter maintenant</Button>
-            <Button variant="outline" className="w-full" size="lg">Faire une offre</Button>
+            <Link href={`/payment?amount=${article.price}&currency=EUR`}>
+              <Button className="w-full" size="lg">Acheter maintenant</Button>
+            </Link>
+              <Button variant="outline" className="w-full" size="lg">
+                <OfferDialog productId={article.id} onOfferSubmit={(offer) => console.log('Offer submitted:', offer)}>
+                </OfferDialog>
+              </Button>
           </div>
         </div>
       </div>

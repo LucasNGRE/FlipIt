@@ -11,7 +11,7 @@ import {
   DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { DollarSign } from "lucide-react";
+import { EuroIcon } from "lucide-react";
 
 type OfferDialogProps = {
   productId: number; // Assurez-vous que productId est bien passé en tant que prop
@@ -53,7 +53,7 @@ export function OfferDialog({ productId, onOfferSubmit }: OfferDialogProps) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="outline" className="flex-1 mr-2">
-          <DollarSign className="mr-2 h-4 w-4" /> Faire une offre
+          <EuroIcon className="mr-2 h-4 w-4" /> Faire une offre
         </Button>
       </DialogTrigger>
       <DialogContent>

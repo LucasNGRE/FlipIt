@@ -129,7 +129,7 @@ const Header = () => {
           <Link href="/items/add-item">
             <button className='flex items-center px-2 py-2 bg-secondary/60 text-white cursor-pointer rounded-lg hover:bg-primary'>
               <CirclePlus className='mr-2' /> {/* L'icône est toujours visible */}
-              <span className='hidden lg:block'>Ajoute un article</span> {/* Le texte est caché sur les petits écrans */}
+              <span className='hidden lg:block'>Ajouter un article</span> {/* Le texte est caché sur les petits écrans */}
             </button>
           </Link>
         </div>
