@@ -66,7 +66,6 @@ export default function Login() {
         </div>
         <p className="text-right text-neutral-600 text-sm max-w-sm mt-4 dark:text-neutral-300">
           Vous ne possédez pas de compte ?{' '}
-          {/* Pass the callbackUrl to the Register page */}
           <Link href={`/register?callbackUrl=${encodeURIComponent(callbackUrl)}`} className="text-blue-500">
             S'enregistrer
           </Link>
