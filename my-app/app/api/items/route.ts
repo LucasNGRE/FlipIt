@@ -77,7 +77,7 @@ export async function PUT(req: NextRequest) { // Fonction pour mettre à jour un
   }
 }
 
-export async function DELETE(req: NextRequest) { // Fonction pour supprimer un produit
+export async function DELETE(req: NextRequest) { 
   try {
     const session = await getSession();
     if (!session?.user?.id) {
@@ -86,14 +86,33 @@ export async function DELETE(req: NextRequest) { // Fonction pour supprimer un p
 
     const { id } = await req.json();
 
-    await prisma.product.delete({
-      where: { id: Number(id), userId: Number(session.user.id) },
+    // Vérifie si le produit existe et appartient à l'utilisateur
+    const product = await prisma.product.findUnique({
+      where: { id: Number(id) },
+      include: {
+        images: true, // Inclut les images associées au produit
+      },
     });
 
-    return NextResponse.json({ message: 'Product deleted' }, { status: 200 });
+    if (!product || product.userId !== Number(session.user.id)) {
+      return NextResponse.json({ error: 'Produit non trouvé ou non autorisé' }, { status: 404 });
+    }
+
+    // Supprime les images associées au produit
+    await prisma.productImage.deleteMany({
+      where: { productId: Number(id) },
+    });
+
+    // Supprime le produit
+    await prisma.product.delete({
+      where: { id: Number(id) },
+    });
+
+    return NextResponse.json({ message: 'Produit et images supprimés' }, { status: 200 });
   } catch (error) {
     console.error('Error deleting product:', error);
-    return NextResponse.json({ error: 'Failed to delete product' }, { status: 500 });
+    return NextResponse.json({ error: 'Échec de la suppression du produit' }, { status: 500 });
   }
 }
+
 

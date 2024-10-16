@@ -1,16 +1,17 @@
-import { useState } from "react"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
-import { Truck, Package } from "lucide-react"
+import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { Truck, Package } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
+// Définition du schéma de validation
 const formSchema = z.object({
   modeDelivraison: z.enum(["standard", "express"], {
     required_error: "Veuillez sélectionner un mode de livraison.",
@@ -31,10 +32,15 @@ const formSchema = z.object({
   pays: z.string().min(2, {
     message: "Veuillez sélectionner un pays.",
   }),
-})
+});
 
-export default function ShippingForm() {
-  const [isSubmitting, setIsSubmitting] = useState(false)
+// Props pour le composant ShippingForm
+interface ShippingFormProps {
+  onSubmit: (values: z.infer<typeof formSchema>) => void; // Fonction de soumission
+}
+
+export default function ShippingForm({ onSubmit }: ShippingFormProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -47,17 +53,17 @@ export default function ShippingForm() {
       ville: "",
       pays: "fr",
     },
-  })
+  });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsSubmitting(true)
-    // Simuler un appel API
+  const handleFormSubmit = (values: z.infer<typeof formSchema>) => {
+    setIsSubmitting(true);
+    // Simule un appel API ou un traitement
     setTimeout(() => {
-      console.log(values)
-      setIsSubmitting(false)
-      // Ici, vous enverriez normalement les données à votre backend ou mettriez à jour l'état de votre application
-    }, 1000)
-  }
+      console.log(values);
+      onSubmit(values); // Appeler la fonction de soumission avec les valeurs
+      setIsSubmitting(false);
+    }, 1000);
+  };
 
   return (
     <Card className="w-full max-w-2xl mx-auto">
@@ -67,7 +73,7 @@ export default function ShippingForm() {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit((onSubmit))} className="space-y-8">
+          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-8">
             <FormField
               control={form.control}
               name="modeDelivraison"
@@ -200,10 +206,10 @@ export default function ShippingForm() {
         </Form>
       </CardContent>
       <CardFooter>
-        <Button type="submit" className="w-full" disabled={isSubmitting} onClick={form.handleSubmit(onSubmit)}>
-          {isSubmitting ? "Enregistrement..." : "Enregistrer les informations"}
+        <Button type="submit" className="w-full" disabled={isSubmitting} onClick={form.handleSubmit(handleFormSubmit)}>
+          Enregistrer les informations
         </Button>
       </CardFooter>
     </Card>
-  )
+  );
 }

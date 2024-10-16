@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useState, useEffect } from 'react'
-import Header from '@/components/Header'
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -11,8 +10,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import Link from 'next/link'
+import { Input } from "@/components/ui/input" 
+
 
 const Setting = () => {
   const [activeSection, setActiveSection] = useState('Profil')
@@ -26,6 +25,7 @@ const Setting = () => {
   const [loadingProducts, setLoadingProducts] = useState<boolean>(false);
   const [productsError, setProductsError] = useState<string | null>(null);
   const [updateMessage, setUpdateMessage] = useState<string | null>(null);
+  const [productImage, setProductImage] = useState<string | null>(null);
   
  // Fetch user data on component mount
  useEffect(() => {

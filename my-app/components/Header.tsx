@@ -18,26 +18,24 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { signOut, useSession } from 'next-auth/react';
 
 const Header = () => {
-  
-  const [userData, setUserData] = React.useState(null)
-  const [isConnected, setIsConnected] = React.useState(false)
+  const { data: session, status } = useSession(); // Récupère la session
+  const [userData, setUserData] = React.useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
-      try {
-        const response = await fetch('/api/user')
-        if (!response.ok) return;
-        const data = await response.json()
-        setUserData(data);
-        setIsConnected(true);
-
-        console.log('User data:', data)
-      } catch (error) {
-        console.error('Erreur lors de la récupération des données utilisateur:', error)
+      if (status === 'authenticated') { // Vérifie si l'utilisateur est connecté
+        try {
+          const response = await fetch('/api/user');
+          if (!response.ok) throw new Error('Erreur lors de la récupération des données utilisateur');
+          const data = await response.json();
+          setUserData(data);
+        } catch (error) {
+          console.error('Erreur lors de la récupération des données utilisateur:', error);
+        }
       }
-    }
-    fetchUserData()
-  }, [])
+    };
+    fetchUserData();
+  }, [status]); // Effectue la récupération des données lorsque le statut change
 
   const handleSearchClick = () => {
     console.log('Search clicked');
@@ -126,7 +124,7 @@ const Header = () => {
       </div>
 
       {/* Bouton "Poster une annonce" */}
-      {isConnected && (
+      {status === 'authenticated' && (
         <div className='mx-4'>
           <Link href="/items/add-item">
             <button className='flex items-center px-2 py-2 bg-secondary/60 text-white cursor-pointer rounded-lg hover:bg-primary'>
@@ -157,7 +155,7 @@ const Header = () => {
             <User className='text-2xl cursor-pointer' />
           </DropdownMenuTrigger>
           <DropdownMenuContent className='w-48 rounded-lg shadow-lg'>
-            {isConnected ? (
+            {status === 'authenticated' ? (
               <>
                 <DropdownMenuItem asChild>
                   <Link href="/settings" className='cursor-pointer'>Settings</Link>
@@ -180,7 +178,7 @@ const Header = () => {
           </DropdownMenuContent>
         </DropdownMenu>
           <Bell className='text-2xl cursor-pointer' />
-        {isConnected && (
+        {status === 'authenticated' && (
           <Link href="/inbox">
             <Mail className='text-2xl cursor-pointer' />
           </Link>
