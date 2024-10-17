@@ -6,12 +6,13 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 interface SkateArticleProps {
-  id: string;
+  id: number;
   title: string;
   price: number;
   images: { url: string; altText: string | null }[];
   condition: 'Neuf' | 'Comme neuf' | 'Bon état' | 'Moyen état' | 'Mauvais état';
   size: string;
+  userId: number;
   user: {
     userId: number;
     firstName: string;
@@ -25,6 +26,7 @@ export default function SkateArticleCard({
   price,
   images,
   condition,
+  userId,
   size,
   user,
 }: SkateArticleProps) {
@@ -34,6 +36,14 @@ export default function SkateArticleCard({
   if (status === "loading") {
     return null; // Do not render anything while session is loading
   }
+
+  // Get the logged-in user's ID
+  const userIdFromSession = session?.user?.id ? parseInt(session.user.id, 10) : null;
+
+  // Check if the product belongs to the logged-in user
+  const isOwner = userIdFromSession !== null && userId === userIdFromSession;
+  console.log(`Product ID: ${userId}, Session User ID: ${session?.user?.id}, Is Owner: ${isOwner}`);
+
 
   const handleBuyClick = () => {
     if (session) {
@@ -103,24 +113,30 @@ export default function SkateArticleCard({
         </div>
       </div>
 
+
       {/* Action Buttons */}
       <div className="px-4 py-3 space-x-2">
-        <Button
-          variant="secondary"
-          size="sm"
-          aria-label={`Acheter ${title}`}
-          onClick={handleBuyClick}
-        >
-          Acheter
-        </Button>
-        <Button
-          variant="default"
-          size="sm"
-          aria-label={`Message à ${user.firstName}`}
-          onClick={handleMessageClick}
-        >
-          Message
-        </Button>
+        {/* Conditionally render buttons if the user is not the owner */}
+        {!isOwner && (
+          <>
+            <Button
+              variant="secondary"
+              size="sm"
+              aria-label={`Acheter ${title}`}
+              onClick={handleBuyClick}
+            >
+              Acheter
+            </Button>
+            <Button
+              variant="default"
+              size="sm"
+              aria-label={`Message à ${user.firstName}`}
+              onClick={handleMessageClick}
+            >
+              Message
+            </Button>
+          </>
+        )}
       </div>
     </div>
   );
