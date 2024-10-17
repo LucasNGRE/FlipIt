@@ -10,18 +10,18 @@ import { toast } from 'sonner';
 
 interface RegisterResponse {
   success: boolean;
-  message?: string; // You can add more properties if needed
+  message?: string; // Add more properties if needed
+  emailExists?: boolean; // To indicate if email is already in use
 }
 
 const Register = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-
-  // Get the callback URL from the URL query parameter or default to '/'
   const callbackUrl = searchParams.get('callbackUrl') || '/';
 
-  // State to handle form data
+  // Form data state
   const [formData, setFormData] = useState({
+    username: '',
     firstname: '',
     lastname: '',
     email: '',
@@ -39,38 +39,34 @@ const Register = () => {
   // Handle registration form submission
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
-      // Prepare form data to send
       const formDataToSend = new FormData();
+      formDataToSend.append('username', formData.username);
       formDataToSend.append('firstname', formData.firstname);
       formDataToSend.append('lastname', formData.lastname);
       formDataToSend.append('email', formData.email);
       formDataToSend.append('password', formData.password);
-
-      // Include the callback URL in the registration process
-      formDataToSend.append('callbackUrl', callbackUrl);  // Add the callback URL to the form data
+      formDataToSend.append('callbackUrl', callbackUrl);  // Add callback URL
 
       // Call the register function
       const response: RegisterResponse = await register(formDataToSend);
 
-      // Handle response
       if (response.success) {
         toast.success('Registration successful');
-        // Redirect to the callback URL after registration
-        router.push(callbackUrl);
+        router.push(callbackUrl); // Redirect on success
+      } else if (response.emailExists) {
+        // If the email already exists, show error without redirection
+        toast.error('Email already in use.');
       } else {
+        // Handle other registration errors
         toast.error(response.message || 'Registration failed. Please try again.');
-        // In case of error, pass callbackUrl back to login if needed
-        router.push(`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`);
       }
     } catch (error) {
-      toast.error('An error occurred during registration');
-      // On failure, redirect to login with callbackUrl preserved
-      router.push(`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`);
+      toast.error('An error occurred during registration.');
     }
   };
-
+  
   return (
     <div className="relative mt-10 max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white border border-[#121212] dark:bg-black">
       <div className="absolute top-4 right-4"></div>
@@ -133,7 +129,7 @@ const Register = () => {
         <p className="text-neutral-600 text-sm max-w-sm mt-2 dark:text-neutral-300">
           Déjà un compte?{' '}
           <Link href={`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`} className="text-blue-500">
-            Login
+            Se connecter
           </Link>
         </p>
 

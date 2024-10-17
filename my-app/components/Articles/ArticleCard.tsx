@@ -31,8 +31,11 @@ export default function SkateArticleCard({
   const { data: session, status } = useSession();
   const router = useRouter();
 
+  if (status === "loading") {
+    return null; // Do not render anything while session is loading
+  }
+
   const handleBuyClick = () => {
-    if (status === "loading") return;
     if (session) {
       router.push(`/payment?amount=${price}&currency=EUR&productId=${id}`);
     } else {
@@ -52,14 +55,14 @@ export default function SkateArticleCard({
   };
 
   return (
-    <div className="max-w-xs overflow-hidden hover:scale-105 rounded-lg border border-gray-300 bg-gray-100 text-card-foreground shadow-sm transition-all duration-300 hover:shadow-lg">
+    <div className="max-w-xs overflow-hidden rounded-lg border border-gray-300 bg-gray-100 text-card-foreground shadow-sm transition-all duration-300 hover:shadow-lg">
       <div className="aspect-square overflow-hidden">
         {images.length > 0 ? (
           <Link href={`/article/${id}`}>
             <img
               src={images[0].url}
               alt={images[0].altText || title}
-              className="h-full w-full object-cover transition-transform duration-300"
+              className="h-full w-full object-cover transition-transform duration-300 hover:scale-105"
             />
           </Link>
         ) : (
