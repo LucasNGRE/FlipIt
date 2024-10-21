@@ -14,8 +14,8 @@ import {
 import { EuroIcon } from "lucide-react";
 
 type OfferDialogProps = {
-  productId: number; // Assurez-vous que productId est bien passé en tant que prop
-  onOfferSubmit: (price: string) => void; // Callback pour gérer la soumission du prix
+  productId: number;
+  onOfferSubmit: (price: string) => void;
 };
 
 export function OfferDialog({ productId, onOfferSubmit }: OfferDialogProps) {
@@ -29,7 +29,7 @@ export function OfferDialog({ productId, onOfferSubmit }: OfferDialogProps) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ offerPrice, productId }), // Utilise le productId passé en prop
+        body: JSON.stringify({ offerPrice, productId }),
       });
 
       if (!response.ok) {
@@ -40,8 +40,8 @@ export function OfferDialog({ productId, onOfferSubmit }: OfferDialogProps) {
       console.log("Offre soumise avec succès :", data);
 
       // Appeler le callback pour ajouter l'offre au chat
-      onOfferSubmit(offerPrice); // Appel du callback
-
+      onOfferSubmit(offerPrice);
+      
       setOfferPrice(""); // Réinitialiser le champ après soumission
       setOpen(false); // Fermer le dialogue après soumission
     } catch (err) {
@@ -52,7 +52,7 @@ export function OfferDialog({ productId, onOfferSubmit }: OfferDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="flex-1 mr-2">
+        <Button variant="outline" className="w-full flex-1 mr-2">
           <EuroIcon className="mr-2 h-4 w-4" /> Faire une offre
         </Button>
       </DialogTrigger>

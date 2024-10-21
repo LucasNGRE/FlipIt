@@ -10,6 +10,11 @@ import { Toaster } from 'sonner'
 
 const inter = Inter({ subsets: ["latin"] });
 
+export const metadata: Metadata = {
+  title: "FlipIt",
+  description: "Welcome home!",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{

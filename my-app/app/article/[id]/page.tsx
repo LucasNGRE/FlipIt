@@ -166,7 +166,7 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ params }) => {
 
           <Card>
             <CardHeader>
-              <CardTitle>Détails de l'article</CardTitle>
+              <CardTitle>Détails de l&apos;article</CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-2 gap-4">
               <div><span className="font-semibold">Size:</span> {article.size}</div>
@@ -223,11 +223,10 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ params }) => {
             <Link href={`/payment?amount=${article.price}&currency=EUR&productId=${article.id}`}>
               <Button className="w-full" size="lg">Acheter maintenant</Button>
             </Link>
-              <Button variant="outline" className="w-full" size="lg">
-                <OfferDialog productId={article.id} onOfferSubmit={(offer) => console.log('Offer submitted:', offer)}>
-                </OfferDialog>
-              </Button>
+
+            <OfferDialog productId={article.id} onOfferSubmit={(offer) => console.log('Offre soumise:', offer)} />
           </div>
+
         </div>
       </div>
     </div>

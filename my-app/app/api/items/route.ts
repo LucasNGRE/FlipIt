@@ -56,26 +56,6 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function PUT(req: NextRequest) { // Fonction pour mettre à jour un produit
-  try {
-    const session = await getSession();
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-    }
-
-    const { id, title, description, price, status } = await req.json();
-
-    const updatedProduct = await prisma.product.update({
-      where: { id: Number(id), userId: Number(session.user.id) },
-      data: { title, description, price },
-    });
-
-    return NextResponse.json(updatedProduct, { status: 200 });
-  } catch (error) {
-    console.error('Error updating product:', error);
-    return NextResponse.json({ error: 'Failed to update product' }, { status: 500 });
-  }
-}
 
 export async function DELETE(req: NextRequest) { 
   try {

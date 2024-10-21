@@ -71,6 +71,23 @@ const Setting = () => {
       [e.target.name]: e.target.value,
     })
   }
+  const handleDeleteProduct = async (productId: number) => {
+    try {
+      const response = await fetch(`/api/items/${productId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) throw new Error('Failed to delete product');
+      setProducts((prevProducts) => prevProducts.filter((product) => product.id !== productId));
+    } catch (error) {
+      console.error('Erreur lors de la suppression du produit:', error);
+    }
+  }
+
+  const handleEditProduct = (productId: number) => {
+    // Add logic to edit product
+    window.location.href = `/edit-product/${productId}`;
+    console.log('Edit product with ID:', productId);
+  }
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
