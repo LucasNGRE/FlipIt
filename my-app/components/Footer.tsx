@@ -1,3 +1,4 @@
+// Example Footer with dynamic banner
 'use client';
 
 import React from 'react';
@@ -17,9 +18,8 @@ const Footer = () => {
 
   return (
     <>
-      <div style={bannerStyle}></div> {/* Dynamic Banner */}
-      <footer className="w-full py-2 lg:py-4 flex flex-col lg:flex-row items-center justify-between bg-background text-foreground">
-        {/* Left Section: FlipIt Text */}
+    {/* <div style={bannerStyle}></div> */}
+      <footer className="w-full py-2 lg:py-4 flex flex-col lg:flex-row items-center justify-between bg-background text-foreground"> 
         <div className="mb-4 lg:mb-0 lg:flex-1 flex justify-center lg:justify-start">
           <span className="text-xl lg:text-2xl font-extrabold tracking-wider">
             <Link href="/" className="hover:scale-110 transition-transform duration-300 ease-out transform-gpu will-change-transform">
@@ -28,7 +28,6 @@ const Footer = () => {
           </span>
         </div>
 
-        {/* Center Section: Social Media Links */}
         <div className="lg:flex-1 flex justify-center">
           <div className="flex space-x-3 lg:space-x-4">
             <Link href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform duration-300 ease-out transform-gpu will-change-transform">
@@ -43,7 +42,6 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Right Section: Contact, About Us, Privacy */}
         <div className="lg:flex-1 flex justify-center lg:justify-end">
           <div className="flex space-x-3 lg:space-x-4">
             <Link href="/contact" className="hover:scale-110 transition-transform duration-300 ease-out transform-gpu will-change-transform">

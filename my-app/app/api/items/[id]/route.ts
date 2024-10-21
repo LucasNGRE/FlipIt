@@ -1,6 +1,38 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/getSession';
 import prisma from '@/lib/db';
+import { getSession } from '@/lib/getSession';
+
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+  try {
+    // Récupérer la session utilisateur
+    const session = await getSession();
+    const productId = Number(params.id);
+
+    // Récupérer le produit en fonction de l'ID
+    const product = await prisma.product.findUnique({
+      where: { id: productId },
+      include: {
+        images: true, // Inclure les images associées au produit
+        // Tu peux ajouter d'autres relations si nécessaire
+      },
+    });
+
+    if (!product) {
+      return NextResponse.json({ error: 'Produit non trouvé' }, { status: 404 });
+    }
+
+    // Vérifier si l'utilisateur est connecté et si le produit lui appartient
+    if (session?.user?.id && product.userId !== Number(session.user.id)) {
+      return NextResponse.json({ error: 'Produit non autorisé' }, { status: 403 });
+    }
+
+    return NextResponse.json(product, { status: 200 });
+  } catch (error) {
+    console.error('Error fetching product:', error);
+    return NextResponse.json({ error: 'Échec de la récupération du produit' }, { status: 500 });
+  }
+}
 
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   const productId = parseInt(params.id, 10); // Vérifie que l'ID est récupéré correctement

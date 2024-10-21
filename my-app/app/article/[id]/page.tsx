@@ -220,7 +220,7 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ params }) => {
 
 
           <div className="space-y-4">
-            <Link href={`/payment?amount=${article.price}&currency=EUR`}>
+            <Link href={`/payment?amount=${article.price}&currency=EUR&productId=${article.id}`}>
               <Button className="w-full" size="lg">Acheter maintenant</Button>
             </Link>
 

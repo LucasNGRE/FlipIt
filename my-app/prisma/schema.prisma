@@ -115,6 +115,7 @@ model Transaction {
   seller      User        @relation("SellerTransactions", fields: [sellerId], references: [id], onDelete: Cascade)
   buyer       User        @relation("BuyerTransactions", fields: [buyerId], references: [id], onDelete: Cascade)
 }
+
 // Table Account (Déjà présente)
 model Account {
   userId            Int
@@ -143,7 +144,6 @@ model Session {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
-
 
 // Table VerificationToken (Déjà présente)
 model VerificationToken {
