@@ -10,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Input } from "@/components/ui/input" 
+import { Input } from "@/components/ui/input"
 
 
 const Setting = () => {
@@ -157,7 +157,7 @@ const Setting = () => {
           <Card>
             <CardHeader>
               <CardTitle>Mes Annonces</CardTitle>
-              <CardDescription>Gère vos annonces ici.</CardDescription>
+              <CardDescription>Gère tes annonces ici.</CardDescription>
             </CardHeader>
             <CardContent>
               {loadingProducts ? (
@@ -172,22 +172,14 @@ const Setting = () => {
                         <CardTitle className="text-lg font-bold">{product.title}</CardTitle>
                       </CardHeader>
                       <CardContent>
+                        <img 
+                          src={product.images[0].url || '/path/to/default-image.jpg'}
+                          alt={product.images[0].altText || 'Product Image'}
+                          className="w-full h-auto object-cover"
+                        />
                         <p className="text-gray-600 mb-2">{product.description}</p>
                         <p className="text-xl font-semibold text-primary mb-4">Prix: {product.price} €</p>
                       </CardContent>
-                      {/* <CardFooter className="flex justify-between">
-                        <Link href={`/payment?amount=${product.price}&currency=EUR`}>
-                          <Button variant="default" className="mr-2">
-                            Acheter
-                          </Button>
-                        </Link>
-                        <Link href="/inbox">
-                          <Button variant="outline">
-                            Message
-                          </Button>
-                        </Link>
-                      </CardFooter> */}
-
                     </Card>
                   ))}
                 </div>
@@ -197,6 +189,7 @@ const Setting = () => {
             </CardContent>
           </Card>
         );
+
       case 'Transactions':
         return (
           <Card>

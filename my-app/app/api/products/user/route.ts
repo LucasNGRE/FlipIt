@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
     // Récupérer les produits de l'utilisateur connecté
     const products = await prisma.product.findMany({
       where: {
-        userId: Number(session.user.id), // Utiliser l'ID de l'utilisateur connecté
+        userId: Number(session.user.id), // Use the logged-in user's ID
       },
       include: {
         user: {
@@ -25,9 +25,14 @@ export async function GET(req: NextRequest) {
             image: true,
           },
         },
+        images: { // Include images in the query
+          select: {
+            url: true,
+            altText: true,
+          },
+        },
       },
     });
-
     // Vérifiez si l'utilisateur a des annonces
     if (!products.length) {
       return NextResponse.json({ error: 'Aucune annonce trouvée pour cet utilisateur' }, { status: 404 });
