@@ -12,18 +12,32 @@ import {
   MenubarTrigger,
 } from "@/components/ui/menubar";
 import { Input } from './ui/input';
-import { CirclePlus, Mail, Search, ShoppingCart, User } from 'lucide-react';
+import { Bell, CirclePlus, Mail, Search, ShoppingCart, User } from 'lucide-react';
 import { ModeToggle } from './toggle.mode';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 const Header = () => {
-  const { data: session, status } = useSession();  // Use useSession to get session info
-  const isConnected = status === 'authenticated';  // Determine if user is authenticated
-  const router = useRouter();
+  const { data: session, status } = useSession(); // Récupère la session
+  const [userData, setUserData] = React.useState(null);
 
-  // Function to handle searching
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (status === 'authenticated') { // Vérifie si l'utilisateur est connecté
+        try {
+          const response = await fetch('/api/user');
+          if (!response.ok) throw new Error('Erreur lors de la récupération des données utilisateur');
+          const data = await response.json();
+          setUserData(data);
+        } catch (error) {
+          console.error('Erreur lors de la récupération des données utilisateur:', error);
+        }
+      }
+    };
+    fetchUserData();
+  }, [status]); // Effectue la récupération des données lorsque le statut change
+
   const handleSearchClick = () => {
     console.log('Search clicked');
   };
@@ -112,12 +126,12 @@ const Header = () => {
       </div>
 
       {/* Bouton "Poster une annonce" */}
-      {isConnected && (
+      {status === 'authenticated' && (
         <div className='mx-4'>
           <Link href="/items/add-item">
             <button className='flex items-center px-2 py-2 bg-secondary/60 text-white cursor-pointer rounded-lg hover:bg-primary'>
               <CirclePlus className='mr-2' /> {/* L'icône est toujours visible */}
-              <span className='hidden lg:block'>Ajoute un article</span> {/* Le texte est caché sur les petits écrans */}
+              <span className='hidden lg:block'>Ajouter un article</span> {/* Le texte est caché sur les petits écrans */}
             </button>
           </Link>
         </div>
@@ -143,7 +157,7 @@ const Header = () => {
             <User className='text-2xl cursor-pointer' />
           </DropdownMenuTrigger>
           <DropdownMenuContent className='w-48 rounded-lg shadow-lg'>
-            {isConnected ? (
+            {status === 'authenticated' ? (
               <>
                 <DropdownMenuItem asChild>
                   <Link href="/settings" className='cursor-pointer'>Settings</Link>
@@ -165,10 +179,8 @@ const Header = () => {
             )}
           </DropdownMenuContent>
         </DropdownMenu>
-        <Link href="/cart">
-          <ShoppingCart className='text-2xl cursor-pointer' />
-        </Link>
-        {isConnected && (
+          <Bell className='text-2xl cursor-pointer' />
+        {status === 'authenticated' && (
           <Link href="/inbox">
             <Mail className='text-2xl cursor-pointer' />
           </Link>

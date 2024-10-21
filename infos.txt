@@ -1,0 +1,16 @@
+# Créer le .env
+DATABASE_URL=postgresql://username:password@localhost:5432/database_name     # Changer les champs par les infos de votre db
+NEXTAUTH_SECRET=node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"  # A rentrer dans le terminal pour générer une clé
+
+
+# Mise à jour des branches
+git fetch origin
+
+
+# Installing Multer pour enregistrer les images uploadées par l'utilisateur en local
+npm install multer @types/multer
+npm install multer next-connect
+
+
+# PostgreSQL server start
+sudo service postgresql start

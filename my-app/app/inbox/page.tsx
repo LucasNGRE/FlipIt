@@ -20,7 +20,8 @@ const Inbox = () => {
       <div className="flex-grow bg-background border-b lg:border-r border-gray-300 overflow-y-auto">
         {/* Afficher le composant de chat seulement sur les écrans larges */}
         <div className="hidden lg:flex lg:flex-grow">
-          <ChatComponent />
+        <ChatComponent />
+
         </div>
       </div>
 

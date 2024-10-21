@@ -3,7 +3,7 @@ import React from 'react'
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Ajouter un article | FlipIt",
+  title: "Publier une annonce | FlipIt",
   description: "Un espace pour ajouter un article à vendre",
 };
 

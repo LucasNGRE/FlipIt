@@ -6,10 +6,15 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { SessionProvider } from "next-auth/react"; // Importer SessionProvider
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import Head from "next/head";
+import FooterBanner from "@/components/FooterBanner";
 import { Toaster } from 'sonner'
 
 const inter = Inter({ subsets: ["latin"] });
+
+export const metadata: Metadata = {
+  title: "FlipIt",
+  description: "Welcome home!",
+};
 
 export default function RootLayout({
   children,
@@ -24,15 +29,13 @@ export default function RootLayout({
             attribute="class"
             defaultTheme="system"
             enableSystem
-            disableTransitionOnChange
-          >
+            disableTransitionOnChange>
             <Toaster />
             <Header />
-            {/* Le main occupe l'espace restant entre le header et le footer */}
-            <main className="flex-grow bg-background">
-              {children}
-            </main>
-            {/* Footer reste en bas */}
+              <main className="flex-grow bg-background">
+                {children}
+              </main>
+            <FooterBanner />
             <Footer />
           </ThemeProvider>
         </SessionProvider>
