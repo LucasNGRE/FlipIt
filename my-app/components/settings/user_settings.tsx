@@ -169,43 +169,64 @@ const Setting = () => {
             </CardFooter>
           </Card>
         )
-      case 'Annonces':
-        return (
-          <Card>
-            <CardHeader>
-              <CardTitle>Mes Annonces</CardTitle>
+        case 'Annonces':
+          return (
+            <Card>
+              <CardHeader>
+                <CardTitle>Mes Annonces</CardTitle>
               <CardDescription>Gère tes annonces ici.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {loadingProducts ? (
-                <p>Chargement des annonces...</p>
-              ) : productsError ? (
-                <p>{productsError}</p>
-              ) : products.length > 0 ? (
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                  {products.map((product) => (
-                    <Card key={product.id} className="shadow-lg">
-                      <CardHeader>
-                        <CardTitle className="text-lg font-bold">{product.title}</CardTitle>
-                      </CardHeader>
-                      <CardContent>
+              </CardHeader>
+              <CardContent>
+                {loadingProducts ? (
+                  <p>Chargement des annonces...</p>
+                ) : productsError ? (
+                  <p>{productsError}</p>
+                ) : products.length > 0 ? (
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    {products.map((product) => (
+                      <Card key={product.id} className="shadow-lg">
+                        <CardHeader>
+                          <CardTitle className="text-lg font-bold">{product.title}</CardTitle>
+                        </CardHeader>
+                        <CardContent>
                         <img 
                           src={product.images[0].url || '/path/to/default-image.jpg'}
                           alt={product.images[0].altText || 'Product Image'}
                           className="w-full h-auto object-cover"
                         />
-                        <p className="text-gray-600 mb-2">{product.description}</p>
-                        <p className="text-xl font-semibold text-primary mb-4">Prix: {product.price} €</p>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              ) : (
-                <p>Aucune annonce trouvée.</p>
-              )}
-            </CardContent>
-          </Card>
-        );
+                          <p className="text-gray-600 mb-2">{product.description}</p>
+                          <p className="text-xl font-semibold text-primary mb-4">Prix: {product.price} €</p>
+                        </CardContent>
+                        <CardFooter className="flex justify-between">
+                          {/* Bouton Modifier */}
+                          <Button 
+                            variant="default" 
+                            className="mr-2" 
+                            onClick={() => handleEditProduct(product.id)}
+                          >
+                            Modifier
+                          </Button>
+                          
+                          {/* Bouton Supprimer */}
+                          <Button 
+                            variant="outline" 
+                            className="text-red-600" 
+                            onClick={() => handleDeleteProduct(product.id)}
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m-7 0a2 2 0 012-2h4a2 2 0 012 2m-8 0h8" />
+                            </svg>
+                          </Button>
+                        </CardFooter>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <p>Aucune annonce trouvée.</p>
+                )}
+              </CardContent>
+            </Card>
+          );
 
       case 'Transactions':
         return (
@@ -269,5 +290,6 @@ const Setting = () => {
     </div>
   )
 }
+
 
 export default Setting
