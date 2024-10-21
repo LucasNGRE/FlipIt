@@ -52,7 +52,7 @@ export default function SkateArticleCard({
   };
 
   return (
-    <div className="max-w-xs overflow-hidden rounded-lg border border-gray-300 bg-gray-100 text-card-foreground shadow-sm transition-all duration-300 hover:shadow-lg">
+    <div className="max-w-xs overflow-hidden rounded-lg border bg- text-card-foreground shadow-sm transition-all duration-300 hover:shadow-lg">
       <div className="aspect-square overflow-hidden">
         {images.length > 0 ? (
           <Link href={`/article/${id}`}>
@@ -74,7 +74,7 @@ export default function SkateArticleCard({
         </h3>
 
         <div className="flex items-center justify-between">
-          <p className="text-2xl font-bold text-primary">
+          <p className="text-2xl font-bold text-foreground">
             {price !== null ? `${price} €` : 'Prix non disponible'}
           </p>
         </div>

@@ -205,13 +205,55 @@ const CountUp = ({ end, duration = 2 }: CountUpProps) => {
   return <motion.span ref={nodeRef}>{rounded}</motion.span>
 }
 
+interface Product {
+  id: number;
+  title: string;
+  description: string;
+  price: number;
+  user: {
+    firstName: string;
+    image: string;
+  }
+  images: {
+    url: string;
+    altText: string;
+  }[];
+}
+
 export default function LandingPage() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { scrollYProgress } = useScroll()
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
     damping: 30,
     restDelta: 0.001
   })
+
+  useEffect(() => {
+    // Appel API pour récupérer les produits
+    const fetchProducts = async () => {
+      try {
+        const res = await fetch('/api/products');
+        if (!res.ok) {
+          throw new Error('Failed to fetch products');
+        }
+        const data = await res.json();
+        setProducts(data);
+      } catch (err: any) {
+        setError(err.message || 'Error fetching products');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -281,13 +323,13 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div>
               <div className="text-4xl font-bold mb-2">
-                <CountUp end={10000} />+
+                <CountUp end={620} />+
               </div>
               <p>Active Users</p>
             </div>
             <div>
               <div className="text-4xl font-bold mb-2">
-                <CountUp end={5000} />+
+                <CountUp end={4530} />+
               </div>
               <p>Products Listed</p>
             </div>
@@ -302,34 +344,40 @@ export default function LandingPage() {
       </section>
 
       {/* Popular Products Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Popular Products</h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <ProductCard image="/placeholder.svg?height=200&width=300" name="Pro Deck X1" price="$89.99" />
-            <ProductCard image="/placeholder.svg?height=200&width=300" name="Ultra Wheels" price="$49.99" />
-            <ProductCard image="/placeholder.svg?height=200&width=300" name="Safety Gear Set" price="$129.99" />
-            <ProductCard image="/placeholder.svg?height=200&width=300" name="Street Wear Hoodie" price="$59.99" />
-          </div>
-        </div>
-      </section>
+<section className="py-20">
+  <div className="container mx-auto px-4">
+    <h2 className="text-3xl font-bold text-center mb-12">Popular Products</h2>
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      {products.slice(0, 4).map((product) => (
+        <Link key={product.id} href={`/article/${product.id}`}>
+        <ProductCard
+          image={product.images[0]?.url || '/placeholder.svg?height=200&width=300'}
+          name={product.title}
+          price={`${product.price}€`} // Assuming `price` is a number
+        />
+      </Link>
+      ))}
+    </div>
+  </div>
+</section>
+
 
       {/* Testimonials Section */}
       <section className="py-20 bg-muted">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">What Our Community Says</h2>
+          <h2 className="text-3xl font-bold text-center mb-12">La Communité parle de FlipIt</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <TestimonialCard
-              quote="This marketplace has completely transformed how I shop for skating gear. The community aspect is unreal!"
-              author="Alex, Pro Skater"
+              quote="Le site est incroyable et me permet de vendre mes vieux articles de skate car je suis chauve et je n'ai plus l'âge"
+              author="Benoit Beti, Retraité"
             />
             <TestimonialCard
-              quote="I've discovered so many unique products and made great connections. It's more than just a marketplace."
-              author="Sam, Skate Enthusiast"
+              quote="FlipIt has completely transformed how I buy and sell gear. It's the best place for skaters!"
+              author="Tony Hawk, Pro Skater"
             />
             <TestimonialCard
-              quote="The pro-verified products give me confidence in my purchases. This platform is a game-changer!"
-              author="Jordan, Aspiring Skater"
+              quote="Les produits vérifiés par des pros me donnent confiance dans mes achats. Cette plateforme change la donne !"
+              author="Fabien.C, Skater en devenir"
             />
           </div>
         </div>
@@ -344,10 +392,10 @@ export default function LandingPage() {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl font-bold mb-6">Ready to Join the Ultimate Skater&apos;s Marketplace?</h2>
-            <p className="mb-8 text-lg">Sign up now and get exclusive access to deals, community events, and more!</p>
+            <h2 className="text-3xl font-bold mb-6">Envie d&apos;être le premier avertie ? </h2>
+            <p className="mb-8 text-lg">Inscrie toi à la Newsletter pour être le premier à voir notre sélection d&apos;articles</p>
             <form className="flex flex-col md:flex-row justify-center items-center gap-4 max-w-md mx-auto">
-              <Input type="email" placeholder="Enter your email" className="bg-white text-black" />
+              <Input type="email" placeholder="Entre ton email" className="bg-white text-black" />
               <Button variant="secondary" size="lg">
                 Sign Up
               </Button>
