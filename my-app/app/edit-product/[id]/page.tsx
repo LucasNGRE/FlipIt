@@ -16,6 +16,7 @@ interface Product {
   brand: string
   price: number
   description: string
+  size: string
   images: { url: string }[]
 }
 
@@ -29,6 +30,7 @@ export default function EditProductPage() {
   const [brand, setBrand] = useState('')
   const [price, setPrice] = useState(0)
   const [description, setDescription] = useState('')
+  const [size, setSize] = useState('') // Ajout de l'état pour la taille
   const [photos, setPhotos] = useState<(string | { url: string })[]>([])
   const [isDragging, setIsDragging] = useState(false)
 
@@ -45,6 +47,7 @@ export default function EditProductPage() {
         setBrand(data.brand)
         setPrice(data.price)
         setDescription(data.description)
+        setSize(data.size) // Initialisation de la taille
         setPhotos(data.images.map(image => image.url))
         setLoading(false)
       } catch (err) {
@@ -60,16 +63,17 @@ export default function EditProductPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     const updatedProduct = {
       id,
       title,
       brand,
       price,
       description,
+      size, // Ajout de la taille dans l'objet à envoyer
       images: photos.map(photo => (typeof photo === 'object' ? photo.url : photo)) // Assure-toi que chaque image est une chaîne de caractères
     };
-  
+
     try {
       const response = await fetch(`/api/items/${id}`, {
         method: 'PUT',
@@ -78,18 +82,17 @@ export default function EditProductPage() {
         },
         body: JSON.stringify(updatedProduct),
       });
-  
+
       if (!response.ok) {
         throw new Error('Failed to update product');
       }
-  
+
       router.push(`/article/${id}`);
     } catch (error) {
       console.error('Error in handleSubmit:', error);
       setError('Erreur lors de la mise à jour du produit');
     }
   };
-  
 
   const handleAddPhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -159,6 +162,16 @@ export default function EditProductPage() {
                   type="number"
                   value={price}
                   onChange={(e) => setPrice(parseFloat(e.target.value))}
+                  required
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="size">Taille</Label>
+                <Input
+                  id="size"
+                  value={size}
+                  onChange={(e) => setSize(e.target.value)} // Ajout du gestionnaire pour la taille
                   required
                 />
               </div>

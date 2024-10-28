@@ -28,7 +28,7 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
-    const { id, title, description, price, images } = await req.json();
+    const { id, title, description, price, images, size } = await req.json();
 
     console.log('Data received for update:', { id, title, description, price, images });
 
@@ -39,6 +39,7 @@ export async function PUT(req: NextRequest) {
         title,
         description,
         price,
+        size, // Ensure 'size' is included in the destructured object from req.json()
         images: {
           deleteMany: {}, // Supprimez les images existantes si nécessaire
           create: images.map((image: string) => ({ url: image })),
