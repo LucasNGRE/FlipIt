@@ -45,13 +45,13 @@ const Footer = () => {
         <div className="lg:flex-1 flex justify-center lg:justify-end">
           <div className="flex space-x-3 lg:space-x-4">
             <Link href="/contact" className="hover:scale-110 transition-transform duration-300 ease-out transform-gpu will-change-transform">
-              Contact
+              Nous contacter
             </Link>
-            <Link href="/about" className="hover:scale-110 transition-transform duration-300 ease-out transform-gpu will-change-transform">
-              About Us
+            <Link href="/landing-page" className="hover:scale-110 transition-transform duration-300 ease-out transform-gpu will-change-transform">
+              À propos
             </Link>
             <Link href="/privacy" className="hover:scale-110 transition-transform duration-300 ease-out transform-gpu will-change-transform">
-              Privacy Policy
+              Politique de confidentialité
             </Link>
           </div>
         </div>

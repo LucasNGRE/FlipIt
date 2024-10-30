@@ -383,6 +383,22 @@ export default function LandingPage() {
         </div>
       </section>
 
+    <section className="py-12 bg-gray-100">
+      <div className="container mx-auto px-6 text-center">
+        <h2 className="text-3xl font-bold mb-6">À propos des auteurs</h2>
+        <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-6">
+          <div className="p-6 rounded-lg shadow-lg bg-white">
+            <h3 className="text-xl font-semibold">Lucas NEGRE</h3>
+            <p className="text-gray-700">Etudiant à Holberton School de Toulouse</p>
+          </div>
+          <div className="p-6 rounded-lg shadow-lg bg-white">
+            <h3 className="text-xl font-semibold">Hadrien TAYAC</h3>
+            <p className="text-gray-700">Etudiant à Holberton School de Toulouse</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
       {/* CTA Section */}
       <section className="py-20 bg-primary text-white">
         <div className="container mx-auto px-4 text-center">
