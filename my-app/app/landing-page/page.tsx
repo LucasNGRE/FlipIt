@@ -5,7 +5,7 @@ import { useInView } from 'react-intersection-observer'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Instagram, Twitter, Facebook } from "lucide-react"
+import { Github, Linkedin } from "lucide-react";
 import Image from 'next/image'
 
 interface ParallaxVideoProps {
@@ -384,11 +384,12 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="py-12 bg-gray-100">
+      <section className="py-12 bg-background">
         <div className="container mx-auto px-6 text-center">
           <h2 className="text-3xl font-bold mb-6">À propos des auteurs</h2>
           <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-6">
-            <div className="p-6 rounded-lg shadow-lg bg-white">
+            {/* Auteur Lucas */}
+            <div className="p-6 rounded-lg shadow-lg bg-secondary">
               <div className="w-36 h-36 mx-auto mb-4">
                 <Image 
                   src="/uploads/Lucas.jpg" 
@@ -398,10 +399,19 @@ export default function LandingPage() {
                   className="rounded-full object-cover w-full h-full"
                 />
               </div>
-              <h3 className="text-xl font-semibold">Lucas NEGRE</h3>
-              <p className="text-gray-700">Étudiant à Holberton School de Toulouse</p>
+              <h3 className="text-xl font-semibold text-white">Lucas NEGRE</h3>
+              <p className="text-white/60">Étudiant à Holberton School de Toulouse</p>
+              <div className="flex justify-center space-x-4 mt-4">
+              <a href="https://github.com/LucasNGRE" target="_blank" rel="noopener noreferrer" className="text-white hover:text-white/50">
+                <Github className="w-6 h-6" />
+              </a>
+              <a href="https://www.linkedin.com/in/lucas-negre-954a77196/" target="_blank" rel="noopener noreferrer" className="text-white hover:text-white/50">
+                <Linkedin className="w-6 h-6" />
+              </a>
+              </div>
             </div>
-            <div className="p-6 rounded-lg shadow-lg bg-white">
+            {/* Auteur Hadrien */}
+            <div className="p-6 rounded-lg shadow-lg bg-secondary">
               <div className="w-36 h-36 mx-auto mb-4">
                 <Image 
                   src="/uploads/Hadri.jpg" 
@@ -411,10 +421,45 @@ export default function LandingPage() {
                   className="rounded-full object-cover w-full h-full"
                 />
               </div>
-              <h3 className="text-xl font-semibold">Hadrien TAYAC</h3>
-              <p className="text-gray-700">Étudiant à Holberton School de Toulouse</p>
+              <h3 className="text-xl font-semibold text-white">Hadrien TAYAC</h3>
+              <p className="text-white/60">Étudiant à Holberton School de Toulouse</p>
+              <div className="flex justify-center space-x-4 mt-4">
+                <a href="https://github.com/Iaskasan" target="_blank" rel="noopener noreferrer" className="text-white hover:text-white/50">
+                  <Github className="w-6 h-6" />
+                </a>
+                <a href="https://www.linkedin.com/in/hadrien-tayac-9423002b4/" target="_blank" rel="noopener noreferrer" className="text-white hover:text-white/50">
+                  <Linkedin className="w-6 h-6" />
+                </a>
+              </div>
             </div>
           </div>
+          {/* Section Motivation et Inspirations */}
+          <div className="mt-12 max-w-2xl mx-auto text-foreground">
+            <h3 
+              className="text-2xl font-semibold mb-4 animate-slide-up opacity-0 transition-opacity duration-700 delay-200"
+            >
+              Notre Motivation et Inspirations
+            </h3>
+            <p 
+              className="text-lg animate-fade-in opacity-0 transition-opacity duration-1000 delay-400"
+            >
+              FlipIt est né de notre passion pour le skateboard et de la volonté de créer une plateforme dédiée aux amateurs de skate en quête de matériel d&apos;occasion fiable. En ciblant ce marché de niche, nous souhaitons offrir un espace où chaque skateur peut trouver facilement des équipements de qualité à prix abordable. Ce projet de portfolio pour Holberton School a été l&apos;occasion parfaite pour transformer notre idée en une réalité concrète en utilisant des technologies modernes comme Next.js et Prisma. Vous pouvez en savoir plus sur FlipIt et le projet dans le repo Github disponible sur le lien ci-dessous.
+            </p>
+            
+            {/* Lien vers le projet GitHub */}
+            <div className="flex items-center justify-center mt-6">
+            <a 
+              href="https://github.com/LucasNGRE/FlipIt" // Remplacez "username" et "FlipIt" par votre lien GitHub
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-foreground hover:text-blue-500 transition-colors duration-200 flex items-center"
+            >
+              <Github className="w-8 h-8" />
+              <span className="ml-2 text-lg">Lien vers le repo GitHub du projet</span>
+            </a>
+          </div>
+          </div>
+
         </div>
       </section>
 
@@ -428,8 +473,8 @@ export default function LandingPage() {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl font-bold mb-6">Envie d&apos;être le premier avertie ? </h2>
-            <p className="mb-8 text-lg">Inscrie toi à la Newsletter pour être le premier à voir notre sélection d&apos;articles</p>
+            <h2 className="text-3xl font-bold mb-6">Envie d&apos;être le premier averti ? </h2>
+            <p className="mb-8 text-lg">Inscris-toi à la Newsletter pour être le premier à voir notre sélection d&apos;articles</p>
             <form className="flex flex-col md:flex-row justify-center items-center gap-4 max-w-md mx-auto">
               <Input type="email" placeholder="Entre ton email" className="bg-white text-black" />
               <Button variant="secondary" size="lg">
