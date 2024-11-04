@@ -20,6 +20,7 @@ import { useRouter } from 'next/navigation';
 
 const Header = () => {
   const { data: session, status } = useSession(); // Récupère la session
+  const router = useRouter(); // Initialize router
   const [userData, setUserData] = React.useState(null);
 
   useEffect(() => {
