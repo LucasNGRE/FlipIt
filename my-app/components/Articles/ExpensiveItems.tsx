@@ -22,7 +22,7 @@ export default function SkateArticleGrid() {
         const data = await response.json();
 
         // Filter articles that are priced under 20 euros
-        const filteredArticles = data.filter((article: any) => article.price < 20);
+        const filteredArticles = data.filter((article: any) => article.price >= 100);
 
         // Sort the filtered articles by updatedAt (newest first)
         const sortedArticles = filteredArticles.sort(
@@ -47,7 +47,7 @@ export default function SkateArticleGrid() {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h2 className="text-3xl font-bold mb-6">Moins de 20 euros !</h2>
+      <h2 className="text-3xl font-bold mb-6">100 euros et plus !</h2>
       
       {/* Keep everything inside the Carousel component */}
       <Carousel className="relative w-full overflow-hidden">

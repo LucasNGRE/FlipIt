@@ -2,6 +2,7 @@ import * as React from "react"
 import type { Metadata } from "next";
 import SkateArticleGrid from "@/components/Articles/ArticleGrid";
 import CheapItems from "@/components/Articles/CheapItems";
+import ExpensiveItems from "@/components/Articles/ExpensiveItems";
 import AutoSlidingBanner from '@/components/Banner';
 import FooterBanner from "@/components/FooterBanner";
 
@@ -20,6 +21,7 @@ export default function Home() {
       <AutoSlidingBanner image={bannerImages} />
       <SkateArticleGrid />
       <CheapItems />
+      <ExpensiveItems />
       <FooterBanner />
     </div>
   );
