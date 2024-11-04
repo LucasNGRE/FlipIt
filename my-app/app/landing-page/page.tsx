@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Instagram, Twitter, Facebook } from "lucide-react"
+import Image from 'next/image'
 
 interface ParallaxVideoProps {
   videoSrc: string;
@@ -383,21 +384,40 @@ export default function LandingPage() {
         </div>
       </section>
 
-    <section className="py-12 bg-gray-100">
-      <div className="container mx-auto px-6 text-center">
-        <h2 className="text-3xl font-bold mb-6">À propos des auteurs</h2>
-        <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-6">
-          <div className="p-6 rounded-lg shadow-lg bg-white">
-            <h3 className="text-xl font-semibold">Lucas NEGRE</h3>
-            <p className="text-gray-700">Etudiant à Holberton School de Toulouse</p>
-          </div>
-          <div className="p-6 rounded-lg shadow-lg bg-white">
-            <h3 className="text-xl font-semibold">Hadrien TAYAC</h3>
-            <p className="text-gray-700">Etudiant à Holberton School de Toulouse</p>
+      <section className="py-12 bg-gray-100">
+        <div className="container mx-auto px-6 text-center">
+          <h2 className="text-3xl font-bold mb-6">À propos des auteurs</h2>
+          <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-6">
+            <div className="p-6 rounded-lg shadow-lg bg-white">
+              <div className="w-36 h-36 mx-auto mb-4">
+                <Image 
+                  src="/uploads/Lucas.jpg" 
+                  alt="Lucas Negre" 
+                  width={150} 
+                  height={150} 
+                  className="rounded-full object-cover w-full h-full"
+                />
+              </div>
+              <h3 className="text-xl font-semibold">Lucas NEGRE</h3>
+              <p className="text-gray-700">Étudiant à Holberton School de Toulouse</p>
+            </div>
+            <div className="p-6 rounded-lg shadow-lg bg-white">
+              <div className="w-36 h-36 mx-auto mb-4">
+                <Image 
+                  src="/uploads/Hadri.jpg" 
+                  alt="Hadrien Tayac" 
+                  width={150} 
+                  height={150} 
+                  className="rounded-full object-cover w-full h-full"
+                />
+              </div>
+              <h3 className="text-xl font-semibold">Hadrien TAYAC</h3>
+              <p className="text-gray-700">Étudiant à Holberton School de Toulouse</p>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
 
       {/* CTA Section */}
       <section className="py-20 bg-primary text-white">
@@ -419,55 +439,6 @@ export default function LandingPage() {
           </motion.div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="bg-background py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="font-bold mb-4">About Us</h3>
-              <ul className="space-y-2">
-                <li><a href="#" className="hover:underline">Our Story</a></li>
-                <li><a href="#" className="hover:underline">Team</a></li>
-                <li><a href="#" className="hover:underline">Careers</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-bold mb-4">Support</h3>
-              <ul className="space-y-2">
-                <li><a href="#" className="hover:underline">FAQ</a></li>
-                <li><a href="#" className="hover:underline">Contact Us</a></li>
-                <li><a href="#" className="hover:underline">Shipping</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-bold mb-4">Legal</h3>
-              <ul className="space-y-2">
-                <li><a href="#" className="hover:underline">Terms of Service</a></li>
-                <li><a href="#" className="hover:underline">Privacy Policy</a></li>
-                <li><a href="#" className="hover:underline">Cookie Policy</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-bold mb-4">Connect</h3>
-              <div className="flex space-x-4">
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors duration-200">
-                  <Instagram className="h-6 w-6" />
-                </a>
-                <a href="#" className="text-muted-foreground  hover:text-primary transition-colors duration-200">
-                  <Twitter className="h-6 w-6" />
-                </a>
-                <a href="#" className="text-muted-foreground hover:text-primary transition-colors duration-200">
-                  <Facebook className="h-6 w-6" />
-                </a>
-              </div>
-            </div>
-          </div>
-          <div className="mt-8 pt-8 border-t text-center text-muted-foreground">
-            <p>&copy; 2024 FlipIt Marketplace. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
     </div>
   )
 }

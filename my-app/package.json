@@ -40,7 +40,7 @@
     "framer-motion": "^11.11.9",
     "lucide-react": "^0.438.0",
     "multer": "^1.4.5-lts.1",
-    "next": "^14.2.13",
+    "next": "^14.2.16",
     "next-auth": "^5.0.0-beta.22",
     "next-connect": "^1.0.0",
     "next-themes": "^0.3.0",
@@ -60,8 +60,8 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/formidable": "^3.4.5",
     "@types/multer": "^1.4.12",
-    "@types/node": "^20.16.11",
-    "@types/react": "^18",
+    "@types/node": "20.17.6",
+    "@types/react": "18.3.12",
     "@types/react-dom": "^18",
     "@types/uuid": "^10.0.0",
     "autoprefixer": "^10.4.20",
@@ -71,7 +71,7 @@
     "prisma": "^5.20.0",
     "tailwindcss": "^3.4.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.6.2"
+    "typescript": "5.6.3"
   },
   "prisma": {
     "schema": "./prisma/schema.prisma"
