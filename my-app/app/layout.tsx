@@ -1,15 +1,17 @@
 // "use client"
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Lora } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { SessionProvider } from "next-auth/react"; // Importer SessionProvider
+import { SessionProvider } from "next-auth/react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import FooterBanner from "@/components/FooterBanner";
-import { Toaster } from 'sonner'
+import { Toaster } from 'sonner';
 
-const inter = Inter({ subsets: ["latin"] });
+// Charger les polices Inter et Lora avec l'option `variable`
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const lora = Lora({ subsets: ["latin"], weight: ["400", "700"], variable: "--font-lora" });
 
 export const metadata: Metadata = {
   title: "FlipIt",
@@ -22,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="h-full">
+    <html lang="en" className={`${inter.variable} ${lora.variable} h-full`}>
       <body className="flex flex-col min-h-screen">
         <SessionProvider>
           <ThemeProvider
