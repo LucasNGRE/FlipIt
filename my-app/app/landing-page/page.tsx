@@ -265,7 +265,7 @@ export default function LandingPage() {
 
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        <ParallaxVideo videoSrc="/videos/skaters-montage.mp4" />
+        <ParallaxVideo videoSrc="/videos/lucas2.mp4" />
         <div className="relative z-10 text-center">
           <h1 className="text-5xl md:text-7xl font-extrabold mb-4 text-white drop-shadow-lg">
             <AnimatedText>Skate</AnimatedText>{' '}
