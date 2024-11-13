@@ -184,21 +184,20 @@ const Setting = () => {
                 ) : products.length > 0 ? (
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                     {products.map((product) => (
-                      <Card key={product.id} className="shadow-lg">
+                      <Card key={product.id} className="shadow-lg flex flex-col h-full">
                         <CardHeader>
                           <CardTitle className="text-lg font-bold">{product.title}</CardTitle>
                         </CardHeader>
-                        <CardContent>
-                        <img 
-                          src={product.images[0].url || '/path/to/default-image.jpg'}
-                          alt={product.images[0].altText || 'Product Image'}
-                          className="w-full h-auto object-cover"
-                        />
-                          <p className="text-gray-600 mb-2">{product.description}</p>
+                        <CardContent className="flex flex-col flex-grow">
+                          <img 
+                            src={product.images[0].url || '/path/to/default-image.jpg'}
+                            alt={product.images[0].altText || 'Product Image'}
+                            className="w-full h-48 object-cover" // Hauteur fixe ici
+                          />
+                          <p className="text-gray-600 mb-2 flex-grow">{product.description}</p>
                           <p className="text-xl font-semibold text-primary mb-4">Prix: {product.price} €</p>
                         </CardContent>
                         <CardFooter className="flex justify-between">
-                          {/* Bouton Modifier */}
                           <Button 
                             variant="default" 
                             className="mr-2" 
@@ -206,8 +205,6 @@ const Setting = () => {
                           >
                             Modifier
                           </Button>
-                          
-                          {/* Bouton Supprimer */}
                           <Button 
                             variant="outline" 
                             className="text-red-600" 

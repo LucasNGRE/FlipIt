@@ -219,7 +219,7 @@ export default function EditProductPage() {
                 {photos.map((photo, index) => (
                   <div key={index} className="relative group">
                     <img
-                      src={photo}
+                      src={typeof photo === 'string' ? photo : photo.url}
                       alt={`Product image ${index + 1}`}
                       className="w-full h-32 object-cover rounded-lg"
                     />
