@@ -79,9 +79,6 @@ export default function AddItem() {
       formDataToSend.append("description", formData.description || "");
       formData.photos.forEach((photo) => formDataToSend.append("photos", photo));
       
-
-
-
       const response = await fetch("/api/items", {
         method: "POST",
         body: formDataToSend,
