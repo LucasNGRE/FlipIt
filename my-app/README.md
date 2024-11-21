@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# FlipIt - Marketplace for Second-Hand Skateboarding Equipment 🛹
 
-## Getting Started
+FlipIt is a marketplace platform that connects sellers and buyers of second-hand skateboarding equipment. This project uses **Next.js** for the front-end, **Tailwind CSS** for responsive design, and **Prisma** for managing the PostgreSQL database.
 
-First, run the development server:
+## Prerequisites ⚙️
 
+Before you begin, ensure you have the following installed on your machine:
+
+- **Nextjs**
+- **Authjs**
+- **Typescript**
+- **Tailwindcss**
+- **PostgreSQL** 🗄️
+- **Prisma** 🔧
+
+## Installation 🛠️
+
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/yourusername/flipit.git
+   ```
+2. Install the dependencies:
+   ```bash
+   npm install
+   ```
+3. Configure your local database. Important: The database has not been migrated to the cloud. To test the app, you will need to use your own local PostgreSQL instance.
+
+- Create a PostgreSQL database locally.
+- Modify the .env file in the root directory to reflect your local database settings:
+   ```bash
+   DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/DATABASE_NAME"
+   ```
+   **Replace USER, PASSWORD, and DATABASE_NAME with your own credentials and database name.**
+4. Run the Prisma migrations to create the tables in your database:
+  ```bash
+   npx prisma migrate dev
+   ```
+5. Start the development server:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+   npm run dev
+   ```
+  **The application will be available at: http://localhost:3000 🌐.**
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Features ✨
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- User authentication (sign up, log in) 🔐
+- Marketplace for buying and selling second-hand skateboarding equipment 💸
+- Product management (add, edit, delete) 📦
+- Shopping cart and checkout process 🛒
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Changes Made 📝
 
-## Learn More
+- Local Database: We have not migrated the database to the cloud. Make sure to set up a local PostgreSQL database and modify the .env file accordingly.
+- Authentication System: Implemented authentication using NextAuth.js with Google and Credentials providers.
+- Dark Mode: Integrated shadcn for dark mode 🌙 and adjusted the design based on the theme.
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Authors ✍️
+- **Lucas NEGRE (https://github.com/LucasNGRE)** 🧑‍💻 - Full Stack dev
+- **Hadrien TAYAC (https://github.com/Iaskasan)** 👩‍💻 - Full Stack dev
+Feel free to reach out to us if you have any questions or suggestions!
