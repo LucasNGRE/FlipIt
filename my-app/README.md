@@ -1,5 +1,5 @@
 # FlipIt - Marketplace for Second-Hand Skateboarding Equipment 🛹
-
+![Project Screenshot](./public/flipit.png)
 FlipIt is a marketplace platform that connects sellers and buyers of second-hand skateboarding equipment. This project uses **Next.js** for the front-end, **Tailwind CSS** for responsive design, and **Prisma** for managing the PostgreSQL database.
 
 ## Prerequisites ⚙️
