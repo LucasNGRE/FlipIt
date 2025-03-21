@@ -3,12 +3,17 @@ import prisma from '@/lib/db';
 import { getSession } from '@/lib/getSession';
 import formidable from 'formidable';
 
-// Définir un type pour la gestion des fichiers
-export const config = {
-  api: {
-    bodyParser: false, // Désactiver le parsing du corps par défaut
-  },
-};
+// Nouvelle méthode pour définir le bodyParser et autres configurations
+export function generateConfig() {
+  return {
+    api: {
+      bodyParser: false, // Désactive le bodyParser comme avant
+    },
+  };
+}
+
+// Définir la configuration de l'API dans la route
+export const config = generateConfig();
 
 export async function GET() {
   try {
