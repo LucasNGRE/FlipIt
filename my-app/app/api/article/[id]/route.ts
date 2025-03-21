@@ -1,29 +1,33 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 
+// Cette fonction permet de récupérer un article (ou produit) par son ID
 export async function GET(request: Request, { params }: { params: { id: string } }) {
   const { id } = params;
 
-  // Log the received ID to check what ID is being passed in
+  // Log pour vérifier l'ID reçu
   console.log(`Received request to fetch product with ID: ${id}`);
 
   try {
-    // Fetch product from the database using Prisma
+    // Vérifier si l'ID est valide avant de l'utiliser dans la requête
+    if (isNaN(Number(id))) {
+      return NextResponse.json({ error: 'Invalid ID format' }, { status: 400 });
+    }
+
+    // Requête Prisma pour récupérer le produit
     const product = await prisma.product.findUnique({
-      where: { id: Number(id) }, // Ensure the ID type matches your schema
-      include: { images: true }, // Optionally include related data (e.g., images)
+      where: { id: Number(id) },
+      include: { images: true },
     });
 
-    // Log the query result, whether it's found or not
     if (!product) {
       console.log(`Product with ID ${id} not found.`);
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
 
-    console.log('Product found:', product); // Log the found product details
-    return NextResponse.json(product); // Return the product data as JSON
+    console.log('Product found:', product);
+    return NextResponse.json(product);
   } catch (error) {
-    // Log any errors that occur during the database query
     console.error(`Error fetching product with ID ${id}:`, error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
