@@ -1,20 +1,15 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 import { getSession } from '@/lib/getSession';
-import formidable from 'formidable';
 
-// Nouvelle méthode pour définir le bodyParser et autres configurations
-export function generateConfig() {
-  return {
-    api: {
-      bodyParser: false, // Désactive le bodyParser comme avant
-    },
-  };
-}
+// Désactive le bodyParser pour cette route API
+export const config = {
+  api: {
+    bodyParser: false,  // Désactiver le body parser pour cette API
+  },
+};
 
-// Définir la configuration de l'API dans la route
-export const config = generateConfig();
-
+// Fonction GET pour récupérer les informations de l'utilisateur
 export async function GET() {
   try {
     const session = await getSession();
@@ -38,7 +33,7 @@ export async function GET() {
     }
 
     // Renvoyer un tableau contenant l'utilisateur
-    return NextResponse.json([user]); // Modifié pour renvoyer un tableau
+    return NextResponse.json([user]);
   } catch (error) {
     return NextResponse.json({ error: 'Error fetching user data' }, { status: 500 });
   }
