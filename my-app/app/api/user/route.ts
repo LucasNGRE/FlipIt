@@ -1,11 +1,12 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 import { getSession } from '@/lib/getSession';
+import formidable from 'formidable';
 
-// Désactive le bodyParser pour cette route API
+// Cette fonction est utilisée pour désactiver le bodyParser pour cette route API
 export const config = {
   api: {
-    bodyParser: false,  // Désactiver le body parser pour cette API
+    bodyParser: false, // Désactive le bodyParser pour cette API
   },
 };
 
@@ -32,7 +33,6 @@ export async function GET() {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Renvoyer un tableau contenant l'utilisateur
     return NextResponse.json([user]);
   } catch (error) {
     return NextResponse.json({ error: 'Error fetching user data' }, { status: 500 });
@@ -55,7 +55,6 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: 'First name and last name are required' }, { status: 400 });
     }
 
-    // Mettre à jour les informations de l'utilisateur
     const updatedUser = await prisma.user.update({
       where: { email: session.user.email },
       data: {
@@ -79,7 +78,6 @@ export async function DELETE() {
       return NextResponse.json({ error: 'User not authenticated' }, { status: 401 });
     }
 
-    // Supprimer l'utilisateur
     await prisma.user.delete({ where: { email: session.user.email } });
 
     return NextResponse.json({ message: 'User deleted' });
