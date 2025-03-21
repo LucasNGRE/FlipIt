@@ -10,8 +10,8 @@ export async function GET(request: Request, { params }: { params: { id: string }
 
   try {
     // Vérifier si l'ID est valide avant de l'utiliser dans la requête
-    if (isNaN(Number(id))) {
-      return NextResponse.json({ error: 'Invalid ID format' }, { status: 400 });
+    if (!id || isNaN(Number(id))) {
+      return NextResponse.json({ error: 'Invalid or missing ID' }, { status: 400 });
     }
 
     // Requête Prisma pour récupérer le produit
