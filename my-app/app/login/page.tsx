@@ -1,5 +1,5 @@
 "use client";
-import { Suspense } from 'react';
+import { Suspense } from 'react';  // Importer Suspense de React
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { signIn } from 'next-auth/react';
@@ -12,7 +12,7 @@ import { toast } from 'sonner';
 const Login = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') || '/';
+  const callbackUrl = searchParams.get('callbackUrl') || '/'; // Get callback URL from search params
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -22,14 +22,17 @@ const Login = () => {
       redirect: false,
       email,
       password,
-      callbackUrl,
+      callbackUrl, // Utilisation de callbackUrl
     });
-
+  
     if (response?.error) {
-      toast.error(response.error || "Ton mot de passe ou ton email est incorrecte");
+      toast.error("Ton mot de passe ou ton email est incorrecte");
     } else if (response?.url) {
-      window.location.replace(response.url);
+      // Si redirection réussie
+      window.location.replace(response.url); // Redirection vers le callbackUrl
     }
+  
+
   };
 
   return (

@@ -35,35 +35,25 @@ const register = async (formData: FormData) => {
     throw new Error("Please fill all fields");
   }
 
-  try {
-    // Check if the user already exists
-    const existingUser = await prisma.user.findUnique({
-      where: { email },
-    });
+  // Check if the user already exists
+  const existingUser = await prisma.user.findUnique({
+    where: { email },
+  });
+  if (existingUser) throw new Error("User already exists");
 
-    if (existingUser) {
-      throw new Error("User already exists");
-    }
+  const hashedPassword = await hash(password, 12);
 
-    const hashedPassword = await hash(password, 12);
-    console.log("Creating user with data:", { firstName, lastName, email, hashedPassword });
-
-    await prisma.user.create({
-      data: {
-        firstName,
-        lastName,
-        email,
-        password: hashedPassword,
-      },
-    });
-    console.log("User created successfully 🥂");
-    return { success: true, message: "Registration successful!" };
-  } catch (error) {
-    console.error("Error during registration:", error);
-    return { success: false, message: (error instanceof Error ? error.message : "An error occurred during registration") };
-  }
+  await prisma.user.create({
+    data: {
+      firstName,
+      lastName,
+      email,
+      password: hashedPassword,
+    },
+  });
+  console.log(`User created successfully 🥂`);
+  redirect("/login");
 };
-
 
 const fetchAllUsers = async () => {
   const users = await prisma.user.findMany();
