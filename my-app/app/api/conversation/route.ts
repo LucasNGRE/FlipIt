@@ -1,29 +1,35 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import prisma from '@/lib/db'; // Assure-toi d'avoir un fichier lib/prisma.ts
+import { NextResponse } from 'next/server';  // Utilise NextResponse pour la réponse
+import prisma from '@/lib/db';  // Assure-toi que le chemin d'importation est correct
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === 'POST') {
-    const { userIds } = req.body;
+// Fonction POST pour créer une conversation
+export async function POST(req: Request) {
+  const { userIds } = await req.json();  // Récupère les données du corps de la requête
 
-    try {
-      const conversation = await prisma.conversation.create({
-        data: {
-          participants: {
-            connect: userIds.map((id: number) => ({ id })),
-          },
+  try {
+    const conversation = await prisma.conversation.create({
+      data: {
+        participants: {
+          connect: userIds.map((id: number) => ({ id })),
         },
-        include: {
-          participants: true,
-          messages: true,
-        },
-      });
+      },
+      include: {
+        participants: true,
+        messages: true,
+      },
+    });
 
-      res.status(200).json(conversation);
-    } catch (error) {
-      res.status(500).json({ error: 'Erreur lors de la création de la conversation' });
-    }
-  } else {
-    res.setHeader('Allow', ['POST']);
-    res.status(405).end(`Méthode ${req.method} non autorisée`);
+    return NextResponse.json(conversation);  // Renvoie la réponse sous forme de JSON
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Erreur lors de la création de la conversation' },
+      { status: 500 }
+    );
   }
 }
+
+// Si tu souhaites autoriser d'autres méthodes comme GET, tu peux les définir ici
+// Exemple pour GET :
+/* export async function GET() {
+  // Logique pour gérer la méthode GET ici
+  return NextResponse.json({ message: 'GET request received' });
+} */
