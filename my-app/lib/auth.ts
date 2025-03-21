@@ -38,12 +38,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           });
 
           if (!user || !user.password) {
+            console.error("Utilisateur non trouvé ou mot de passe manquant");
             throw new Error("Invalid email or password");
           }
 
           const isMatched = await compare(password, user.password);
 
           if (!isMatched) {
+            console.error("Mot de passe incorrect pour l'utilisateur", email);
             throw new Error("Password did not match");
           }
 
@@ -54,6 +56,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             lastName: user.lastName,
           };
         } catch (error) {
+          console.error("Authentication failed", error);
           throw new Error("Authentication failed");
         }
       },
@@ -71,13 +74,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             return false; // Échec de la connexion
           }
 
-          // Vérifiez si l'utilisateur existe déjà
           const existingUser = await prisma.user.findUnique({
             where: { email },
           });
 
           if (!existingUser) {
-            // Créez un nouvel utilisateur sans mot de passe
             await prisma.user.create({
               data: {
                 email,
@@ -89,15 +90,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             });
           }
 
-          return true; // Connexion réussie
+          return true;
         } catch (error) {
           console.error("Error while creating user:", error);
-          return false; // Connexion échouée
+          return false;
         }
       }
 
       if (account?.provider === "credentials") {
-        return true; // Connexion réussie pour les credentials (géré ailleurs dans authorize)
+        return true; // Connexion réussie pour les credentials
       }
 
       return false; // Connexion échouée pour les autres fournisseurs
@@ -111,7 +112,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
     async session({ session, token }) {
       if (session.user && token.sub) {
-        session.user.id = token.sub; // Ajoute l'ID utilisateur dans la session
+        session.user.id = token.sub;
       }
       return session;
     },
