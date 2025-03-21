@@ -1,4 +1,5 @@
 "use client";
+import { Suspense } from 'react';  // Importer Suspense de React
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { signIn } from 'next-auth/react';
@@ -8,7 +9,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
-export default function Login() {
+const Login = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/'; // Get callback URL from search params
@@ -72,5 +73,14 @@ export default function Login() {
         </p>
       </div>
     </div>
+  );
+};
+
+// Enveloppez le composant Login dans Suspense pour résoudre l'erreur
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Login />
+    </Suspense>
   );
 }

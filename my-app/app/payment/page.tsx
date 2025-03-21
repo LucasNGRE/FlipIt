@@ -1,10 +1,12 @@
 "use client";
 
 import React, { useState } from 'react';
+import { Suspense } from 'react';  // Importer Suspense de React
 import { useRouter, useSearchParams } from 'next/navigation';
 import PaymentForm from '@/components/payment/payment-form';
 import ShippingForm from '@/components/payment/Delivery-form';
 
+// Fonction CheckoutPage
 const CheckoutPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -45,4 +47,11 @@ const CheckoutPage = () => {
   );
 };
 
-export default CheckoutPage;
+// Envelopper CheckoutPage dans Suspense pour éviter l'erreur
+export default function CheckoutPageWrapper() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}> {/* Affiche "Loading..." pendant le chargement */}
+      <CheckoutPage />
+    </Suspense>
+  );
+}
