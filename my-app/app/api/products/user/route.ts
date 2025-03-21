@@ -3,6 +3,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db'; // Votre instance Prisma
 import { getSession } from '@/lib/getSession'; // Importez votre fonction de récupération de session
 
+// Cette ligne permet d'éviter la génération statique et de traiter la route dynamiquement
+export const dynamic = 'force-dynamic'; // Indique que cette route est dynamique
+
 export async function GET(req: NextRequest) {
   try {
     // Récupérer la session de l'utilisateur connecté
@@ -16,7 +19,7 @@ export async function GET(req: NextRequest) {
     // Récupérer les produits de l'utilisateur connecté
     const products = await prisma.product.findMany({
       where: {
-        userId: Number(session.user.id), // Use the logged-in user's ID
+        userId: Number(session.user.id), // Utilisez l'ID de l'utilisateur connecté
       },
       include: {
         user: {
@@ -25,7 +28,7 @@ export async function GET(req: NextRequest) {
             image: true,
           },
         },
-        images: { // Include images in the query
+        images: { // Inclure les images dans la requête
           select: {
             url: true,
             altText: true,
@@ -33,15 +36,16 @@ export async function GET(req: NextRequest) {
         },
       },
     });
-    // Vérifiez si l'utilisateur a des annonces
+
+    // Vérifiez si l'utilisateur a des produits
     if (!products.length) {
       return NextResponse.json({ error: 'Aucune annonce trouvée pour cet utilisateur' }, { status: 404 });
     }
 
-    // Retourner les annonces de l'utilisateur
+    // Retourner les produits de l'utilisateur
     return NextResponse.json(products, { status: 200 });
   } catch (error) {
-    console.error('Erreur lors de la récupération des annonces de l’utilisateur:', error);
-    return NextResponse.json({ error: 'Échec de la récupération des annonces de l’utilisateur' }, { status: 500 });
+    console.error('Erreur lors de la récupération des produits de l’utilisateur:', error);
+    return NextResponse.json({ error: 'Échec de la récupération des produits de l’utilisateur' }, { status: 500 });
   }
 }
