@@ -1,8 +1,0 @@
-{
-    "functions": {
-      "api/*": {
-        "runtime": "nodejs20"
-      }
-    }
-  }
-  
