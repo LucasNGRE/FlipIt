@@ -134,7 +134,7 @@ const Register = () => {
         </p>
 
         {/* Submit button for registration */}
-        <Button type="submit" className="ml-auto block">S'enregistrer &rarr;</Button>
+        <Button type="submit" className="ml-auto block">S&apos;enregistrer &rarr;</Button>
       </form>
     </div>
   );
