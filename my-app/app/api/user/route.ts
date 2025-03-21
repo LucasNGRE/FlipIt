@@ -3,14 +3,9 @@ import prisma from '@/lib/db';
 import { getSession } from '@/lib/getSession';
 import formidable from 'formidable';
 
-// Cette fonction est utilisée pour désactiver le bodyParser pour cette route API
-export const config = {
-  api: {
-    bodyParser: false, // Désactive le bodyParser pour cette API
-  },
-};
+// Désactivation du bodyParser pour cette route API, via les configurations de segment
+export const runtime = 'edge'; // Définir le runtime pour utiliser la nouvelle configuration
 
-// Fonction GET pour récupérer les informations de l'utilisateur
 export async function GET() {
   try {
     const session = await getSession();
@@ -50,7 +45,6 @@ export async function PUT(request: Request) {
 
     const { firstName, lastName } = await request.json();
 
-    // Validation des données
     if (!firstName || !lastName) {
       return NextResponse.json({ error: 'First name and last name are required' }, { status: 400 });
     }
