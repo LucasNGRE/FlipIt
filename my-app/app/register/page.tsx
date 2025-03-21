@@ -37,7 +37,7 @@ const Register = () => {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     try {
       const formDataToSend = new FormData();
       formDataToSend.append("username", formData.username);
@@ -46,21 +46,22 @@ const Register = () => {
       formDataToSend.append("email", formData.email);
       formDataToSend.append("password", formData.password);
       formDataToSend.append("callbackUrl", callbackUrl);
-
-      const response: RegisterResponse = await register(formDataToSend);
-
+  
+      // Envoi des données au serveur pour l'enregistrement
+      const response = await register(formDataToSend);
+  
       if (response.success) {
-        toast.success("Registration successful");
-        router.push(callbackUrl); // Redirect on success
-      } else if (response.emailExists) {
-        toast.error("Email already in use.");
+        toast.success(response.message);
+        router.push(callbackUrl); // Redirection après succès
       } else {
-        toast.error(response.message || "Registration failed. Please try again.");
+        toast.error(response.message); // Affichage du message d'erreur
       }
     } catch (error) {
+      console.error("Registration error:", error);
       toast.error("An error occurred during registration.");
     }
   };
+  
 
   return (
     <div className="relative mt-10 max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white border border-[#121212] dark:bg-black">
