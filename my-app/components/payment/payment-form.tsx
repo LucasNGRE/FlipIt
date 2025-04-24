@@ -39,34 +39,34 @@ export default function PaymentForm({ amount = 50, currency = 'EUR', productId =
     return /^\d{3}$/.test(cvv)
   }
 
-  const handleDeleteProduct = async (productId: number) => {
-    // Vérification de l'ID du produit
-    if (!productId || isNaN(productId)) {
-      console.error('ID du produit invalide:', productId);
-      return;
-    }
+  // const handleDeleteProduct = async (productId: number) => {
+  //   // Vérification de l'ID du produit
+  //   if (!productId || isNaN(productId)) {
+  //     console.error('ID du produit invalide:', productId);
+  //     return;
+  //   }
     
-    try {
-      // Suppression fictive du produit via une API
-      const response = await fetch(`/api/items/${productId}`, {
-        method: 'DELETE',
-      });
+  //   try {
+  //     // Suppression fictive du produit via une API
+  //     const response = await fetch(`/api/items/${productId}`, {
+  //       method: 'DELETE',
+  //     });
   
-      console.log('Réponse de l\'API:', response); // Log de la réponse de l'API
+  //     console.log('Réponse de l\'API:', response); // Log de la réponse de l'API
   
-      if (!response.ok) {
-        const errorData = await response.json(); // Récupérer le message d'erreur
-        console.error('Erreur lors de la suppression du produit:', errorData); // Log des erreurs
-        throw new Error('Erreur lors de la suppression du produit.');
-      }
+  //     if (!response.ok) {
+  //       const errorData = await response.json(); // Récupérer le message d'erreur
+  //       console.error('Erreur lors de la suppression du produit:', errorData); // Log des erreurs
+  //       throw new Error('Erreur lors de la suppression du produit.');
+  //     }
       
-      const data = await response.json(); // Récupération des données de la réponse
-      console.log('Données de la réponse:', data); // Log des données retournées par l'API
-      console.log('Produit supprimé avec succès.');
-    } catch (error) {
-      console.error('Erreur capturée:', error);
-    }
-  };
+  //     const data = await response.json(); // Récupération des données de la réponse
+  //     console.log('Données de la réponse:', data); // Log des données retournées par l'API
+  //     console.log('Produit supprimé avec succès.');
+  //   } catch (error) {
+  //     console.error('Erreur capturée:', error);
+  //   }
+  // };
   
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -89,8 +89,8 @@ export default function PaymentForm({ amount = 50, currency = 'EUR', productId =
     setError('')
     console.log('Traitement du paiement...')
 
-    // Simulation d'un paiement réussi et suppression du produit
-    await handleDeleteProduct(productId)
+    // // Simulation d'un paiement réussi et suppression du produit
+    // await handleDeleteProduct(productId)
 
     // Redirection vers une page de remerciement
     router.push('/thank-you')
