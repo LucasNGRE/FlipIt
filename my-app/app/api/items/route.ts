@@ -16,6 +16,7 @@ export async function POST(req: NextRequest) {
     const price = parseFloat(formData.get('price') as string);
     const size = formData.get('size') as string;
     const condition = formData.get('condition') as string;
+    const category = formData.get('category') as string;
     const description = formData.get('description') as string;
     const photos = formData.getAll('photos') as File[];
 
@@ -37,6 +38,7 @@ export async function POST(req: NextRequest) {
       price,
       size,
       condition: condition as any,
+      category: category as any,
       description,
       userId: Number(session.user.id),
       images: {

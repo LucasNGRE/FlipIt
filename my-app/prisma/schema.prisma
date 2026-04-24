@@ -16,6 +16,7 @@ model User {
   password       String?
   emailVerified  DateTime?
   image          String?
+  bio            String?
   authProviderId String?
   
   // Relations
@@ -28,6 +29,7 @@ model User {
   
   // Conversations où l'utilisateur est un participant
   conversations       Conversation[]  @relation("UserConversations")
+  conversationReads   ConversationRead[]
 
   // Messages envoyés par l'utilisateur (relation corrigée)
   sentMessages        Message[]       @relation("SentMessages")
@@ -43,16 +45,25 @@ model User {
 
 model Conversation {
   id           Int        @id @default(autoincrement())
-  
-  // Participants à la conversation
-  participants User[]     @relation("UserConversations")
-  
-  // Messages envoyés dans cette conversation
-  messages     Message[]  @relation("ConversationMessages")
-  
-  // Timestamps
+  productId    Int?
+
+  participants User[]              @relation("UserConversations")
+  messages     Message[]           @relation("ConversationMessages")
+  reads        ConversationRead[]
+
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
+}
+
+model ConversationRead {
+  userId         Int
+  conversationId Int
+  lastReadAt     DateTime @default(now())
+
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@id([userId, conversationId])
 }
 
 model Message {
@@ -77,6 +88,7 @@ model Product {
   description String?
   price       Decimal          @db.Decimal(10, 2)
   condition   Condition        @default(Neuf)
+  category    Category?
   brand       String?
   size        String?
 
@@ -183,6 +195,15 @@ enum Condition {
   Bon_etat
   Moyen_etat
   Mauvais_etat
+}
+
+enum Category {
+  Deck
+  Truck
+  Roue
+  Chaussure
+  Vetement
+  Accessoire
 }
 
 enum OfferStatus {

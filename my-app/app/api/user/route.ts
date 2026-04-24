@@ -16,6 +16,7 @@ export async function GET() {
         firstName: true,
         lastName: true,
         email: true,
+        bio: true,
       },
     });
 
@@ -38,7 +39,7 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: 'User not authenticated' }, { status: 401 });
     }
 
-    const { firstName, lastName } = await request.json();
+    const { firstName, lastName, bio } = await request.json();
 
     if (!firstName || !lastName) {
       return NextResponse.json({ error: 'First name and last name are required' }, { status: 400 });
@@ -46,10 +47,7 @@ export async function PUT(request: Request) {
 
     const updatedUser = await prisma.user.update({
       where: { email: session.user.email },
-      data: {
-        firstName,
-        lastName,
-      },
+      data: { firstName, lastName, bio: bio ?? null },
     });
 
     return NextResponse.json(updatedUser);

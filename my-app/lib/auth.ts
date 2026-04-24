@@ -22,41 +22,30 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const email = credentials?.email as string | undefined;
         const password = credentials?.password as string | undefined;
 
-        if (!email || !password) {
-          throw new Error("Please provide both email & password");
-        }
+        if (!email || !password) return null;
 
-        try {
-          const user = await prisma.user.findUnique({
-            where: { email },
-            select: {
-              id: true,
-              email: true,
-              firstName: true,
-              lastName: true,
-              password: true,
-            },
-          });
+        const user = await prisma.user.findUnique({
+          where: { email },
+          select: {
+            id: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+            password: true,
+          },
+        });
 
-          if (!user || !user.password) {
-            throw new Error("Invalid email or password");
-          }
+        if (!user || !user.password) return null;
 
-          const isMatched = await compare(password, user.password);
+        const isMatched = await compare(password, user.password);
+        if (!isMatched) return null;
 
-          if (!isMatched) {
-            throw new Error("Password did not match");
-          }
-
-          return {
-            id: user.id.toString(),
-            email: user.email,
-            firstName: user.firstName,
-            lastName: user.lastName,
-          };
-        } catch (error) {
-          throw new Error("Authentication failed");
-        }
+        return {
+          id: user.id.toString(),
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+        };
       },
     }),
   ],

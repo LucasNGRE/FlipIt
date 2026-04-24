@@ -1,68 +1,52 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import SkateArticleCard from "./ArticleCard";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselPrevious,
-  CarouselNext,
-} from "@/components/ui/homepage-carousel"; // Adjust the import path if needed
+'use client'
 
-export default function SkateArticleGrid() {
-  const [articles, setArticles] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+import React, { useEffect, useState } from 'react'
+import SkateArticleCard from './ArticleCard'
+
+export default function ExpensiveItems() {
+  const [articles, setArticles] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const fetchArticles = async () => {
-      try {
-        const response = await fetch("/api/products"); // Fetch from the public articles API
-        if (!response.ok) throw new Error("Failed to fetch articles");
-        const data = await response.json();
+    fetch('/api/products')
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then(data => {
+        const filtered = data
+          .filter((a: any) => a.price >= 100)
+          .sort((a: any, b: any) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+        setArticles(filtered)
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [])
 
-        // Filter articles that are priced under 20 euros
-        const filteredArticles = data.filter((article: any) => article.price >= 100);
-
-        // Sort the filtered articles by updatedAt (newest first)
-        const sortedArticles = filteredArticles.sort(
-          (a: any, b: any) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-        );
-
-        setArticles(sortedArticles);
-      } catch (error) {
-        console.error("Error fetching articles:", error);
-        setError("Could not load articles.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchArticles();
-  }, []);
-
-  if (error) {
-    return <p>{error}</p>;
-  }
+  if (!loading && articles.length === 0) return null
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h2 className="text-3xl font-bold mb-6">100 euros et plus !</h2>
-      
-      {/* Keep everything inside the Carousel component */}
-      <Carousel className="relative w-full overflow-hidden">
-        <CarouselPrevious className="absolute left-2 top-1/2 transform -translate-y-1/2 z-10" />
-        
-        <CarouselContent className="flex"> {/* Ensure items are aligned horizontally */}
-          {articles.map((product) => (
-            <CarouselItem key={product.id} className="min-w-[25%] p-4"> {/* Ensure 4 items per view */}
-              <SkateArticleCard {...product} user={product.user} />
-            </CarouselItem>
+    <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 pb-20">
+      <div className="flex items-end justify-between mb-8">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-widest text-brand mb-1">Premium</p>
+          <h2 className="font-display text-3xl font-bold">100 € et plus</h2>
+        </div>
+        <a href="/?min=100" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors duration-150">
+          Voir tout →
+        </a>
+      </div>
+
+      {loading ? (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="rounded-xl bg-muted animate-pulse aspect-[4/6]" />
           ))}
-        </CarouselContent>
-        
-        <CarouselNext className="absolute right-2 top-1/2 transform -translate-y-1/2 z-10" />
-      </Carousel>
-    </div>
-  );
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {articles.map(product => (
+            <SkateArticleCard key={product.id} {...product} user={product.user} />
+          ))}
+        </div>
+      )}
+    </section>
+  )
 }

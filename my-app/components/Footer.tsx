@@ -1,63 +1,107 @@
-// Example Footer with dynamic banner
-'use client';
+import Link from 'next/link'
+import { GitBranch, Mail } from 'lucide-react'
 
-import React from 'react';
-import Link from 'next/link';
-import { useTheme } from 'next-themes';
-import { Facebook, Instagram, Twitter } from 'lucide-react';
+const links = {
+  categories: [
+    { label: 'Decks',      href: '/?cat=Deck' },
+    { label: 'Trucks',     href: '/?cat=Truck' },
+    { label: 'Roues',      href: '/?cat=Roue' },
+    { label: 'Chaussures', href: '/?cat=Chaussure' },
+    { label: 'Vêtements',  href: '/?cat=Vetement' },
+    { label: 'Accessoires',href: '/?cat=Accessoire' },
+  ],
+  infos: [
+    { label: 'À propos',        href: '/about' },
+    { label: 'Contact',         href: '/contact' },
+    { label: 'Confidentialité', href: '/privacy' },
+  ],
+}
 
-const Footer = () => {
-  const { theme } = useTheme();
-
-  // Define banner colors based on the current theme
-  const bannerStyle = {
-    backgroundColor: theme === 'dark' ? '#9ea09d' : '#000000', // Dark banner color
-    height: '1px',
-    width: '100%',
-  };
-
+export default function Footer() {
   return (
-    <>
-    {/* <div style={bannerStyle}></div> */}
-      <footer className="w-full py-2 lg:py-4 flex flex-col lg:flex-row items-center justify-between bg-background text-foreground"> 
-        <div className="mb-4 lg:mb-0 lg:flex-1 flex justify-center lg:justify-start">
-          <span className="text-xl lg:text-2xl font-extrabold tracking-wider">
-            <Link href="/" className="hover:scale-110 transition-transform duration-300 ease-out transform-gpu will-change-transform">
-              FlipIt
-            </Link>
-          </span>
-        </div>
+    <footer className="border-t border-border bg-background">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
 
-        <div className="lg:flex-1 flex justify-center">
-          <div className="flex space-x-3 lg:space-x-4">
-            <Link href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform duration-300 ease-out transform-gpu will-change-transform">
-              <Facebook className='w-5 h-5 lg:w-6 lg:h-6' />
+          {/* Brand */}
+          <div className="col-span-2 md:col-span-1">
+            <Link href="/" className="inline-block mb-3">
+              <span className="font-display text-xl font-bold tracking-tight">
+                Flip<span className="text-brand">It</span>
+              </span>
             </Link>
-            <Link href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform duration-300 ease-out transform-gpu will-change-transform">
-              <Twitter className='w-5 h-5 lg:w-6 lg:h-6' />
-            </Link>
-            <Link href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-transform duration-300 ease-out transform-gpu will-change-transform">
-              <Instagram className='w-5 h-5 lg:w-6 lg:h-6' />
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              La marketplace du skate d'occasion entre passionnés. Achète, vends, ride.
+            </p>
+            <div className="flex items-center gap-3 mt-4">
+              <a
+                href="mailto:lucas12negre@gmail.com"
+                aria-label="Email"
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-border hover:border-brand hover:text-brand transition-colors duration-150"
+              >
+                <Mail className="h-4 w-4" />
+              </a>
+              <a
+                href="https://github.com/LucasNGRE/FlipIt"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="GitHub"
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-border hover:border-brand hover:text-brand transition-colors duration-150"
+              >
+                <GitBranch className="h-4 w-4" />
+              </a>
+            </div>
+          </div>
+
+          {/* Catégories */}
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-brand mb-4">Catégories</p>
+            <ul className="space-y-2.5">
+              {links.categories.map(l => (
+                <li key={l.href}>
+                  <Link href={l.href} className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-150">
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Infos */}
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-brand mb-4">Informations</p>
+            <ul className="space-y-2.5">
+              {links.infos.map(l => (
+                <li key={l.href}>
+                  <Link href={l.href} className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-150">
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* CTA */}
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-brand mb-4">Vendre</p>
+            <p className="text-sm text-muted-foreground mb-4 leading-relaxed">
+              Dépose une annonce en moins de 2 minutes.
+            </p>
+            <Link
+              href="/items/add-item"
+              className="inline-flex items-center rounded-xl bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 transition-colors duration-200"
+            >
+              Publier une annonce
             </Link>
           </div>
         </div>
 
-        <div className="lg:flex-1 flex justify-center lg:justify-end">
-          <div className="flex space-x-3 lg:space-x-4">
-            <Link href="/contact" className="hover:scale-110 transition-transform duration-300 ease-out transform-gpu will-change-transform">
-              Nous contacter
-            </Link>
-            <Link href="/landing-page" className="hover:scale-110 transition-transform duration-300 ease-out transform-gpu will-change-transform">
-              À propos
-            </Link>
-            <Link href="/privacy" className="hover:scale-110 transition-transform duration-300 ease-out transform-gpu will-change-transform">
-              Politique de confidentialité
-            </Link>
-          </div>
+        {/* Bottom bar */}
+        <div className="border-t border-border pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
+          <p>© {new Date().getFullYear()} FlipIt. Tous droits réservés.</p>
+          <p>Fait par des skateurs, pour des skateurs.</p>
         </div>
-      </footer>
-    </>
-  );
-};
-
-export default Footer;
+      </div>
+    </footer>
+  )
+}

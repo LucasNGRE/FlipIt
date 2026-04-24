@@ -10,10 +10,22 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     const user = await prisma.user.findUnique({
       where: { id: Number(id) },
       select: {
+        id: true,
         firstName: true,
         lastName: true,
-        email: true,
-        image: true, // Add any other fields you want to retrieve
+        image: true,
+        bio: true,
+        createdAt: true,
+        products: {
+          orderBy: { createdAt: 'desc' },
+          select: {
+            id: true,
+            title: true,
+            price: true,
+            condition: true,
+            images: { take: 1, select: { url: true } },
+          },
+        },
       },
     });
 

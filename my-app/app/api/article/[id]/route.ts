@@ -17,7 +17,19 @@ export async function GET(request: Request, { params }: { params: { id: string }
     // Requête Prisma pour récupérer le produit
     const product = await prisma.product.findUnique({
       where: { id: Number(id) },
-      include: { images: true },
+      include: {
+        images: true,
+        user: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            image: true,
+            bio: true,
+            createdAt: true,
+          },
+        },
+      },
     });
 
     if (!product) {

@@ -1,35 +1,33 @@
-// pages/api/articles/index.ts
 import { NextRequest, NextResponse } from 'next/server';
-import prisma from '@/lib/db'; // Your Prisma instance
+import prisma from '@/lib/db';
 
 export async function GET(req: NextRequest) {
   try {
+    const { searchParams } = req.nextUrl;
+    const cat = searchParams.get('cat');
+    const q = searchParams.get('q');
+
     const products = await prisma.product.findMany({
-      include: {
-        user: {
-          select: {
-            firstName: true,
-            image: true,
-          },
-        },
-        images: { // Include images in the query
-          select: {
-            url: true,
-            altText: true,
-          },
-        },
+      where: {
+        ...(cat ? { category: cat as any } : {}),
+        ...(q ? {
+          OR: [
+            { title:       { contains: q, mode: 'insensitive' } },
+            { brand:       { contains: q, mode: 'insensitive' } },
+            { description: { contains: q, mode: 'insensitive' } },
+          ],
+        } : {}),
       },
+      include: {
+        user: { select: { firstName: true, image: true } },
+        images: { select: { url: true, altText: true } },
+      },
+      orderBy: { updatedAt: 'desc' },
     });
 
-    // Check if articles exist
-    if (!products.length) {
-      return NextResponse.json({ error: 'No articles found' }, { status: 404 });
-    }
-
-    // Return the articles as a JSON response
     return NextResponse.json(products, { status: 200 });
   } catch (error) {
-    console.error('Error fetching articles:', error);
-    return NextResponse.json({ error: 'Failed to fetch articles' }, { status: 500 });
+    console.error('Error fetching products:', error);
+    return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });
   }
 }
