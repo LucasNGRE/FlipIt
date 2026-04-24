@@ -5,6 +5,7 @@ import prisma from "@/lib/db"; // Assurez-vous d'importer correctement votre cli
 import { compare } from "bcryptjs"; // Si vous utilisez bcrypt pour hacher les mots de passe
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  trustHost: true,
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID,
