@@ -1,11 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 import { getSession } from '@/lib/getSession';
-import formidable from 'formidable';
-
-// Désactivation du bodyParser pour cette route API, via les configurations de segment
-export const runtime = 'edge'; // Définir le runtime pour utiliser la nouvelle configuration
-
 export async function GET() {
   try {
     const session = await getSession();
