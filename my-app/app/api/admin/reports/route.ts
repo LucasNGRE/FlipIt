@@ -1,11 +1,12 @@
-import { NextResponse } from 'next/server'
+﻿import { NextResponse } from 'next/server'
+export const dynamic = 'force-dynamic'
 import prisma from '@/lib/db'
 import { cookies } from 'next/headers'
 import { logAdmin } from '@/lib/adminLog'
 
 export async function GET(req: Request) {
   if (cookies().get('admin_token')?.value !== process.env.ADMIN_TOKEN)
-    return NextResponse.json({ error: 'Accès refusé' }, { status: 403 })
+    return NextResponse.json({ error: 'AccÃ¨s refusÃ©' }, { status: 403 })
 
   const status = new URL(req.url).searchParams.get('status') ?? 'pending'
 
@@ -24,10 +25,11 @@ export async function GET(req: Request) {
 
 export async function PATCH(req: Request) {
   if (cookies().get('admin_token')?.value !== process.env.ADMIN_TOKEN)
-    return NextResponse.json({ error: 'Accès refusé' }, { status: 403 })
+    return NextResponse.json({ error: 'AccÃ¨s refusÃ©' }, { status: 403 })
 
   const { id, status } = await req.json()
   const report = await prisma.report.update({ where: { id: Number(id) }, data: { status } })
   await logAdmin('report_updated', `report:${id}`, status)
   return NextResponse.json(report)
 }
+

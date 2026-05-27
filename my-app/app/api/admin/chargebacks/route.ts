@@ -1,10 +1,11 @@
-import { NextResponse } from 'next/server'
+﻿import { NextResponse } from 'next/server'
+export const dynamic = 'force-dynamic'
 import prisma from '@/lib/db'
 import { cookies } from 'next/headers'
 
 export async function GET() {
   if (cookies().get('admin_token')?.value !== process.env.ADMIN_TOKEN)
-    return NextResponse.json({ error: 'Accès refusé' }, { status: 403 })
+    return NextResponse.json({ error: 'AccÃ¨s refusÃ©' }, { status: 403 })
 
   const chargebacks = await prisma.chargeback.findMany({
     include: {
@@ -22,3 +23,4 @@ export async function GET() {
   })
   return NextResponse.json(chargebacks)
 }
+
