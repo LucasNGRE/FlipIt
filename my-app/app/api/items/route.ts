@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db'; // Import de votre instance Prisma
 import { getSession } from '@/lib/getSession'; // Suppose que vous avez une fonction pour obtenir la session
