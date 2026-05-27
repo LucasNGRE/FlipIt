@@ -3,7 +3,7 @@ import prisma from '@/lib/db'
 import stripe from '@/lib/stripe'
 import pusherServer from '@/lib/pusher-server'
 
-export const config = { api: { bodyParser: false } }
+export const dynamic = 'force-dynamic'
 
 export async function POST(req: Request) {
   const body = await req.text()
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
     switch (event.type) {
       case 'payment_intent.succeeded': {
         const pi = event.data.object as any
-        const { productId, buyerId, sellerId, offerId, finalPrice, sellerStripeAccountId } = pi.metadata
+        const { productId, buyerId, sellerId, offerId, finalPrice } = pi.metadata
 
         // Crée l'Order + marque le produit comme réservé
         const [order] = await Promise.all([

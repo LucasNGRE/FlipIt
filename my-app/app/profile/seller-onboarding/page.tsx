@@ -1,13 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { CheckCircle, AlertCircle, ExternalLink, Loader2, ArrowRight, BarChart2 } from 'lucide-react'
 
 type Step = 'idle' | 'loading' | 'redirecting' | 'success' | 'error' | 'refresh' | 'already-onboarded'
 
-export default function SellerOnboardingPage() {
+function SellerOnboardingContent() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -237,5 +237,17 @@ export default function SellerOnboardingPage() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function SellerOnboardingPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="h-6 w-6 rounded-full border-2 border-foreground/20 border-t-foreground animate-spin" />
+      </div>
+    }>
+      <SellerOnboardingContent />
+    </Suspense>
   )
 }
