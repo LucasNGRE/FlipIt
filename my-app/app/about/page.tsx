@@ -30,12 +30,15 @@ export default function AboutPage() {
 
       {/* Hero */}
       <div className="mb-20 text-center">
-        <span className="inline-block mb-4 rounded-full bg-brand-50 border border-brand-100 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-brand dark:bg-brand-800/20 dark:border-brand-800/40">
+        <span
+          className="inline-block mb-4 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-widest font-mono"
+          style={{ background: 'var(--acid)', color: 'var(--ink)' }}
+        >
           Notre histoire
         </span>
         <h1 className="font-display text-4xl sm:text-5xl font-bold tracking-tight mb-6">
           La marketplace du skate<br />
-          <span className="text-brand">entre passionnés</span>
+          <span className="acid-hl">entre passionnés</span>
         </h1>
         <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
           FlipIt c'est Vinted, mais pour le skate. On a créé cet espace pour que les skateurs puissent acheter, vendre et échanger du matos d'occasion facilement, sans intermédiaire et sans prise de tête.
@@ -46,8 +49,11 @@ export default function AboutPage() {
       <div className="grid sm:grid-cols-3 gap-8 mb-20">
         {values.map(({ icon: Icon, title, description }) => (
           <div key={title} className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-6">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 dark:bg-brand-800/20">
-              <Icon className="h-5 w-5 text-brand" />
+            <div
+              className="flex h-10 w-10 items-center justify-center rounded-xl"
+              style={{ background: 'var(--acid)' }}
+            >
+              <Icon className="h-5 w-5" style={{ color: 'var(--ink)' }} />
             </div>
             <h2 className="font-display text-lg font-semibold">{title}</h2>
             <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>

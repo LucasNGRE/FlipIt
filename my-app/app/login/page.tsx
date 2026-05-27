@@ -1,76 +1,97 @@
 "use client";
-import { Suspense } from 'react';  // Importer Suspense de React
+import { Suspense } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import React, { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Button } from '@/components/ui/button';
+import { useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
+import { ArrowRight } from 'lucide-react';
 
 const Login = () => {
-  const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('callbackUrl') || '/'; // Get callback URL from search params
+  const callbackUrl = searchParams.get('callbackUrl') || '/';
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const credentialsAction = async () => {
+    setLoading(true);
     const response: any = await signIn("credentials", {
       redirect: false,
       email,
       password,
       callbackUrl,
     });
-  
+    setLoading(false);
+
     if (response?.error) {
       console.error("Authentication error:", response.error);
-      toast.error("Ton mot de passe ou ton email est incorrecte");
+      toast.error("Email ou mot de passe incorrect");
     } else if (response?.url) {
-      console.log("Redirection URL:", response.url);
-      window.location.replace(response.url); // Redirection vers le callbackUrl
+      window.location.replace(response.url);
     }
   };
-  
 
   return (
-    <div className="mt-10 max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white border border-[#121212] dark:bg-black">
-      <div className="my-8">
-        <Label htmlFor="email">Adresse Email</Label>
-        <Input
-          id="email"
-          placeholder="exemple@gmail.com"
-          type="email"
-          name="email"
-          onChange={(e: any) => setEmail(e.target.value)}
-        />
+    <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12">
+      <div className="w-full max-w-sm">
 
-        <Label htmlFor="password">Mot de passe</Label>
-        <Input
-          id="password"
-          placeholder="*************"
-          type="password"
-          name="password"
-          className="mb-6"
-          onChange={(e: any) => setPassword(e.target.value)}
-        />
-        <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-8 h-[1px] w-full" />
-        <div className="flex justify-between items-center">
-          <Link href="/" passHref>
-            <Button type="button" variant="outline" className="w-24">
-              Retour
-            </Button>
+        {/* Wordmark */}
+        <div className="mb-10 text-center">
+          <Link href="/" className="inline-block mb-4">
+            <span className="font-logo text-3xl font-black uppercase tracking-tighter select-none">
+              FLIP<span className="animate-flip-i">I</span>
+              <span className="inline-flex items-center justify-center rounded-[3px] px-[3px]"
+                style={{ background: 'var(--acid)', color: 'var(--ink)' }}>T</span>
+            </span>
           </Link>
-          <Button className="w-36" onClick={credentialsAction}>
-            Se connecter &rarr;
-          </Button>
+          <p className="text-sm text-muted-foreground">Connecte-toi à ton compte</p>
         </div>
-        <p className="text-right text-neutral-600 text-sm max-w-sm mt-4 dark:text-neutral-300">
-          Vous ne possédez pas de compte ?{' '}
-          <Link href={`/register?callbackUrl=${encodeURIComponent(callbackUrl)}`} className="text-blue-500">
-            S&apos;enregistrer
+
+        {/* Form card */}
+        <div className="rounded-xl border border-border bg-card p-8 space-y-5">
+          <div className="space-y-1.5">
+            <Label htmlFor="email" className="text-sm font-medium">Email</Label>
+            <Input
+              id="email"
+              placeholder="exemple@gmail.com"
+              type="email"
+              name="email"
+              onChange={(e: any) => setEmail(e.target.value)}
+              className="bg-background"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="password" className="text-sm font-medium">Mot de passe</Label>
+            <Input
+              id="password"
+              placeholder="••••••••••••"
+              type="password"
+              name="password"
+              onChange={(e: any) => setPassword(e.target.value)}
+              className="bg-background"
+            />
+          </div>
+
+          <button
+            onClick={credentialsAction}
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-2 rounded-lg py-3 text-sm font-bold tracking-wide disabled:opacity-60 transition-opacity cursor-pointer"
+            style={{ background: 'var(--acid)', color: 'var(--ink)' }}
+          >
+            {loading ? 'Connexion…' : <>Se connecter <ArrowRight className="h-4 w-4" /></>}
+          </button>
+        </div>
+
+        <p className="mt-5 text-center text-sm text-muted-foreground">
+          Pas encore de compte ?{' '}
+          <Link href={`/register?callbackUrl=${encodeURIComponent(callbackUrl)}`}
+            className="font-semibold text-foreground underline underline-offset-2 hover:opacity-70">
+            S&apos;inscrire
           </Link>
         </p>
       </div>
@@ -78,10 +99,9 @@ const Login = () => {
   );
 };
 
-// Enveloppez le composant Login dans Suspense pour résoudre l'erreur
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div className="flex h-screen items-center justify-center"><div className="h-6 w-6 rounded-full border-2 border-foreground/20 border-t-foreground animate-spin" /></div>}>
       <Login />
     </Suspense>
   );

@@ -36,11 +36,11 @@ interface User {
 }
 
 const conditionConfig: Record<string, { label: string; color: string }> = {
-  Neuf:         { label: 'Neuf',        color: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' },
-  Comme_neuf:   { label: 'Comme neuf',  color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' },
-  Bon_etat:     { label: 'Bon état',    color: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400' },
-  Moyen_etat:   { label: 'Moyen état',  color: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400' },
-  Mauvais_etat: { label: 'Mauvais état',color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' },
+  Neuf:         { label: 'Neuf',         color: 'bg-card border border-border text-foreground/80' },
+  Comme_neuf:   { label: 'Comme neuf',   color: 'bg-card border border-border text-foreground/80' },
+  Bon_etat:     { label: 'Bon état',     color: 'bg-card border border-border text-foreground/80' },
+  Moyen_etat:   { label: 'Moyen état',   color: 'bg-card border border-border text-foreground/80' },
+  Mauvais_etat: { label: 'Mauvais état', color: 'bg-card border border-border text-foreground/80' },
 }
 
 const ArticlePage: React.FC<ArticlePageProps> = ({ params }) => {
@@ -48,6 +48,7 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ params }) => {
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
+  const [likeLoading, setLikeLoading] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const { data: session } = useSession();
   const router = useRouter();
@@ -61,6 +62,30 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ params }) => {
       })
       .finally(() => setLoading(false));
   }, [params.id]);
+
+  // Vérifie si l'article est déjà liké
+  useEffect(() => {
+    if (!session || !params.id) return;
+    fetch(`/api/likes/${params.id}`)
+      .then(r => r.ok ? r.json() : { liked: false })
+      .then(d => setIsLiked(d.liked));
+  }, [session, params.id]);
+
+  const handleLike = async () => {
+    if (!session) { router.push(`/login?callbackUrl=/article/${params.id}`); return; }
+    if (likeLoading) return;
+    setLikeLoading(true);
+    const res = await fetch('/api/likes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productId: article?.id }),
+    });
+    if (res.ok) {
+      const d = await res.json();
+      setIsLiked(d.liked);
+    }
+    setLikeLoading(false);
+  };
 
   const handleBuy = () => {
     if (session) {
@@ -161,7 +186,7 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ params }) => {
                   key={i}
                   onClick={() => setSelectedImage(i)}
                   className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-colors duration-150 cursor-pointer ${
-                    i === selectedImage ? 'border-brand' : 'border-transparent hover:border-border'
+                    i === selectedImage ? 'border-foreground' : 'border-transparent hover:border-border'
                   }`}
                 >
                   <Image src={img.url} alt="" width={64} height={64} className="object-cover w-full h-full" />
@@ -182,7 +207,7 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ params }) => {
             <h1 className="font-display text-2xl sm:text-3xl font-bold leading-tight mb-3">
               {article.title}
             </h1>
-            <p className="text-4xl font-bold tabular-nums">
+            <p className="font-mono text-4xl font-bold tabular-nums">
               {Number(article.price).toFixed(0)} <span className="text-2xl">€</span>
             </p>
           </div>
@@ -190,7 +215,8 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ params }) => {
           {/* Actions rapides */}
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setIsLiked(!isLiked)}
+              onClick={handleLike}
+              disabled={likeLoading}
               className={`flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-all duration-200 cursor-pointer ${
                 isLiked
                   ? 'border-red-300 bg-red-50 text-red-600 dark:bg-red-900/20 dark:border-red-800'
@@ -240,13 +266,13 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ params }) => {
           {/* Vendeur */}
           <div className="rounded-2xl border border-border bg-card p-5">
             <h2 className="font-semibold text-sm uppercase tracking-wide text-muted-foreground mb-4">Vendeur</h2>
-            <div className="flex items-start gap-3 mb-4">
+            <a href={`/profile/${article.userId}`} className="flex items-start gap-3 mb-4 hover:opacity-80 transition-opacity duration-150 cursor-pointer">
               <Avatar className="h-10 w-10 flex-shrink-0">
                 <AvatarImage src={user?.image} />
                 <AvatarFallback>{user?.firstName?.charAt(0)}</AvatarFallback>
               </Avatar>
               <div className="min-w-0">
-                <p className="font-semibold">
+                <p className="font-semibold underline-offset-2 hover:underline">
                   {user ? `${user.firstName} ${user.lastName}`.trim() || 'Vendeur FlipIt' : '—'}
                 </p>
                 {user?.createdAt && (
@@ -258,7 +284,7 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ params }) => {
                   <p className="text-sm text-foreground/70 mt-2 leading-relaxed">{user.bio}</p>
                 )}
               </div>
-            </div>
+            </a>
             <button
               onClick={handleContact}
               className="w-full flex items-center justify-center gap-2 rounded-xl border border-border bg-background hover:bg-muted py-2.5 text-sm font-medium transition-colors duration-200 cursor-pointer"
@@ -272,7 +298,8 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ params }) => {
           <div className="space-y-3">
             <button
               onClick={handleBuy}
-              className="w-full rounded-xl bg-brand hover:bg-brand-700 py-3.5 text-sm font-semibold text-white transition-colors duration-200 cursor-pointer"
+              className="w-full rounded-xl py-3.5 text-sm font-bold tracking-wide hover:opacity-90 transition-opacity duration-150 cursor-pointer"
+              style={{ background: 'var(--acid)', color: 'var(--ink)' }}
             >
               Acheter maintenant — {Number(article.price).toFixed(0)} €
             </button>
@@ -284,7 +311,7 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ params }) => {
 
           {/* Sécurité */}
           <div className="flex items-start gap-3 rounded-xl bg-muted/50 p-4 text-xs text-muted-foreground">
-            <ShieldCheck className="h-4 w-4 flex-shrink-0 text-brand mt-0.5" />
+            <ShieldCheck className="h-4 w-4 flex-shrink-0 mt-0.5" />
             <p>Effectue toujours tes échanges via la plateforme FlipIt pour être protégé. Ne communique jamais tes coordonnées bancaires.</p>
           </div>
 

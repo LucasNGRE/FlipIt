@@ -4,67 +4,82 @@
 
 @layer base {
   :root {
-    /* Surfaces */
-    --background:        0 0% 100%;
-    --foreground:        220 13% 9%;
-    --card:              0 0% 100%;
-    --card-foreground:   220 13% 9%;
-    --popover:           0 0% 100%;
-    --popover-foreground:220 13% 9%;
+    /* ── Raw design tokens ─────────────────────────── */
+    --ink:        #0a0a0a;
+    --carbon:     #1a1a1a;
+    --paper:      #f5f3ee;
+    --paper-2:    #ebe7df;
+    --snow:       #ffffff;
+    --acid:       #caff00;
+    --acid-deep:  #b3e500;
 
-    /* Brand primary = vert #16A34A */
-    --primary:           142 72% 29%;
-    --primary-foreground:0 0% 100%;
+    /* Concrete grays */
+    --concrete-1: #e0ddd8;
+    --concrete-2: #c8c5bf;
+    --concrete-3: #8a8781;
+    --concrete-4: #5c5a56;
 
-    /* Secondary = gris neutre */
-    --secondary:         220 9% 94%;
-    --secondary-foreground:220 13% 20%;
+    /* Border radii */
+    --r-pill: 999px;
+    --r-md:   10px;
+    --r-lg:   16px;
+    --r-xl:   20px;
 
-    /* Muted */
-    --muted:             220 9% 96%;
-    --muted-foreground:  220 9% 46%;
+    /* ── shadcn/ui HSL variables – light ────────────── */
+    --background:          39 26% 95%;   /* paper  */
+    --foreground:          0 0% 4%;      /* ink    */
+    --card:                0 0% 100%;    /* snow   */
+    --card-foreground:     0 0% 4%;
+    --popover:             0 0% 100%;
+    --popover-foreground:  0 0% 4%;
 
-    /* Accent */
-    --accent:            220 9% 94%;
-    --accent-foreground: 220 13% 9%;
+    --primary:             73 100% 50%;  /* acid   */
+    --primary-foreground:  0 0% 4%;      /* ink on acid button */
 
-    /* Destructive */
-    --destructive:       0 84% 60%;
-    --destructive-foreground:0 0% 100%;
+    --secondary:           39 19% 89%;   /* paper-2 */
+    --secondary-foreground: 0 0% 4%;
 
-    /* UI */
-    --border:  220 13% 91%;
-    --input:   220 13% 91%;
-    --ring:    142 72% 29%;
-    --radius:  0.75rem;
+    --muted:               39 19% 89%;
+    --muted-foreground:    0 0% 40%;
+
+    --accent:              73 100% 50%;
+    --accent-foreground:   0 0% 4%;
+
+    --destructive:         0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border:  39 15% 82%;
+    --input:   39 15% 82%;
+    --ring:    73 100% 50%;
+    --radius:  0.5rem;
   }
 
   .dark {
-    --background:        220 13% 5%;
-    --foreground:        0 0% 98%;
-    --card:              220 13% 7%;
-    --card-foreground:   0 0% 98%;
-    --popover:           220 13% 7%;
-    --popover-foreground:0 0% 98%;
+    --background:          0 0% 4%;      /* ink    */
+    --foreground:          39 26% 95%;   /* paper  */
+    --card:                0 0% 10%;     /* carbon */
+    --card-foreground:     39 26% 95%;
+    --popover:             0 0% 10%;
+    --popover-foreground:  39 26% 95%;
 
-    --primary:           142 71% 45%;
-    --primary-foreground:0 0% 100%;
+    --primary:             73 100% 50%;
+    --primary-foreground:  0 0% 4%;
 
-    --secondary:         220 9% 13%;
-    --secondary-foreground:0 0% 98%;
+    --secondary:           0 0% 13%;
+    --secondary-foreground: 39 26% 95%;
 
-    --muted:             220 9% 13%;
-    --muted-foreground:  220 9% 60%;
+    --muted:               0 0% 13%;
+    --muted-foreground:    0 0% 55%;
 
-    --accent:            220 9% 13%;
-    --accent-foreground: 0 0% 98%;
+    --accent:              73 100% 50%;
+    --accent-foreground:   0 0% 4%;
 
-    --destructive:       0 72% 51%;
-    --destructive-foreground:0 0% 100%;
+    --destructive:         0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border:  220 13% 14%;
-    --input:   220 13% 14%;
-    --ring:    142 71% 45%;
+    --border:  0 0% 16%;
+    --input:   0 0% 16%;
+    --ring:    73 100% 50%;
   }
 }
 
@@ -77,11 +92,29 @@
     font-feature-settings: "rlig" 1, "calt" 1;
   }
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display font-semibold tracking-tight;
+    @apply font-display font-bold tracking-tight;
   }
 }
 
 @layer utilities {
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+  .animate-marquee {
+    animation: marquee 22s linear infinite;
+  }
+
+  @keyframes flip-i {
+    0%, 60% { transform: rotateY(0deg); }
+    100%     { transform: rotateY(360deg); }
+  }
+  .animate-flip-i {
+    display: inline-block;
+    animation: flip-i 3.5s ease-in-out infinite;
+    transform-origin: center;
+  }
+
   @keyframes slide-up {
     from { transform: translateY(16px); opacity: 0; }
     to   { transform: translateY(0);    opacity: 1; }
@@ -91,5 +124,13 @@
     to   { opacity: 1; }
   }
   .animate-slide-up { animation: slide-up 0.5s ease-out forwards; }
-  .animate-fade-in  { animation: fade-in 0.5s ease-out forwards; }
+  .animate-fade-in  { animation: fade-in  0.5s ease-out forwards; }
+
+  /* Acid highlight — used on big headlines */
+  .acid-hl {
+    background: var(--acid);
+    color: var(--ink);
+    padding: 0 .06em;
+    display: inline-block;
+  }
 }

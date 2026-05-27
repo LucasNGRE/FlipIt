@@ -24,28 +24,48 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         if (!email || !password) return null;
 
-        const user = await prisma.user.findUnique({
-          where: { email },
-          select: {
-            id: true,
-            email: true,
-            firstName: true,
-            lastName: true,
-            password: true,
-          },
-        });
+        try {
+          const user = await prisma.user.findUnique({
+            where: { email },
+            select: {
+              id: true,
+              email: true,
+              firstName: true,
+              lastName: true,
+              password: true,
+              suspended: true,
+            },
+          });
 
-        if (!user || !user.password) return null;
+          if (!user) {
+            console.error("[auth] User not found:", email);
+            return null;
+          }
+          if (user.suspended) {
+            console.error("[auth] User is suspended:", email);
+            return null;
+          }
+          if (!user.password) {
+            console.error("[auth] User has no password (OAuth account):", email);
+            return null;
+          }
 
-        const isMatched = await compare(password, user.password);
-        if (!isMatched) return null;
+          const isMatched = await compare(password, user.password);
+          if (!isMatched) {
+            console.error("[auth] Wrong password for:", email);
+            return null;
+          }
 
-        return {
-          id: user.id.toString(),
-          email: user.email,
-          firstName: user.firstName,
-          lastName: user.lastName,
-        };
+          return {
+            id: user.id.toString(),
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+          };
+        } catch (err) {
+          console.error("[auth] authorize error:", err);
+          return null;
+        }
       },
     }),
   ],
@@ -61,10 +81,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             return false; // Échec de la connexion
           }
 
-          // Vérifiez si l'utilisateur existe déjà
           const existingUser = await prisma.user.findUnique({
             where: { email },
+            select: { id: true, suspended: true },
           });
+
+          if (existingUser?.suspended) return false;
 
           if (!existingUser) {
             // Créez un nouvel utilisateur sans mot de passe

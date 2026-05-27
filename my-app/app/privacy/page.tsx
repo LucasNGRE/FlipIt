@@ -81,7 +81,7 @@ export default function PrivacyPage() {
     <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-16">
 
       <div className="mb-12 text-center">
-        <span className="inline-block mb-4 rounded-full bg-brand-50 border border-brand-100 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-brand dark:bg-brand-800/20 dark:border-brand-800/40">
+        <span className="inline-block mb-4 rounded-full px-3 py-1 text-xs font-bold uppercase tracking-widest font-mono" style={{ background: 'var(--acid)', color: 'var(--ink)' }}>
           Légal
         </span>
         <h1 className="font-display text-4xl font-bold tracking-tight mb-4">
@@ -106,7 +106,7 @@ export default function PrivacyPage() {
       <div className="mt-12 rounded-2xl bg-muted/50 border border-border p-6 text-center">
         <p className="text-sm text-muted-foreground">
           Des questions sur tes données ?{" "}
-          <a href="mailto:lucas12negre@gmail.com" className="font-semibold text-brand hover:underline">
+          <a href="mailto:lucas12negre@gmail.com" className="font-semibold text-foreground hover:underline">
             Contacte-nous
           </a>
         </p>

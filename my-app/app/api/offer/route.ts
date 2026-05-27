@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/db"; // Votre instance Prisma
-import { getSession } from "@/lib/getSession"; // Suppose que vous avez une fonction pour obtenir la session
+import prisma from "@/lib/db";
+import { getSession } from "@/lib/getSession";
+import pusherServer from "@/lib/pusher-server";
 
 export async function POST(req: NextRequest) {
   try {
@@ -26,9 +27,34 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
 
-    // Vérifier si l'utilisateur connecté est le propriétaire du produit
-    if (product.userId === Number(session.user.id)) {
-      return NextResponse.json({ error: "You cannot make an offer on your own product" }, { status: 403 });
+    // Trouver la conversation entre cet acheteur et ce vendeur pour ce produit
+    const conversation = await prisma.conversation.findFirst({
+      where: {
+        productId: productId,
+        participants: { some: { id: Number(session.user.id) } },
+      },
+      include: { participants: { select: { id: true } } },
+    });
+
+    // Annuler toutes les offres précédentes (pending + accepted) entre ces deux participants
+    // Nouvelle offre = on repart à zéro, comme sur Vinted/LBC
+    if (conversation) {
+      const participantIds = conversation.participants.map((p) => p.id);
+      await prisma.offer.updateMany({
+        where: {
+          productId: productId,
+          buyerId: { in: participantIds },
+          status: { in: ["pending", "accepted"] },
+        },
+        data: { status: "rejected" },
+      });
+
+      // Notifier tous les participants que les offres ont été réinitialisées
+      await pusherServer.trigger(
+        `private-conversation-${conversation.id}`,
+        "offers-reset",
+        {}
+      );
     }
 
     // Enregistrement de l'offre dans la base de données

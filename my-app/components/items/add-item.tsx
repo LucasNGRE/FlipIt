@@ -255,8 +255,8 @@ export default function AddItem() {
   if (success) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center px-4">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-50 dark:bg-brand-800/20">
-          <Check className="h-8 w-8 text-brand" />
+        <div className="flex h-16 w-16 items-center justify-center rounded-full" style={{ background: 'var(--acid)' }}>
+          <Check className="h-8 w-8" style={{ color: 'var(--ink)' }} />
         </div>
         <h2 className="font-display text-2xl font-bold">Annonce publiée !</h2>
         <p className="text-muted-foreground text-sm">Redirection vers l'accueil…</p>
@@ -281,7 +281,7 @@ export default function AddItem() {
           <div
             key={i}
             className={`h-1 flex-1 rounded-full transition-colors duration-300 ${
-              i <= effectiveStep ? 'bg-brand' : 'bg-muted'
+              i <= effectiveStep ? 'bg-foreground' : 'bg-muted'
             }`}
           />
         ))}
@@ -299,12 +299,12 @@ export default function AddItem() {
                 onClick={() => { set('category', cat.value); set('subcat', ''); set('brand', ''); set('size', '') }}
                 className={`w-full flex items-center gap-4 rounded-2xl border p-4 text-left transition-all duration-150 cursor-pointer ${
                   formData.category === cat.value
-                    ? 'border-brand bg-brand-50 dark:bg-brand-800/20'
-                    : 'border-border hover:border-brand/40 hover:bg-muted/40'
+                    ? 'border-foreground bg-foreground/5'
+                    : 'border-border hover:border-foreground/30 hover:bg-muted/40'
                 }`}
               >
                 <div className={`flex h-10 w-10 items-center justify-center rounded-xl flex-shrink-0 transition-colors duration-150 ${
-                  formData.category === cat.value ? 'bg-brand text-white' : 'bg-muted text-muted-foreground'
+                  formData.category === cat.value ? 'bg-foreground text-background' : 'bg-muted text-muted-foreground'
                 }`}>
                   <Icon className="h-5 w-5" />
                 </div>
@@ -312,7 +312,7 @@ export default function AddItem() {
                   <p className="font-semibold text-sm">{cat.label}</p>
                   <p className="text-xs text-muted-foreground">{cat.desc}</p>
                 </div>
-                {formData.category === cat.value && <Check className="h-4 w-4 text-brand flex-shrink-0" />}
+                {formData.category === cat.value && <Check className="h-4 w-4 text-foreground flex-shrink-0" />}
               </button>
             )
           })}
@@ -332,8 +332,8 @@ export default function AddItem() {
                 onClick={() => { set('subcat', sub.value); set('brand', ''); set('size', '') }}
                 className={`rounded-2xl border px-4 py-3.5 text-sm font-medium text-left transition-all duration-150 cursor-pointer ${
                   formData.subcat === sub.value
-                    ? 'border-brand bg-brand-50 dark:bg-brand-800/20 text-brand'
-                    : 'border-border hover:border-brand/40 hover:bg-muted/40'
+                    ? 'border-foreground bg-foreground/5 text-foreground'
+                    : 'border-border hover:border-foreground/30 hover:bg-muted/40'
                 }`}
               >
                 {sub.label}
@@ -357,7 +357,7 @@ export default function AddItem() {
               value={brandSearch}
               onChange={e => setBrandSearch(e.target.value)}
               placeholder="Rechercher une marque…"
-              className="w-full rounded-xl border border-border bg-background pl-9 pr-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-brand/40 transition-shadow"
+              className="w-full rounded-xl border border-border bg-background pl-9 pr-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-foreground/15 transition-shadow"
             />
             {brandSearch && (
               <button onClick={() => setBrandSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer">
@@ -377,8 +377,8 @@ export default function AddItem() {
                   onClick={() => set('brand', brand)}
                   className={`rounded-xl border px-4 py-3 text-sm font-medium text-left transition-all duration-150 cursor-pointer ${
                     formData.brand === brand
-                      ? 'border-brand bg-brand-50 dark:bg-brand-800/20 text-brand'
-                      : 'border-border hover:border-brand/40 hover:bg-muted/40'
+                      ? 'border-foreground bg-foreground/5 text-foreground'
+                      : 'border-border hover:border-foreground/30 hover:bg-muted/40'
                   }`}
                 >
                   {brand}
@@ -413,8 +413,8 @@ export default function AddItem() {
                   onClick={() => set('size', size)}
                   className={`rounded-lg border px-3 py-1.5 text-sm font-medium transition-all duration-150 cursor-pointer ${
                     formData.size === size
-                      ? 'border-brand bg-brand-50 dark:bg-brand-800/20 text-brand'
-                      : 'border-border hover:border-brand/40'
+                      ? 'border-foreground bg-foreground/5 text-foreground'
+                      : 'border-border hover:border-foreground/30'
                   }`}
                 >
                   {size}
@@ -436,12 +436,12 @@ export default function AddItem() {
                 onClick={() => set('condition', c.value)}
                 className={`w-full flex items-start gap-3 rounded-xl border p-3.5 text-left transition-all duration-150 cursor-pointer ${
                   formData.condition === c.value
-                    ? 'border-brand bg-brand-50 dark:bg-brand-800/20'
-                    : 'border-border hover:border-brand/40 hover:bg-muted/40'
+                    ? 'border-foreground bg-foreground/5'
+                    : 'border-border hover:border-foreground/30 hover:bg-muted/40'
                 }`}
               >
                 {formData.condition === c.value
-                  ? <Check className="h-4 w-4 text-brand mt-0.5 flex-shrink-0" />
+                  ? <Check className="h-4 w-4 text-foreground mt-0.5 flex-shrink-0" />
                   : <div className="h-4 w-4 rounded-full border border-muted-foreground mt-0.5 flex-shrink-0" />
                 }
                 <div>
@@ -476,7 +476,7 @@ export default function AddItem() {
               onChange={e => set('description', e.target.value)}
               placeholder="Décris l'article : couleur, état détaillé, raison de la vente…"
               rows={3}
-              className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-brand/40 resize-none transition-shadow"
+              className="w-full rounded-xl border border-border bg-background px-3 py-2.5 text-sm outline-none focus:ring-2 focus:ring-foreground/15 resize-none transition-shadow"
             />
           </div>
         </div>
@@ -502,7 +502,7 @@ export default function AddItem() {
               </div>
             ))}
             {formData.photos.length < 5 && (
-              <label className="aspect-square rounded-xl border-2 border-dashed border-border hover:border-brand flex flex-col items-center justify-center gap-1.5 cursor-pointer transition-colors duration-150">
+              <label className="aspect-square rounded-xl border-2 border-dashed border-border hover:border-foreground/50 flex flex-col items-center justify-center gap-1.5 cursor-pointer transition-colors duration-150">
                 <ImagePlus className="h-6 w-6 text-muted-foreground" />
                 <span className="text-xs text-muted-foreground">Ajouter</span>
                 <input type="file" accept="image/*" multiple className="hidden" onChange={handlePhotos} />
@@ -565,7 +565,7 @@ export default function AddItem() {
                 {/* Catégorie + marque */}
                 <div className="flex items-center justify-between px-5 py-3.5">
                   <div className="flex flex-wrap gap-2">
-                    <span className="rounded-full bg-brand-50 dark:bg-brand-800/20 border border-brand-100 dark:border-brand-800/40 px-2.5 py-0.5 text-xs font-semibold text-brand">
+                    <span className="rounded-full bg-muted border border-border px-2.5 py-0.5 text-xs font-semibold text-foreground">
                       {catLabel}{subcatLabel ? ` · ${subcatLabel}` : ''}
                     </span>
                     <span className="rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground border border-border">
@@ -574,7 +574,7 @@ export default function AddItem() {
                   </div>
                   <button
                     onClick={() => setStep(hasSubcat(formData.category) ? 1 : 0)}
-                    className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-brand transition-colors cursor-pointer ml-3 flex-shrink-0"
+                    className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer ml-3 flex-shrink-0"
                   >
                     <Pencil className="h-3 w-3" /> Modifier
                   </button>
@@ -590,7 +590,7 @@ export default function AddItem() {
                     <p className="text-xl font-bold tabular-nums">{formData.price} €</p>
                     <button
                       onClick={() => setStep(3)}
-                      className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-brand transition-colors cursor-pointer"
+                      className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                     >
                       <Pencil className="h-3 w-3" /> Modifier
                     </button>
@@ -609,7 +609,7 @@ export default function AddItem() {
                   </div>
                   <button
                     onClick={() => setStep(4)}
-                    className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-brand transition-colors cursor-pointer flex-shrink-0"
+                    className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer flex-shrink-0"
                   >
                     <Pencil className="h-3 w-3" /> Modifier
                   </button>
@@ -626,7 +626,7 @@ export default function AddItem() {
                   </div>
                   <button
                     onClick={() => setStep(5)}
-                    className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-brand transition-colors cursor-pointer ml-3 flex-shrink-0"
+                    className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer ml-3 flex-shrink-0"
                   >
                     <Pencil className="h-3 w-3" /> Modifier
                   </button>
@@ -657,7 +657,7 @@ export default function AddItem() {
           <Button
             onClick={next}
             disabled={!canNext()}
-            className="bg-brand hover:bg-brand-700 text-white cursor-pointer min-w-[120px]"
+            className="cursor-pointer min-w-[120px] font-bold" style={{ background: 'var(--acid)', color: 'var(--ink)' }}
           >
             Continuer
           </Button>
@@ -665,7 +665,7 @@ export default function AddItem() {
           <Button
             onClick={handleSubmit}
             disabled={submitting}
-            className="bg-brand hover:bg-brand-700 text-white cursor-pointer min-w-[150px]"
+            className="cursor-pointer min-w-[150px] font-bold" style={{ background: 'var(--acid)', color: 'var(--ink)' }}
           >
             {submitting ? 'Publication…' : 'Publier l\'annonce'}
           </Button>

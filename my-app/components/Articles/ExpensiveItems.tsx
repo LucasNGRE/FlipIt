@@ -26,8 +26,8 @@ export default function ExpensiveItems() {
     <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 pb-20">
       <div className="flex items-end justify-between mb-8">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-brand mb-1">Premium</p>
-          <h2 className="font-display text-3xl font-bold">100 € et plus</h2>
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground mb-1.5">Premium</p>
+          <h2 className="font-display text-3xl font-extrabold">100 € et plus</h2>
         </div>
         <a href="/?min=100" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors duration-150">
           Voir tout →

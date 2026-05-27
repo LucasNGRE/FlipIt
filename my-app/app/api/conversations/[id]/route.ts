@@ -27,7 +27,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
         orderBy: { createdAt: 'asc' },
         include: {
           user: { select: { id: true, firstName: true, lastName: true, image: true } },
-          product: { select: { id: true, title: true, images: { take: 1 } } },
+          product: { select: { id: true, title: true, images: { take: 1 }, userId: true } },
         },
       },
     },

@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { Bell, CirclePlus, Mail, Search, User, LogOut, Settings, ChevronDown } from 'lucide-react';
+import { Heart, CirclePlus, Mail, Search, User, LogOut, Settings, ChevronDown, Package, Store } from 'lucide-react';
 import { ModeToggle } from './toggle.mode';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { signOut, useSession } from 'next-auth/react';
@@ -158,7 +158,7 @@ function MegaMenuNav({ onNavigate }: { onNavigate: () => void }) {
   };
 
   return (
-    <nav className="hidden md:flex items-center gap-1 text-sm font-medium text-muted-foreground">
+    <nav className="hidden md:flex items-center gap-0.5 text-sm font-medium text-muted-foreground">
       {NAV_CATEGORIES.map(cat => (
         <div
           key={cat.label}
@@ -166,34 +166,34 @@ function MegaMenuNav({ onNavigate }: { onNavigate: () => void }) {
           onMouseEnter={() => handleEnter(cat.label)}
           onMouseLeave={handleLeave}
         >
-          {/* Trigger */}
           <Link
             href={`/?cat=${cat.cat}`}
-            className={`flex items-center gap-1 px-3 py-2 rounded-lg transition-colors duration-150 cursor-pointer ${
-              open === cat.label ? 'text-foreground bg-muted' : 'hover:text-foreground hover:bg-muted'
+            className={`flex items-center gap-1 px-3 py-2 rounded-md transition-colors duration-150 cursor-pointer ${
+              open === cat.label
+                ? 'text-foreground bg-muted'
+                : 'hover:text-foreground hover:bg-muted'
             }`}
           >
             {cat.label}
-            <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${open === cat.label ? 'rotate-180' : ''}`} />
+            <ChevronDown className={`h-3 w-3 transition-transform duration-200 ${open === cat.label ? 'rotate-180' : ''}`} />
           </Link>
 
-          {/* Dropdown panel */}
           {open === cat.label && (
             <div
-              className="absolute top-full left-0 mt-1 z-50 rounded-2xl border border-border bg-background/95 backdrop-blur-md shadow-xl p-5 flex gap-8 min-w-[300px]"
+              className="absolute top-full left-0 mt-2 z-50 rounded-xl border border-border bg-card/95 backdrop-blur-md shadow-2xl p-5 flex gap-8 min-w-[300px]"
               onMouseEnter={() => handleEnter(cat.label)}
               onMouseLeave={handleLeave}
             >
               {cat.columns.map(col => (
                 <div key={col.heading} className="flex-1">
-                  <p className="text-xs font-semibold uppercase tracking-widest text-brand mb-3">{col.heading}</p>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-3">{col.heading}</p>
                   <ul className="space-y-2">
                     {col.links.map(link => (
                       <li key={link.label}>
                         <Link
                           href={`/?cat=${cat.cat}&q=${encodeURIComponent(link.q)}`}
                           onClick={() => { setOpen(null); onNavigate(); }}
-                          className="text-sm text-muted-foreground hover:text-foreground hover:translate-x-0.5 inline-block transition-all duration-150"
+                          className="text-sm text-foreground/70 hover:text-foreground hover:translate-x-0.5 inline-block transition-all duration-150"
                         >
                           {link.label}
                         </Link>
@@ -210,6 +210,24 @@ function MegaMenuNav({ onNavigate }: { onNavigate: () => void }) {
   );
 }
 
+/* ── Logo ─────────────────────────────────────────── */
+function Wordmark() {
+  return (
+    <span className="font-logo text-[22px] uppercase select-none leading-none" style={{ letterSpacing: '-.04em' }}>
+      FL
+      <span className="animate-flip-i inline-block">I</span>
+      P
+      <span
+        className="px-[.05em]"
+        style={{ background: 'var(--acid)', color: 'var(--ink)' }}
+      >
+        IT
+      </span>
+    </span>
+  );
+}
+
+/* ── Header ───────────────────────────────────────── */
 const Header = () => {
   const { status } = useSession();
   const router = useRouter();
@@ -228,22 +246,23 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-md">
+    <header className="fixed top-0 left-0 right-0 z-50 border-b border-border/40 bg-paper/80 dark:bg-ink/80 backdrop-blur-xl">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between gap-4">
 
           {/* Logo */}
           <Link href="/" className="flex-shrink-0">
-            <span className="font-display text-2xl font-bold tracking-tight">
-              Flip<span className="text-brand">It</span>
-            </span>
+            <Wordmark />
           </Link>
 
           {/* Mega menu nav */}
           <MegaMenuNav onNavigate={() => setSearchValue('')} />
 
           {/* Search bar */}
-          <form onSubmit={handleSearch} className="flex flex-1 max-w-sm items-center gap-2 rounded-full border border-border bg-muted/50 px-4 py-2 text-sm text-muted-foreground focus-within:border-brand focus-within:bg-background transition-all duration-200">
+          <form
+            onSubmit={handleSearch}
+            className="flex flex-1 max-w-sm items-center gap-2 rounded-full border border-border bg-card/60 px-4 py-2 text-sm text-muted-foreground focus-within:border-foreground/30 focus-within:bg-card transition-all duration-200"
+          >
             <Search className="h-4 w-4 flex-shrink-0" />
             <input
               type="text"
@@ -255,10 +274,11 @@ const Header = () => {
           </form>
 
           {/* Actions */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             {status === 'authenticated' && (
               <Link href="/items/add-item">
-                <button className="hidden sm:flex items-center gap-2 rounded-full bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700 transition-colors duration-200 cursor-pointer">
+                <button className="hidden sm:flex items-center gap-2 rounded-full px-4 py-2 text-sm font-bold text-ink hover:opacity-90 transition-opacity duration-150 cursor-pointer"
+                  style={{ background: 'var(--acid)' }}>
                   <CirclePlus className="h-4 w-4" />
                   Vendre
                 </button>
@@ -267,23 +287,37 @@ const Header = () => {
 
             {status === 'authenticated' && (
               <>
-                <Link href="/inbox" aria-label="Messagerie" className="relative flex h-9 w-9 items-center justify-center rounded-full hover:bg-muted transition-colors duration-150 cursor-pointer">
+                <Link
+                  href="/inbox"
+                  aria-label="Messagerie"
+                  className="relative flex h-9 w-9 items-center justify-center rounded-full hover:bg-muted transition-colors duration-150 cursor-pointer"
+                >
                   <Mail className="h-4 w-4" />
                   {unreadCount > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-full bg-brand text-white text-[10px] font-bold flex items-center justify-center leading-none">
+                    <span
+                      className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-full text-[10px] font-bold flex items-center justify-center leading-none"
+                      style={{ background: 'var(--acid)', color: 'var(--ink)' }}
+                    >
                       {unreadCount > 9 ? '9+' : unreadCount}
                     </span>
                   )}
                 </Link>
-                <button aria-label="Notifications" className="flex h-9 w-9 items-center justify-center rounded-full hover:bg-muted transition-colors duration-150 cursor-pointer">
-                  <Bell className="h-4 w-4" />
-                </button>
+                <Link
+                  href="/likes"
+                  aria-label="Articles likés"
+                  className="flex h-9 w-9 items-center justify-center rounded-full hover:bg-muted transition-colors duration-150 cursor-pointer"
+                >
+                  <Heart className="h-4 w-4" />
+                </Link>
               </>
             )}
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button aria-label="Mon compte" className="flex h-9 w-9 items-center justify-center rounded-full hover:bg-muted transition-colors duration-150 cursor-pointer">
+                <button
+                  aria-label="Mon compte"
+                  className="flex h-9 w-9 items-center justify-center rounded-full hover:bg-muted transition-colors duration-150 cursor-pointer"
+                >
                   <User className="h-4 w-4" />
                 </button>
               </DropdownMenuTrigger>
@@ -291,11 +325,24 @@ const Header = () => {
                 {status === 'authenticated' ? (
                   <>
                     <DropdownMenuItem asChild>
+                      <Link href="/orders" className="flex items-center gap-2 cursor-pointer">
+                        <Package className="h-4 w-4" /> Mes commandes
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/profile/seller-onboarding" className="flex items-center gap-2 cursor-pointer">
+                        <Store className="h-4 w-4" /> Compte vendeur
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
                       <Link href="/settings" className="flex items-center gap-2 cursor-pointer">
                         <Settings className="h-4 w-4" /> Paramètres
                       </Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleLogout} className="flex items-center gap-2 cursor-pointer text-destructive focus:text-destructive">
+                    <DropdownMenuItem
+                      onClick={handleLogout}
+                      className="flex items-center gap-2 cursor-pointer text-destructive focus:text-destructive"
+                    >
                       <LogOut className="h-4 w-4" /> Déconnexion
                     </DropdownMenuItem>
                   </>

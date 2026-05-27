@@ -91,7 +91,7 @@ export default function Setting() {
               onClick={() => setActiveSection(id)}
               className={`flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition-colors duration-150 whitespace-nowrap cursor-pointer text-left w-full ${
                 activeSection === id
-                  ? 'bg-brand text-white'
+                  ? 'bg-foreground text-background'
                   : 'text-muted-foreground hover:bg-muted hover:text-foreground'
               }`}
             >
@@ -108,7 +108,7 @@ export default function Setting() {
           {feedback && (
             <div className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm mb-6 ${
               feedback.type === 'success'
-                ? 'bg-brand-50 border border-brand-100 text-brand dark:bg-brand-800/20 dark:border-brand-800/40'
+                ? 'bg-muted border border-border text-foreground'
                 : 'bg-red-50 border border-red-100 text-red-700 dark:bg-red-900/20 dark:border-red-900/40'
             }`}>
               {feedback.type === 'success'
@@ -172,7 +172,7 @@ export default function Setting() {
                 <Button
                   type="submit"
                   disabled={saving}
-                  className="bg-brand hover:bg-brand-700 text-white cursor-pointer"
+                  className="cursor-pointer font-bold" style={{ background: 'var(--acid)', color: 'var(--ink)' }}
                 >
                   {saving ? 'Enregistrement…' : 'Enregistrer'}
                 </Button>

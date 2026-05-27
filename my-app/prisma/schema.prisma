@@ -10,7 +10,7 @@ generator client {
 
 // Table User
 model User {
-  id             Int             @id @default(autoincrement())  
+  id             Int             @id @default(autoincrement())
   firstName      String
   lastName       String
   email          String          @unique
@@ -19,27 +19,36 @@ model User {
   image          String?
   bio            String?
   authProviderId String?
-  
+
+  stripeAccountId  String?
+  stripeOnboarded  Boolean @default(false)
+
   // Relations
   accounts            Account[]
   sessions            Session[]
-  Authenticator       Authenticator[] // WebAuthn support
-  
-  products            Product[]       // Produits créés par l'utilisateur
-  offers              Offer[]         // Offres faites par l'utilisateur
-  
-  // Conversations où l'utilisateur est un participant
-  conversations       Conversation[]  @relation("UserConversations")
+  Authenticator       Authenticator[]
+
+  products            Product[]
+  offers              Offer[]
+  likes               Like[]
+
+  conversations       Conversation[]   @relation("UserConversations")
   conversationReads   ConversationRead[]
+  sentMessages        Message[]        @relation("SentMessages")
 
-  // Messages envoyés par l'utilisateur (relation corrigée)
-  sentMessages        Message[]       @relation("SentMessages")
+  transactionsBuyer   Transaction[]    @relation("BuyerTransactions")
+  transactionsSeller  Transaction[]    @relation("SellerTransactions")
 
-  // Transactions où l'utilisateur est acheteur ou vendeur
-  transactionsBuyer   Transaction[]   @relation("BuyerTransactions")
-  transactionsSeller  Transaction[]   @relation("SellerTransactions")
-  
-  // Timestamps
+  ordersBuyer         Order[]          @relation("OrderBuyer")
+  ordersSeller        Order[]          @relation("OrderSeller")
+
+  suspended           Boolean          @default(false)
+  suspendedReason     String?
+
+  reportsMade         Report[]         @relation("ReportsMade")
+  reportsReceived     Report[]         @relation("ReportsReceived")
+  adminMessages       AdminMessage[]
+
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
 }
@@ -92,6 +101,7 @@ model Product {
   category    Category?
   brand       String?
   size        String?
+  status      ProductStatus    @default(available)
 
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
@@ -99,22 +109,36 @@ model Product {
   user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   images      ProductImage[]   // Chaque produit peut avoir plusieurs images
   offers      Offer[]          // Relation inverse avec Offer
-  messages     Message[]       // Add this line for back-relation to Message
-  transactions Transaction[]   // Add this line for back-relation to Transaction
+  messages     Message[]
+  transactions Transaction[]
+  orders       Order[]
+  likes        Like[]
+  reports      Report[]
+}
+
+model Like {
+  userId    Int
+  productId Int
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@id([userId, productId])
 }
 
 model Offer {
-  id          Int        @id @default(autoincrement())  // Changement ici pour Int
+  id          Int         @id @default(autoincrement())
   productId   Int
   buyerId     Int
   offerPrice  Decimal     @db.Decimal(10, 2)
-  status      OfferStatus      @default(pending)  // Status: pending, accepted, rejected
+  status      OfferStatus @default(pending)
+  expiresAt   DateTime?
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
-  // Relations
   product     Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
   buyer       User        @relation(fields: [buyerId], references: [id], onDelete: Cascade)
-  }
+}
 
 model Transaction {
   id          Int        @id @default(autoincrement())  // Changement ici pour Int
@@ -211,4 +235,101 @@ enum OfferStatus {
   pending
   accepted
   rejected
+}
+
+enum OrderStatus {
+  paid
+  shipped
+  confirmed
+  disputed
+  refunded
+}
+
+enum ProductStatus {
+  available
+  reserved
+  sold
+}
+
+model Order {
+  id               Int         @id @default(autoincrement())
+  productId        Int
+  sellerId         Int
+  buyerId          Int
+  offerId          Int?
+  finalPrice       Decimal     @db.Decimal(10, 2)
+  paymentIntentId  String      @unique
+  transferGroup    String
+  status           OrderStatus @default(paid)
+  shippedAt        DateTime?
+  confirmDeadline  DateTime?
+  trackingNumber   String?
+  disputeReason    String?
+  disputeDetails   String?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  product        Product              @relation(fields: [productId], references: [id], onDelete: Cascade)
+  seller         User                 @relation("OrderSeller", fields: [sellerId], references: [id], onDelete: Cascade)
+  buyer          User                 @relation("OrderBuyer", fields: [buyerId], references: [id], onDelete: Cascade)
+  disputeImages  OrderDisputeImage[]
+  chargebacks    Chargeback[]
+}
+
+model OrderDisputeImage {
+  id      Int    @id @default(autoincrement())
+  orderId Int
+  url     String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+enum ReportStatus {
+  pending
+  reviewed
+  dismissed
+}
+
+model Report {
+  id             Int          @id @default(autoincrement())
+  reporterId     Int
+  reason         String
+  details        String?
+  status         ReportStatus @default(pending)
+  productId      Int?
+  reportedUserId Int?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  reporter       User         @relation("ReportsMade", fields: [reporterId], references: [id], onDelete: Cascade)
+  product        Product?     @relation(fields: [productId], references: [id], onDelete: SetNull)
+  reportedUser   User?        @relation("ReportsReceived", fields: [reportedUserId], references: [id], onDelete: SetNull)
+}
+
+model AdminLog {
+  id        Int      @id @default(autoincrement())
+  action    String
+  target    String?
+  details   String?
+  createdAt DateTime @default(now())
+}
+
+model Chargeback {
+  id        Int      @id @default(autoincrement())
+  stripeId  String   @unique
+  orderId   Int?
+  amount    Decimal  @db.Decimal(10, 2)
+  reason    String?
+  status    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  order     Order?   @relation(fields: [orderId], references: [id])
+}
+
+model AdminMessage {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  subject   String
+  body      String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
