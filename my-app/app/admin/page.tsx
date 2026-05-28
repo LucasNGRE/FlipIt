@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState } from 'react'
 import { TrendingUp, Euro, Package, AlertTriangle, Users, Tag, RefreshCw } from 'lucide-react'
@@ -51,7 +51,7 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="px-8 py-10">
+      <div className="px-4 sm:px-8 py-10">
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
           {Array.from({ length: 9 }).map((_, i) => (
             <div key={i} className="h-28 rounded-2xl animate-pulse" style={{ background: 'var(--paper-2)' }} />
@@ -64,7 +64,7 @@ export default function AdminDashboard() {
   if (!stats) return null
 
   return (
-    <div className="px-8 py-10">
+    <div className="px-4 sm:px-8 py-10">
       <div className="mb-8">
         <h1 className="font-display font-bold text-2xl tracking-tight" style={{ color: 'var(--ink)' }}>Dashboard</h1>
         <p className="text-sm mt-1" style={{ color: 'var(--concrete-4)' }}>Vue d'ensemble de la plateforme</p>

@@ -39,7 +39,7 @@ const columns = [
 
 export default function Footer() {
   return (
-    <footer style={{ background: 'var(--ink)', color: 'var(--paper)' }} className="mt-20 px-8 pt-16 pb-6">
+    <footer style={{ background: 'var(--ink)', color: 'var(--paper)' }} className="mt-20 px-4 sm:px-8 pt-16 pb-6">
       <div className="mx-auto" style={{ maxWidth: 1440 }}>
 
         {/* Giant wordmark */}
@@ -63,12 +63,9 @@ export default function Footer() {
         </div>
 
         {/* 5-col grid */}
-        <div
-          className="grid py-10 gap-8"
-          style={{ gridTemplateColumns: '1.6fr 1fr 1fr 1fr 1fr' }}
-        >
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-[1.6fr_1fr_1fr_1fr_1fr] py-10 gap-8">
           {/* Brand blurb */}
-          <div>
+          <div className="col-span-2 sm:col-span-4 lg:col-span-1">
             <p
               className="font-display font-semibold leading-[1.2] max-w-xs"
               style={{ fontSize: 22, letterSpacing: '-.02em' }}

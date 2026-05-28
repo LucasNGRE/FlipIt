@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import { Heart, CirclePlus, Mail, Search, User, LogOut, Settings, ChevronDown, Package, Store } from 'lucide-react';
+import { Heart, CirclePlus, Mail, Search, User, LogOut, Settings, ChevronDown, Package, Store, Menu, X } from 'lucide-react';
 import { ModeToggle } from './toggle.mode';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { signOut, useSession } from 'next-auth/react';
@@ -232,6 +232,7 @@ const Header = () => {
   const { status } = useSession();
   const router = useRouter();
   const [searchValue, setSearchValue] = useState('');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const unreadCount = useUnreadCount(status);
 
   const handleLogout = async () => {
@@ -243,6 +244,7 @@ const Header = () => {
     e.preventDefault();
     const q = searchValue.trim();
     router.push(q ? `/?q=${encodeURIComponent(q)}` : '/');
+    setMobileMenuOpen(false);
   };
 
   return (
@@ -255,13 +257,13 @@ const Header = () => {
             <Wordmark />
           </Link>
 
-          {/* Mega menu nav */}
+          {/* Mega menu nav — desktop only */}
           <MegaMenuNav onNavigate={() => setSearchValue('')} />
 
-          {/* Search bar */}
+          {/* Search bar — masquée sur mobile */}
           <form
             onSubmit={handleSearch}
-            className="flex flex-1 max-w-sm items-center gap-2 rounded-full border border-border bg-card/60 px-4 py-2 text-sm text-muted-foreground focus-within:border-foreground/30 focus-within:bg-card transition-all duration-200"
+            className="hidden sm:flex flex-1 max-w-sm items-center gap-2 rounded-full border border-border bg-card/60 px-4 py-2 text-sm text-muted-foreground focus-within:border-foreground/30 focus-within:bg-card transition-all duration-200"
           >
             <Search className="h-4 w-4 flex-shrink-0" />
             <input
@@ -305,7 +307,7 @@ const Header = () => {
                 <Link
                   href="/likes"
                   aria-label="Articles likés"
-                  className="flex h-9 w-9 items-center justify-center rounded-full hover:bg-muted transition-colors duration-150 cursor-pointer"
+                  className="hidden sm:flex h-9 w-9 items-center justify-center rounded-full hover:bg-muted transition-colors duration-150 cursor-pointer"
                 >
                   <Heart className="h-4 w-4" />
                 </Link>
@@ -355,9 +357,73 @@ const Header = () => {
             </DropdownMenu>
 
             <ModeToggle />
+
+            {/* Hamburger — mobile only */}
+            <button
+              onClick={() => setMobileMenuOpen(o => !o)}
+              aria-label="Menu"
+              className="flex md:hidden h-9 w-9 items-center justify-center rounded-full hover:bg-muted transition-colors duration-150 cursor-pointer"
+            >
+              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
           </div>
         </div>
       </div>
+
+      {/* ── Mobile menu drawer ───────────────────────── */}
+      {mobileMenuOpen && (
+        <div className="md:hidden border-t border-border/40 bg-paper/95 dark:bg-ink/95 backdrop-blur-xl">
+          {/* Search */}
+          <div className="px-4 pt-3 pb-2">
+            <form onSubmit={handleSearch} className="flex items-center gap-2 rounded-full border border-border bg-card/60 px-4 py-2.5 text-sm text-muted-foreground focus-within:border-foreground/30 transition-all">
+              <Search className="h-4 w-4 flex-shrink-0" />
+              <input
+                type="text"
+                value={searchValue}
+                onChange={e => setSearchValue(e.target.value)}
+                placeholder="Rechercher..."
+                className="flex-1 bg-transparent outline-none placeholder:text-muted-foreground"
+              />
+            </form>
+          </div>
+
+          {/* Nav links */}
+          <nav className="px-4 pb-4 space-y-0.5">
+            {NAV_CATEGORIES.map(cat => (
+              <Link
+                key={cat.cat}
+                href={`/?cat=${cat.cat}`}
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-medium hover:bg-muted transition-colors cursor-pointer"
+              >
+                {cat.label}
+                <ChevronDown className="h-4 w-4 -rotate-90 text-muted-foreground" />
+              </Link>
+            ))}
+
+            <div className="pt-2 border-t border-border/40 mt-2 space-y-0.5">
+              {status === 'authenticated' ? (
+                <>
+                  <Link href="/items/add-item" onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-bold cursor-pointer"
+                    style={{ background: 'var(--acid)', color: 'var(--ink)' }}>
+                    <CirclePlus className="h-4 w-4" /> Vendre
+                  </Link>
+                  <Link href="/likes" onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium hover:bg-muted transition-colors cursor-pointer">
+                    <Heart className="h-4 w-4" /> Mes favoris
+                  </Link>
+                </>
+              ) : (
+                <Link href="/login" onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium hover:bg-muted transition-colors cursor-pointer">
+                  <User className="h-4 w-4" /> Connexion
+                </Link>
+              )}
+            </div>
+          </nav>
+        </div>
+      )}
     </header>
   );
 };

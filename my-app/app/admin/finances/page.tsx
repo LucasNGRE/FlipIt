@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState } from 'react'
 import { TrendingUp, Euro, RefreshCw, Download } from 'lucide-react'
@@ -50,8 +50,8 @@ export default function AdminFinancesPage() {
 
   if (loading) {
     return (
-      <div className="px-8 py-10">
-        <div className="grid grid-cols-3 gap-4 mb-8">
+      <div className="px-4 sm:px-8 py-10">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
           {[1,2,3].map(i => <div key={i} className="h-24 rounded-2xl animate-pulse" style={{ background: 'var(--paper-2)' }} />)}
         </div>
       </div>
@@ -59,7 +59,7 @@ export default function AdminFinancesPage() {
   }
 
   return (
-    <div className="px-8 py-10">
+    <div className="px-4 sm:px-8 py-10">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="font-display font-bold text-2xl tracking-tight" style={{ color: 'var(--ink)' }}>Finances</h1>
@@ -74,7 +74,7 @@ export default function AdminFinancesPage() {
       </div>
 
       {/* KPI cards */}
-      <div className="grid grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         {[
           { label: 'Volume vendu', value: fmt(totalRevenue), icon: TrendingUp, accent: 'var(--acid)' },
           { label: 'Commission FlipIt', value: fmt(totalCommission), sub: '10% du volume', icon: Euro, accent: 'var(--acid)' },
@@ -134,7 +134,8 @@ export default function AdminFinancesPage() {
         </div>
       ) : (
         <div className="rounded-2xl border overflow-hidden" style={{ borderColor: 'rgba(0,0,0,.06)' }}>
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full text-sm" style={{ minWidth: 640 }}>
             <thead>
               <tr style={{ background: 'var(--paper-2)', borderBottom: '1px solid rgba(0,0,0,.06)' }}>
                 {['#', 'Article', 'Acheteur', 'Vendeur', 'Montant vendeur', 'Commission', 'Date'].map(h => (
@@ -160,6 +161,7 @@ export default function AdminFinancesPage() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
     </div>

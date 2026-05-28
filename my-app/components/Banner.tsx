@@ -44,8 +44,8 @@ export default function LandingHero() {
     <>
       {/* ── Editorial 2-col hero ────────────────────────── */}
       <section
-        className="mx-auto px-8 pt-10 pb-6"
-        style={{ maxWidth: 1440, display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: 32, alignItems: 'end' }}
+        className="mx-auto px-4 sm:px-8 pt-10 pb-6 grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-8"
+        style={{ maxWidth: 1440, alignItems: 'end' }}
       >
         {/* Left — headline */}
         <div>
@@ -74,7 +74,7 @@ export default function LandingHero() {
           >
             La plateforme de revente dédiée au skate. Trouve le matos qu'il te faut, vends ce qui dort dans ton garage.
           </p>
-          <div className="flex items-center gap-3 mt-7">
+          <div className="flex flex-wrap items-center gap-3 mt-7">
             <Link href="/#articles">
               <button
                 className="inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-bold hover:opacity-90 transition-opacity cursor-pointer"
@@ -182,7 +182,7 @@ export default function LandingHero() {
 
       {/* ── Stats strip ───────────────────────────────── */}
       <div
-        className="mx-auto px-8 py-6 border-b flex flex-wrap gap-9"
+        className="mx-auto px-4 sm:px-8 py-6 border-b flex flex-wrap gap-6 sm:gap-9"
         style={{ maxWidth: 1440, borderColor: 'rgba(0,0,0,.08)' }}
       >
         {[

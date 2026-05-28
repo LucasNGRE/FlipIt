@@ -75,7 +75,7 @@ export default function AdminUsersPage() {
   }
 
   return (
-    <div className="px-8 py-10">
+    <div className="px-4 sm:px-8 py-10">
       <div className="mb-6">
         <h1 className="font-display font-bold text-2xl tracking-tight" style={{ color: 'var(--ink)' }}>Utilisateurs</h1>
         <p className="text-sm mt-1" style={{ color: 'var(--concrete-4)' }}>{users.length} membre{users.length !== 1 ? 's' : ''}</p>
@@ -91,7 +91,8 @@ export default function AdminUsersPage() {
         <div className="space-y-2">{[1,2,3,4,5].map(i => <div key={i} className="h-16 rounded-xl animate-pulse" style={{ background: 'var(--paper-2)' }} />)}</div>
       ) : (
         <div className="rounded-2xl border overflow-hidden" style={{ borderColor: 'rgba(0,0,0,.06)' }}>
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full text-sm" style={{ minWidth: 700 }}>
             <thead>
               <tr style={{ background: 'var(--paper-2)', borderBottom: '1px solid rgba(0,0,0,.06)' }}>
                 {['Utilisateur', 'Email', 'Annonces', 'Achats', 'Ventes', 'Stripe', 'Inscrit', 'Actions'].map(h => (
@@ -151,6 +152,7 @@ export default function AdminUsersPage() {
               ))}
             </tbody>
           </table>
+          </div>
           {filtered.length === 0 && (
             <div className="py-12 text-center">
               <p className="text-sm" style={{ color: 'var(--concrete-4)' }}>{search ? `Aucun résultat pour « ${search} »` : 'Aucun utilisateur'}</p>

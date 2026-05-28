@@ -24,7 +24,7 @@ export default function LikesPage() {
   }, [status, router])
 
   return (
-    <div className="mx-auto px-8 py-12" style={{ maxWidth: 1440 }}>
+    <div className="mx-auto px-4 sm:px-8 py-12" style={{ maxWidth: 1440 }}>
 
       {/* Header */}
       <div className="mb-10">

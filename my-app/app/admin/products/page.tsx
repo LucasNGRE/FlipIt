@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState } from 'react'
 import { Package, Trash2 } from 'lucide-react'
@@ -54,7 +54,7 @@ export default function AdminProductsPage() {
   }
 
   return (
-    <div className="px-8 py-10">
+    <div className="px-4 sm:px-8 py-10">
       <div className="mb-6">
         <h1 className="font-display font-bold text-2xl tracking-tight" style={{ color: 'var(--ink)' }}>Annonces</h1>
         <p className="text-sm mt-1" style={{ color: 'var(--concrete-4)' }}>{products.length} annonce{products.length !== 1 ? 's' : ''}</p>

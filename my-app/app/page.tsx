@@ -40,12 +40,12 @@ export default async function Home() {
       <LandingHero />
 
       {/* ── Drops du jour ──────────────────────────────── */}
-      <section className="mx-auto px-8 pt-12 pb-2" style={{ maxWidth: 1440 }}>
+      <section className="mx-auto px-4 sm:px-8 pt-12 pb-2" style={{ maxWidth: 1440 }}>
         <SkateArticleGrid />
       </section>
 
       {/* ── Catégories ──────────────────────────────────── */}
-      <section className="mx-auto px-8 pt-12 pb-6" style={{ maxWidth: 1440 }}>
+      <section className="mx-auto px-4 sm:px-8 pt-12 pb-6" style={{ maxWidth: 1440 }}>
         <div className="mb-7">
           <div
             className="font-mono text-[11px] uppercase tracking-[.14em]"
@@ -61,10 +61,7 @@ export default async function Home() {
           </h2>
         </div>
 
-        <div
-          className="grid gap-3"
-          style={{ gridTemplateColumns: 'repeat(6, 1fr)' }}
-        >
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
           {categories.map(c => (
             <Link key={c.name} href={`/?cat=${c.cat}`}>
               <div
@@ -106,7 +103,7 @@ export default async function Home() {
       </section>
 
       {/* ── Vendre CTA ──────────────────────────────────── */}
-      <section className="mx-auto px-8 pt-12 pb-6" style={{ maxWidth: 1440 }}>
+      <section className="mx-auto px-4 sm:px-8 pt-12 pb-6" style={{ maxWidth: 1440 }}>
         <div
           className="rounded-[20px] p-10 flex flex-col md:flex-row md:items-center justify-between gap-8"
           style={{ background: 'var(--ink)', color: 'var(--paper)' }}

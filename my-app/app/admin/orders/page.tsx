@@ -44,7 +44,7 @@ export default function AdminOrdersPage() {
   }, [filter])
 
   return (
-    <div className="px-8 py-10">
+    <div className="px-4 sm:px-8 py-10">
       <div className="mb-6">
         <h1 className="font-display font-bold text-2xl tracking-tight" style={{ color: 'var(--ink)' }}>Commandes</h1>
         <p className="text-sm mt-1" style={{ color: 'var(--concrete-4)' }}>{orders.length} commande{orders.length !== 1 ? 's' : ''}</p>
@@ -77,7 +77,8 @@ export default function AdminOrdersPage() {
         </div>
       ) : (
         <div className="rounded-2xl border overflow-hidden" style={{ borderColor: 'rgba(0,0,0,.06)' }}>
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto">
+          <table className="w-full text-sm" style={{ minWidth: 640 }}>
             <thead>
               <tr style={{ background: 'var(--paper-2)', borderBottom: '1px solid rgba(0,0,0,.06)' }}>
                 {['#', 'Article', 'Acheteur', 'Vendeur', 'Montant', 'Statut', 'Date'].map(h => (
@@ -106,6 +107,7 @@ export default function AdminOrdersPage() {
               })}
             </tbody>
           </table>
+          </div>
         </div>
       )}
     </div>

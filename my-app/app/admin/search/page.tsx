@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { Search, User, Package, ShoppingBag } from 'lucide-react'
@@ -29,7 +29,7 @@ export default function AdminSearchPage() {
   const total = results ? results.users.length + results.orders.length + results.products.length : 0
 
   return (
-    <div className="px-8 py-10 max-w-3xl">
+    <div className="px-4 sm:px-8 py-10 max-w-3xl">
       <div className="mb-6">
         <h1 className="font-display font-bold text-2xl tracking-tight mb-1" style={{ color: 'var(--ink)' }}>Recherche globale</h1>
         <p className="text-sm" style={{ color: 'var(--concrete-4)' }}>Email, nom, ID commande, titre article</p>

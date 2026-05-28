@@ -70,8 +70,8 @@ export default function ProfilePage() {
       <div>
         {/* Cover skeleton */}
         <div className="h-60 bg-muted animate-pulse" />
-        <div className="mx-auto px-8 pt-4" style={{ maxWidth: 1440, display: 'grid', gridTemplateColumns: '300px 1fr', gap: 32 }}>
-          <div className="space-y-4" style={{ marginTop: -54 }}>
+        <div className="mx-auto px-4 sm:px-8 pt-4 grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8" style={{ maxWidth: 1440 }}>
+          <div className="space-y-4 lg:mt-[-54px]">
             <div className="h-28 w-28 rounded-full bg-muted animate-pulse" />
             <div className="h-6 w-40 bg-muted rounded animate-pulse" />
             <div className="h-4 w-32 bg-muted rounded animate-pulse" />
@@ -128,10 +128,7 @@ export default function ProfilePage() {
       </section>
 
       {/* ── Main layout: sidebar + content ───────────── */}
-      <div
-        className="mx-auto px-8"
-        style={{ maxWidth: 1440, display: 'grid', gridTemplateColumns: '300px 1fr', gap: 32 }}
-      >
+      <div className="mx-auto px-4 sm:px-8 grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-8" style={{ maxWidth: 1440 }}>
         {/* ── Sidebar ────────────────────────────────── */}
         <aside style={{ marginTop: -54 }}>
           {/* Avatar */}
@@ -311,7 +308,7 @@ export default function ProfilePage() {
                   <p className="text-sm font-semibold" style={{ color: 'var(--concrete-4)' }}>Aucune annonce pour le moment</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                   {profile.products.map(product => (
                     <Link
                       key={product.id}

@@ -144,7 +144,7 @@ function CheckoutPage() {
 
         <PortfolioModal alwaysShow />
 
-        <div className="grid gap-8" style={{ gridTemplateColumns: '1fr 360px', alignItems: 'start' }}>
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_360px] gap-8" style={{ alignItems: 'start' }}>
 
           {/* ── Gauche : stepper + formulaire ─────────────── */}
           <div>
@@ -320,7 +320,7 @@ function CheckoutPage() {
           </div>
 
           {/* ── Droite : récapitulatif ─────────────────────── */}
-          <div className="rounded-2xl overflow-hidden sticky top-24" style={{ border: '1px solid var(--ink)' }}>
+          <div className="rounded-2xl overflow-hidden lg:sticky top-24" style={{ border: '1px solid var(--ink)' }}>
             {product?.images[0] ? (
               <div className="relative w-full" style={{ height: 200 }}>
                 <Image src={product.images[0].url} alt={product.title} fill className="object-cover" />

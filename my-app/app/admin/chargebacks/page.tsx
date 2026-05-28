@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useState } from 'react'
 import { AlertOctagon } from 'lucide-react'
@@ -41,7 +41,7 @@ export default function AdminChargebacksPage() {
   const total = chargebacks.reduce((s, c) => s + Number(c.amount), 0)
 
   return (
-    <div className="px-8 py-10 max-w-4xl">
+    <div className="px-4 sm:px-8 py-10 max-w-4xl">
       <div className="flex items-center gap-3 mb-6">
         <div className="h-10 w-10 rounded-xl flex items-center justify-center" style={{ background: '#fee2e2' }}>
           <AlertOctagon className="h-5 w-5" style={{ color: '#dc2626' }} />
