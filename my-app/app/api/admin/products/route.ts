@@ -25,6 +25,20 @@ export async function GET(req: Request) {
   return NextResponse.json(products)
 }
 
+export async function PATCH(req: Request) {
+  if (cookies().get('admin_token')?.value !== process.env.ADMIN_TOKEN)
+    return NextResponse.json({ error: 'Accès refusé' }, { status: 403 })
+
+  const { id, suspended } = await req.json()
+  const product = await prisma.product.update({
+    where: { id: Number(id) },
+    data: { suspended: Boolean(suspended) },
+    select: { id: true, suspended: true },
+  })
+  await logAdmin(suspended ? 'product_suspended' : 'product_unsuspended', `product:${id}`)
+  return NextResponse.json(product)
+}
+
 export async function DELETE(req: Request) {
   if (cookies().get('admin_token')?.value !== process.env.ADMIN_TOKEN) {
     return NextResponse.json({ error: 'AccÃ¨s refusÃ©' }, { status: 403 })

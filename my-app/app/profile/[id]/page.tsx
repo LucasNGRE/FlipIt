@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { MessageCircle, Package, BadgeCheck, MapPin, Clock } from 'lucide-react'
 import { useSession } from 'next-auth/react'
+import ReportButton from '@/components/ReportButton'
 
 interface Product {
   id: number
@@ -186,6 +187,13 @@ export default function ProfilePage() {
                 <MessageCircle className="h-4 w-4" />
                 Message
               </button>
+            </div>
+          )}
+
+          {/* Signaler l'utilisateur */}
+          {!isOwnProfile && session && (
+            <div className="mt-4 flex justify-end">
+              <ReportButton reportedUserId={profile.id} label="Signaler cet utilisateur" />
             </div>
           )}
 

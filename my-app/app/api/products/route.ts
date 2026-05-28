@@ -10,7 +10,8 @@ export async function GET(req: NextRequest) {
 
     const products = await prisma.product.findMany({
       where: {
-        status: { not: 'sold' }, // exclut les produits vendus des listings
+        status: { not: 'sold' },
+        suspended: false,
         ...(cat ? { category: cat as any } : {}),
         ...(q ? {
           OR: [

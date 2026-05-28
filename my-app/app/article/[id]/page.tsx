@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Heart, MessageCircle, Share2, ArrowLeft, ShieldCheck, Tag, Ruler, Layers } from 'lucide-react';
 import { OfferDialog } from '@/components/chat/offer-dialog';
+import ReportButton from '@/components/ReportButton';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
@@ -314,6 +315,13 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ params }) => {
             <ShieldCheck className="h-4 w-4 flex-shrink-0 mt-0.5" />
             <p>Effectue toujours tes échanges via la plateforme FlipIt pour être protégé. Ne communique jamais tes coordonnées bancaires.</p>
           </div>
+
+          {/* Signaler l'annonce — masqué si c'est la sienne */}
+          {String(session?.user?.id) !== String(article.userId) && (
+            <div className="flex justify-end">
+              <ReportButton productId={article.id} label="Signaler cette annonce" />
+            </div>
+          )}
 
         </div>
       </div>

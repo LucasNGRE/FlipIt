@@ -102,6 +102,7 @@ model Product {
   brand       String?
   size        String?
   status      ProductStatus    @default(available)
+  suspended   Boolean          @default(false)
 
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
