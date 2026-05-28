@@ -126,7 +126,7 @@ function GroupCard({
     setBusy(false)
   }
 
-  const uniqueReasons = [...new Set(group.reports.map(r => r.reason))]
+  const uniqueReasons = Array.from(new Set(group.reports.map(r => r.reason)))
 
   return (
     <div
