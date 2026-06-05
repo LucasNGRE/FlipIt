@@ -5,6 +5,9 @@ import Link from 'next/link'
 import { useSession } from 'next-auth/react'
 import { ArrowRight, Flame } from 'lucide-react'
 import Image from 'next/image'
+import Marquee from '@/components/Marquee'
+
+const MARQUEE_ITEMS = ['decks', 'trucks', 'wheels', 'bearings', 'grip', 'shoes', 'apparel', 'completes', 'protection', 'new in', 'offres', 'hot deals']
 
 interface FeaturedProduct {
   id: number
@@ -209,24 +212,13 @@ export default function LandingHero() {
       </div>
 
       {/* ── Marquee strip ─────────────────────────────── */}
-      <div
-        className="w-full overflow-hidden border-y"
-        style={{ background: 'var(--ink)', borderColor: 'rgba(255,255,255,.08)' }}
-        aria-hidden="true"
-      >
-        <div
-          className="animate-marquee whitespace-nowrap py-3 font-mono text-[13px] uppercase tracking-[.1em]"
-          style={{ color: 'var(--acid)' }}
-        >
-          {['decks', 'trucks', 'wheels', 'bearings', 'grip', 'shoes', 'apparel', 'completes', 'protection', 'new in', 'offres', 'hot deals',
-            'decks', 'trucks', 'wheels', 'bearings', 'grip', 'shoes', 'apparel', 'completes', 'protection', 'new in', 'offres', 'hot deals'].map((item, i) => (
-            <span key={i} className="inline-flex items-center gap-3 mx-3">
-              {item}
-              <span className="opacity-40">·</span>
-            </span>
-          ))}
-        </div>
-      </div>
+      <Marquee
+        items={MARQUEE_ITEMS}
+        speed="slow"
+        background="var(--ink)"
+        color="var(--acid)"
+        borderColor="rgba(255,255,255,.08)"
+      />
     </>
   )
 }

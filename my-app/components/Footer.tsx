@@ -73,14 +73,6 @@ export default function Footer() {
               Achète et revends ton matos skate.<br />
               <span style={{ color: 'var(--acid)' }}>Simple, rapide, entre passionnés.</span>
             </p>
-            <div
-              className="flex gap-2 mt-6 font-mono text-[11px]"
-              style={{ color: 'rgba(245,243,238,.6)' }}
-            >
-              <span>12 482 SKATERS</span>
-              <span>·</span>
-              <span>3 891 ANNONCES LIVE</span>
-            </div>
           </div>
 
           {/* Link columns */}
@@ -114,7 +106,7 @@ export default function Footer() {
           className="border-t flex items-center justify-between pt-5 font-mono text-[11px]"
           style={{ borderColor: 'rgba(255,255,255,.1)', color: 'rgba(245,243,238,.5)' }}
         >
-          <span>© 2026 FLIPIT · MADE WITH ♥ IN PARIS</span>
+          <span>© 2026 FLIPIT — Conçu &amp; développé par LucasNGRE.</span>
           <span>v0.4 · BETA</span>
         </div>
 

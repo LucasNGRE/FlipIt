@@ -1,8 +1,12 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import Image from "next/image"
 import LandingHero from "@/components/Banner"
 import SkateArticleGrid from "@/components/Articles/ArticleGrid"
+import Marquee from "@/components/Marquee"
 import prisma from "@/lib/db"
+
+const ACID_MARQUEE = ['skate', 'share', 'repeat', '— la session ne s\'arrête jamais —']
 
 export const metadata: Metadata = {
   title: "FlipIt — Marketplace du skate d'occasion",
@@ -18,6 +22,7 @@ const CATEGORY_DEFS = [
   { name: 'Accessoires', cat: 'Accessoire', accent: false },
 ]
 
+
 export default async function Home() {
   const counts = await prisma.product.groupBy({
     by: ['category'],
@@ -29,9 +34,28 @@ export default async function Home() {
     if (row.category) countMap[row.category] = row._count.id
   }
 
+  // Fetch one product image per category for card backgrounds
+  const categoryProducts = await prisma.product.findMany({
+    where: {
+      category: { in: ['Deck', 'Truck', 'Roue', 'Chaussure', 'Vetement', 'Accessoire'] as any[] },
+      suspended: false,
+      status: { not: 'sold' },
+      images: { some: {} },
+    },
+    select: { category: true, images: { select: { url: true }, take: 1 } },
+    distinct: ['category'],
+    orderBy: { createdAt: 'desc' },
+  })
+
+  const imageMap: Record<string, string> = {}
+  for (const p of categoryProducts) {
+    if (p.category && p.images[0]) imageMap[p.category] = p.images[0].url
+  }
+
   const categories = CATEGORY_DEFS.map(c => ({
     ...c,
     count: (countMap[c.cat] ?? 0).toLocaleString('fr-FR'),
+    image: imageMap[c.cat] ?? null,
   }))
 
   return (
@@ -65,33 +89,52 @@ export default async function Home() {
           {categories.map(c => (
             <Link key={c.name} href={`/?cat=${c.cat}`}>
               <div
-                className="overflow-hidden border cursor-pointer transition-all duration-250 hover:-translate-y-1 hover:shadow-xl"
+                className="relative overflow-hidden cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl group"
                 style={{
+                  height: 200,
                   borderRadius: 'var(--r-lg)',
                   border: '1px solid var(--ink)',
-                  background: c.accent ? 'var(--acid)' : 'var(--snow)',
+                  background: c.image ? 'var(--ink)' : c.accent ? 'var(--acid)' : 'var(--ink)',
                 }}
               >
-                <div
-                  className="w-full flex items-center justify-center font-mono text-[10px] uppercase tracking-widest"
-                  style={{
-                    height: 120,
-                    background: c.accent ? 'rgba(0,0,0,.08)' : 'var(--ink)',
-                    color: c.accent ? 'var(--ink)' : 'var(--acid)',
-                  }}
-                >
-                  {c.name.substring(0, 3).toUpperCase()}
-                </div>
-                <div className="px-4 py-3.5">
+                {/* Product photo background */}
+                {c.image && (
+                  <>
+                    <Image
+                      src={c.image}
+                      alt={c.name}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
+                    />
+                    {/* Gradient overlay */}
+                    <div
+                      className="absolute inset-0"
+                      style={{ background: 'linear-gradient(to top, rgba(10,10,10,.7) 30%, rgba(10,10,10,.0) 100%)' }}
+                    />
+                  </>
+                )}
+
+                {/* Acid badge top-left for accent card without photo */}
+                {!c.image && c.accent && (
+                  <div className="absolute inset-0" style={{ background: 'var(--acid)' }} />
+                )}
+
+                {/* Text */}
+                <div className="absolute bottom-0 left-0 right-0 p-4">
                   <div
-                    className="font-display font-bold"
-                    style={{ fontSize: 20, letterSpacing: '-.02em' }}
+                    className="font-display font-extrabold leading-none"
+                    style={{
+                      fontSize: 20,
+                      letterSpacing: '-.02em',
+                      color: c.image || !c.accent ? 'var(--paper)' : 'var(--ink)',
+                    }}
                   >
                     {c.name}
                   </div>
                   <div
-                    className="font-mono text-[10px] mt-0.5"
-                    style={{ color: 'var(--concrete-3)' }}
+                    className="font-mono text-[10px] mt-1 uppercase tracking-widest"
+                    style={{ color: c.image || !c.accent ? 'rgba(245,243,238,.55)' : 'rgba(0,0,0,.5)' }}
                   >
                     {c.count} annonces →
                   </div>
@@ -152,24 +195,14 @@ export default async function Home() {
 
       {/* ── Marquee (acid) ─────────────────────────────── */}
       <section className="mt-20">
-        <div
-          className="w-full overflow-hidden border-y py-3"
-          style={{ background: 'var(--acid)', borderColor: 'var(--ink)' }}
-          aria-hidden="true"
-        >
-          <div
-            className="animate-marquee whitespace-nowrap font-mono text-base uppercase tracking-[.1em]"
-            style={{ color: 'var(--ink)' }}
-          >
-            {['skate', 'share', 'repeat', '— la session ne s\'arrête jamais —',
-              'skate', 'share', 'repeat', '— la session ne s\'arrête jamais —'].map((item, i) => (
-              <span key={i} className="inline-flex items-center gap-4 mx-4">
-                {item}
-                <span className="opacity-40">·</span>
-              </span>
-            ))}
-          </div>
-        </div>
+        <Marquee
+          items={ACID_MARQUEE}
+          speed="normal"
+          repeat={3}
+          background="var(--acid)"
+          color="var(--ink)"
+          borderColor="var(--ink)"
+        />
       </section>
     </div>
   )
