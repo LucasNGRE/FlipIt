@@ -24,7 +24,11 @@ export default function AdminLoginPage() {
       if (res.ok) {
         router.push('/admin/disputes')
       } else {
-        setError('Mot de passe incorrect')
+        // Remonte le message renvoyé par l'API : un 429 de limitation de débit
+        // doit être distingué d'un simple mot de passe erroné, sans quoi
+        // l'utilisateur bloqué croit s'être trompé de saisie.
+        const data = await res.json().catch(() => null)
+        setError(data?.error ?? 'Mot de passe incorrect')
         setPassword('')
       }
     } finally {
