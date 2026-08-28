@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server'
 import prisma from '@/lib/db'
 import pusherServer from '@/lib/pusher-server'
 import { getSession } from '@/lib/getSession'
+import { canRespondToOffer, resolveOfferDecision } from '@/lib/domain/offers'
 
 export async function POST(req: Request) {
   // 1. Auth
@@ -23,29 +24,26 @@ export async function POST(req: Request) {
   })
   if (!offer) return NextResponse.json({ error: 'Offre introuvable' }, { status: 404 })
 
-  // 2. L'offre doit être en attente
-  if (offer.status !== 'pending') {
-    return NextResponse.json({ error: 'Cette offre a déjà été traitée' }, { status: 400 })
-  }
-
-  // 3. L'émetteur ne peut pas répondre à sa propre offre
-  if (currentUserId === offer.buyerId) {
-    return NextResponse.json({ error: 'Impossible de répondre à sa propre offre' }, { status: 403 })
-  }
-
-  // 4. L'utilisateur doit être participant de la conversation liée à ce produit
+  // 2 à 4. Règles métier centralisées : offre en attente, émetteur exclu,
+  //         utilisateur participant de la conversation liée au produit
   const conversation = await prisma.conversation.findFirst({
     where: {
       productId: offer.productId,
       participants: { some: { id: currentUserId } },
     },
   })
-  if (!conversation) {
-    return NextResponse.json({ error: 'Non autorisé' }, { status: 403 })
+
+  const authorization = canRespondToOffer({
+    offer,
+    currentUserId,
+    isConversationParticipant: Boolean(conversation),
+  })
+  if (!authorization.allowed || !conversation) {
+    return NextResponse.json({ error: authorization.error }, { status: authorization.status })
   }
 
   // 5. Mettre à jour l'offre (fenêtre de paiement 24h si acceptée)
-  const expiresAt = accepted ? new Date(Date.now() + 24 * 60 * 60 * 1000) : null
+  const { expiresAt } = resolveOfferDecision(accepted, new Date())
   const updatedOffer = await prisma.offer.update({
     where: { id: Number(id) },
     data: {

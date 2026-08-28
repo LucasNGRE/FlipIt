@@ -4,6 +4,8 @@ import prisma from '@/lib/db'
 import stripe from '@/lib/stripe'
 import { getSession } from '@/lib/getSession'
 import pusherServer from '@/lib/pusher-server'
+import { computeTransferAmountCents } from '@/lib/domain/pricing'
+import { canConfirmOrder } from '@/lib/domain/orders'
 
 export async function POST(_req: Request, { params }: { params: { id: string } }) {
   try {
@@ -18,18 +20,16 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
       include: { seller: { select: { stripeAccountId: true } } },
     })
     if (!order) return NextResponse.json({ error: 'Commande introuvable' }, { status: 404 })
-    if (order.buyerId !== currentUserId) {
-      return NextResponse.json({ error: 'Non autorisé' }, { status: 403 })
-    }
-    if (order.status !== 'shipped') {
-      return NextResponse.json({ error: 'La commande doit être expédiée avant confirmation' }, { status: 400 })
+    const authorization = canConfirmOrder(order, currentUserId)
+    if (!authorization.allowed) {
+      return NextResponse.json({ error: authorization.error }, { status: authorization.status })
     }
     if (!order.seller.stripeAccountId) {
       return NextResponse.json({ error: 'Compte vendeur manquant' }, { status: 400 })
     }
 
     // Le vendeur reçoit le prix produit en entier — la commission est payée par l'acheteur en sus
-    const transferAmount = Math.round(Number(order.finalPrice) * 100)
+    const transferAmount = computeTransferAmountCents(Number(order.finalPrice))
 
     // Récupère le charge ID lié au PaymentIntent pour source_transaction
     // (évite le problème de solde insuffisant en test mode)

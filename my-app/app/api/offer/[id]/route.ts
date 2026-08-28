@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic'
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/db'
+import { isOfferExpired } from '@/lib/domain/offers'
 
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
   const offer = await prisma.offer.findUnique({
@@ -10,7 +11,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
   if (!offer) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
   // Auto-expire si la fenêtre de 24h est dépassée
-  if (offer.status === 'accepted' && offer.expiresAt && offer.expiresAt < new Date()) {
+  if (isOfferExpired(offer, new Date())) {
     await prisma.offer.update({
       where: { id: offer.id },
       data: { status: 'rejected' },

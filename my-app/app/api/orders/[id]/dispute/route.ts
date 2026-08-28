@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server'
 import prisma from '@/lib/db'
 import { getSession } from '@/lib/getSession'
 import pusherServer from '@/lib/pusher-server'
+import { canDisputeOrder } from '@/lib/domain/orders'
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
   try {
@@ -14,11 +15,9 @@ export async function POST(req: Request, { params }: { params: { id: string } })
 
     const order = await prisma.order.findUnique({ where: { id: Number(params.id) } })
     if (!order) return NextResponse.json({ error: 'Commande introuvable' }, { status: 404 })
-    if (order.buyerId !== currentUserId) {
-      return NextResponse.json({ error: 'Non autorisé' }, { status: 403 })
-    }
-    if (!['paid', 'shipped'].includes(order.status)) {
-      return NextResponse.json({ error: 'Impossible de disputer une commande dans cet état' }, { status: 400 })
+    const authorization = canDisputeOrder(order, currentUserId)
+    if (!authorization.allowed) {
+      return NextResponse.json({ error: authorization.error }, { status: authorization.status })
     }
 
     const { reason, details, images } = await req.json().catch(() => ({ reason: '', details: '', images: [] }))

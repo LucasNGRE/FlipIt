@@ -2,11 +2,13 @@ import { NextResponse } from 'next/server'
 import prisma from '@/lib/db'
 import stripe from '@/lib/stripe'
 import pusherServer from '@/lib/pusher-server'
+import { computeTransferAmountCents } from '@/lib/domain/pricing'
+import { isCronAuthorized } from '@/lib/domain/access'
 
 export async function POST(req: Request) {
   // Vérifie le secret cron pour éviter les appels non autorisés
   const auth = req.headers.get('authorization')
-  if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (!isCronAuthorized(auth, process.env.CRON_SECRET)) {
     return NextResponse.json({ error: 'Non autorisé' }, { status: 401 })
   }
 
@@ -29,7 +31,7 @@ export async function POST(req: Request) {
         if (!order.seller.stripeAccountId) continue
 
         // Le vendeur reçoit le prix produit en entier — commission payée par l'acheteur en sus
-        const transferAmount = Math.round(Number(order.finalPrice) * 100)
+        const transferAmount = computeTransferAmountCents(Number(order.finalPrice))
 
         const pi = await stripe.paymentIntents.retrieve(order.paymentIntentId)
         const chargeId = typeof pi.latest_charge === 'string' ? pi.latest_charge : pi.latest_charge?.id

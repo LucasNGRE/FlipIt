@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server'
 import prisma from '@/lib/db'
 import stripe from '@/lib/stripe'
 import { getSession } from '@/lib/getSession'
+import { computeOrderAmounts, resolveFinalPrice, DEFAULT_DELIVERY_COST } from '@/lib/domain/pricing'
 
 export async function POST(req: Request) {
   try {
@@ -37,15 +38,16 @@ export async function POST(req: Request) {
         where: { id: Number(offerId) },
         select: { offerPrice: true, status: true },
       })
-      if (offer?.status === 'accepted') {
-        finalPrice = Number(offer.offerPrice)
-      }
+      finalPrice = resolveFinalPrice(
+        finalPrice,
+        offer ? { offerPrice: Number(offer.offerPrice), status: offer.status } : null
+      )
     }
 
-    const deliveryAmount = Number(deliveryCost ?? 4)
-    const commissionAmount = Math.round(finalPrice * 0.10 * 100) / 100
-    const totalAmount = finalPrice + deliveryAmount + commissionAmount
-    const amountCents = Math.round(totalAmount * 100)
+    const { amountCents } = computeOrderAmounts(
+      finalPrice,
+      Number(deliveryCost ?? DEFAULT_DELIVERY_COST)
+    )
 
     const transferGroup = `ORDER_${product.id}_${Date.now()}`
 
