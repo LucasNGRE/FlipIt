@@ -1,6 +1,7 @@
 # 00 — Inventaire technique du projet
 
-> Relevé effectué le **28 août 2026** sur la branche `tests/dossier-cda`
+> Relevé effectué le **28 août 2026** sur la branche `tests/dossier-cda`,
+> après la campagne de nettoyage du code mort (voir §9)
 > (dernier commit de `main` : `0019db1`, 5 juin 2026).
 
 ## 1. Identification
@@ -35,9 +36,9 @@ FlipIt/
 │   │   ├── page.tsx            # Page d'accueil
 │   │   ├── globals.css         # Design system (variables CSS custom)
 │   │   ├── admin/              # Panel d'administration (11 pages)
-│   │   ├── api/                # 50 routes API
+│   │   ├── api/                # 47 routes API
 │   │   │   ├── admin/          # 16 routes d'administration
-│   │   │   ├── auth/           # NextAuth + dossiers vides forgot/reset-password
+│   │   │   ├── auth/           # NextAuth
 │   │   │   ├── conversations/  # Messagerie
 │   │   │   ├── cron/           # auto-confirm (cron Vercel)
 │   │   │   ├── items/          # CRUD annonces
@@ -51,30 +52,31 @@ FlipIt/
 │   │   ├── items/              # Mes annonces + add-item
 │   │   ├── inbox/ orders/ payment/ likes/ settings/ thank-you/
 │   │   ├── login/ register/
-│   │   ├── about/ contact/ privacy/ landing-page/ Item_summary/[id]/
+│   │   ├── about/ contact/ privacy/
 │   │   └── action/user.ts      # Server action
-│   ├── components/             # 45 composants React
-│   │   ├── ui/                 # 21 composants shadcn/ui
+│   ├── components/             # 38 composants React
+│   │   ├── ui/                 # 20 composants shadcn/ui
 │   │   ├── admin/              # AdminSidebar
-│   │   ├── Articles/           # ArticleCard, ArticleGrid, CheapItems, ExpensiveItems
-│   │   ├── chat/               # ConversationList, MessageThread, offer-dialog (+ 2 legacy)
+│   │   ├── Articles/           # ArticleCard, ArticleGrid
+│   │   ├── chat/               # ConversationList, MessageThread, offer-dialog
 │   │   ├── items/              # add-item (formulaire multi-étapes)
 │   │   ├── payment/            # StripePaymentForm, payment-form, Delivery-form
 │   │   ├── settings/           # user_settings
 │   │   └── Header, Footer, Banner, Marquee, PortfolioModal, ReportButton…
 │   ├── lib/
 │   │   ├── domain/             # Logique métier pure (extraite, testée) — offers, orders,
-│   │   │                       #   products, pricing, access
+│   │   │                       #   products, pricing, access, session
 │   │   ├── auth.ts             # Configuration NextAuth v5
 │   │   ├── adminAuth.ts        # Vérification de session administrateur
 │   │   ├── getSession.ts, db.ts, adminLog.ts, rateLimit.ts
 │   │   ├── pusher-server.ts, pusher-client.ts, stripe.ts, utils.ts
-│   ├── tests/                  # Suites Vitest (8 fichiers, 141 tests)
+│   ├── tests/                  # Suites Vitest (10 fichiers, 162 tests)
 │   │   └── api/                # Tests de routes avec Prisma mocké
+│   ├── scripts/captures.mjs    # Génération des captures d'écran (Playwright)
 │   ├── prisma/
 │   │   ├── schema.prisma       # 19 modèles, 6 énumérations
 │   │   ├── schema.mmd          # Diagramme Mermaid
-│   │   ├── seed.ts             # Jeu de données (faker)
+│   │   ├── seed.ts             # Jeu de données (écrites en dur)
 │   │   └── migrations/         # 3 migrations (octobre 2024)
 │   ├── ERD/diagram.svg         # Diagramme entité-association
 │   ├── middleware.ts           # Protection des pages /admin/*
@@ -83,32 +85,31 @@ FlipIt/
 │   ├── next.config.mjs, tailwind.config.ts, tsconfig.json
 │   ├── .env                    # Base de production (non versionné)
 │   └── .env.local              # Base de développement (non versionné)
-└── infos.txt                   # Notes d'installation historiques
 ```
 
 ## 4. Métriques
 
 | Indicateur | Valeur |
 |---|---|
-| Pages (`page.tsx`) | **31** (20 publiques + 11 admin) |
-| Routes API (`route.ts`) | **50** (34 applicatives + 16 admin) |
-| Composants React (`.tsx` dans `components/`) | **45** |
+| Pages (`page.tsx`) | **29** (18 publiques + 11 admin) |
+| Routes API (`route.ts`) | **47** (31 applicatives + 16 admin) |
+| Composants React (`.tsx` dans `components/`) | **38** |
 | Modèles Prisma | **19** |
 | Énumérations Prisma | **6** |
-| Fichiers de tests | **8** |
-| Tests automatisés | **141** |
+| Fichiers de tests | **10** |
+| Tests automatisés | **162** |
 | Migrations Prisma | 3 (toutes d'octobre 2024) |
 
 ### Volume de code (hors `node_modules`, `.next`, `.git`)
 
 | Langage | Fichiers | Lignes |
 |---|---:|---:|
-| TypeScript React (`.tsx`) | 78 | 12 197 |
-| TypeScript (`.ts`) | 79 | 4 723 |
+| TypeScript React (`.tsx`) | 69 | 10 965 |
+| TypeScript (`.ts`) | 79 | 4 996 |
 | Prisma (`.prisma`) | 1 | 336 |
 | CSS | 1 | 149 |
 | JavaScript (`.mjs`) | 2 | 26 |
-| **Total code applicatif** | **161** | **17 431** |
+| **Total code applicatif** | **153** | **16 791** |
 | JSON (configs + lockfile) | 7 | 11 929 |
 
 > Comptage réalisé par parcours du système de fichiers (lignes brutes, commentaires
@@ -123,7 +124,6 @@ FlipIt/
 | `typescript` | 5.6.3 | Typage statique (devDependency, mais central) |
 | `@prisma/client` | ^5.20.0 | Client ORM généré, accès PostgreSQL |
 | `next-auth` | ^5.0.0-beta.22 | Authentification (Credentials + Google OAuth), sessions JWT |
-| `@auth/prisma-adapter` | ^2.4.2 | Adaptateur NextAuth ↔ Prisma (présent, non actif en stratégie JWT) |
 | `bcryptjs` | ^2.4.3 | Hachage et vérification des mots de passe |
 | `stripe` | ^22.1.1 | SDK serveur Stripe (PaymentIntent, transferts, webhooks) |
 | `@stripe/stripe-js` | ^9.7.0 | SDK navigateur Stripe |
@@ -133,7 +133,7 @@ FlipIt/
 | `zod` | ^3.23.8 | Schémas de validation — utilisé dans `components/payment/Delivery-form.tsx` uniquement |
 | `react-hook-form` | ^7.53.0 | Gestion des formulaires (2 fichiers) |
 | `@hookform/resolvers` | ^3.9.0 | Passerelle react-hook-form ↔ zod |
-| `framer-motion` | ^11.11.9 | Animations — utilisé dans `app/landing-page/page.tsx` uniquement |
+| `framer-motion` | ^11.11.9 | Animations — **plus aucun import** depuis la suppression de `app/landing-page/` |
 | `next-themes` | ^0.3.0 | Bascule thème clair / sombre (3 fichiers) |
 | `lucide-react` | ^0.438.0 | Jeu d'icônes principal |
 | `@radix-ui/react-*` (17 paquets) | ^1.x – ^2.x | Primitives accessibles sous-jacentes à shadcn/ui |
@@ -143,23 +143,35 @@ FlipIt/
 | `embla-carousel-react` | ^8.3.0 | Carrousel d'images (2 fichiers) |
 | `canvas-confetti` | ^1.9.3 | Effet visuel de confirmation (1 fichier) |
 | `sonner` | ^1.5.0 | Notifications toast (2 fichiers) |
-| `react-intersection-observer` | ^9.13.1 | Détection de visibilité (animations au défilement) |
+| `react-intersection-observer` | ^9.13.1 | Détection de visibilité — **plus aucun import** depuis la suppression de `app/landing-page/` |
 | `react-icons` | ^5.3.0 | Jeu d'icônes secondaire (8 fichiers) |
 
-### Dépendances déclarées mais non importées par le code
+### Dépendances supprimées lors du nettoyage
 
-Vérification par recherche d'imports dans `app/`, `components/`, `lib/` et `prisma/`.
-Aucun de ces paquets n'est référencé — à signaler comme dette technique (voir `99_manques.md`) :
+Ces paquets étaient déclarés sans qu'aucun import ne les référence. Ils ont été
+désinstallés (voir §9) :
 
-| Paquet | Occurrences | Remarque |
-|---|---:|---|
-| `talkjs`, `@talkjs/react` | 0 | Solution de messagerie tierce, remplacée par l'implémentation Pusher maison |
-| `multer`, `formidable`, `next-connect` | 0 | Traitement d'upload de l'ère Pages Router ; l'App Router utilise `req.formData()` |
-| `@tabler/icons-react` | 0 | Jeu d'icônes jamais employé |
-| `@faker-js/faker` | 0 | Déclaré pour le seed, mais `prisma/seed.ts` utilise des données écrites en dur |
-| `@auth/prisma-adapter` | 0 | Adaptateur inutile en stratégie JWT |
-| `babel-eslint`, `@babel/eslint-parser` | 0 | Configuration ESLint héritée ; le projet utilise `eslint-config-next` |
-| `@types/canvas-confetti` | — | Type déclaré en dépendance de production au lieu de développement |
+| Paquet | Motif |
+|---|---|
+| `talkjs`, `@talkjs/react` | Messagerie tierce, remplacée par l'implémentation Pusher maison |
+| `multer`, `formidable`, `next-connect` | Traitement d'upload de l'ère Pages Router ; l'App Router utilise `req.formData()` |
+| `@tabler/icons-react` | Jeu d'icônes jamais employé |
+| `@faker-js/faker` | Déclaré pour le seed, mais `prisma/seed.ts` utilise des données écrites en dur |
+| `@auth/prisma-adapter` | Adaptateur inutile en stratégie JWT |
+| `babel-eslint`, `@babel/eslint-parser`, `@babel/core`, `@babel/preset-react` | Aucune configuration Babel dans le projet ; `.eslintrc.json` n'étend que `next` et `next/core-web-vitals` |
+| `@types/multer`, `@types/formidable`, `@types/uuid` | Types orphelins, leurs paquets respectifs n'étant plus (ou pas) installés |
+
+`@types/canvas-confetti` a par ailleurs été déplacé de `dependencies` vers `devDependencies`.
+
+### Dépendances devenues orphelines après le nettoyage
+
+| Paquet | Situation |
+|---|---|
+| `framer-motion` | N'était importé que par `app/landing-page/page.tsx`, page supprimée |
+| `react-intersection-observer` | Idem |
+
+Elles sont **conservées pour l'instant** : leur suppression est une décision à prendre
+séparément, ces deux bibliothèques pouvant resservir pour des animations.
 
 ## 6. Dépendances de développement
 
@@ -205,15 +217,72 @@ Cette substitution n'affecte pas le build Next.js, qui n'utilise pas Rollup.
 
 ## 8. État de sécurité des dépendances (`npm audit`, 28/08/2026)
 
-| Sévérité | Nombre |
-|---|---:|
-| Critique | 6 |
-| Haute | 25 |
-| Modérée | 15 |
-| Faible | 4 |
-| **Total** | **50** |
+| Sévérité | Avant nettoyage | Après nettoyage |
+|---|---:|---:|
+| Critique | 6 | **5** |
+| Haute | 25 | 25 |
+| Modérée | 15 | 15 |
+| Faible | 4 | **2** |
+| **Total** | **50** | **47** |
+
+La désinstallation des dépendances inutilisées a supprimé 3 vulnérabilités, dont une
+critique (`@auth/prisma-adapter`, transitive de `@auth/core`).
 
 Les vulnérabilités les plus significatives sont détaillées dans `03_securite.md`.
 La seule touchant directement le périmètre de production est
 `@auth/core` (critique — contournement par homoglyphe lors de la normalisation d'adresse e-mail),
 transitive de `next-auth`.
+
+## 9. Campagne de nettoyage du code mort (28/08/2026)
+
+Chaque suppression a été précédée d'une recherche de références (imports, appels `fetch`,
+liens `href`, mentions en configuration) dans `app/`, `components/`, `lib/`, `middleware.ts`
+et les fichiers de configuration. Aucune référence active n'a été trouvée pour les éléments
+listés ci-dessous.
+
+### Routes API supprimées
+
+| Fichier | Motif |
+|---|---|
+| `app/api/messages/route.ts` | **Faille active** : acceptait un `senderId` fourni par le client et créait un message au nom de cet utilisateur, sans vérification de session. Route non appelée par l'interface mais déployée en production |
+| `app/api/conversation/route.ts` | Ancienne API de conversation (singulier), remplacée par `app/api/conversations/` |
+| `app/api/conversation/[userId]/route.ts` | Idem |
+
+`app/api/messages/unread/` et l'ensemble de `app/api/conversations/` sont conservés :
+ce sont eux que la messagerie en service appelle.
+
+### Composants et pages supprimés
+
+| Fichier | Motif |
+|---|---|
+| `components/TestButtonApi.tsx` | Composant de test |
+| `components/FooterBanner.tsx` | Abandonné |
+| `components/Articles/CheapItems.tsx` | Abandonné |
+| `components/Articles/ExpensiveItems.tsx` | Abandonné |
+| `components/ui/homepage-carousel.tsx` | Abandonné |
+| `components/chat/chat-component.tsx` | Ancienne messagerie, remplacée par `MessageThread` |
+| `components/chat/conversation-list.tsx` | Doublon en minuscules de `ConversationList.tsx`, seul ce dernier étant importé par `/inbox` |
+| `app/landing-page/` | Page d'accueil alternative de 488 lignes, aucun lien n'y menait |
+| `app/Item_summary/` | Page cassée en production : `fetch('http://localhost:3000/api/items/…')` en dur |
+
+### Coquilles vides et fichiers obsolètes supprimés
+
+| Fichier | Motif |
+|---|---|
+| `app/api/auth/forgot-password/`, `reset-password/` | Dossiers sans `route.ts` — fonctionnalité jamais implémentée |
+| `my-app/prisma-heroku` | **Gitlink de sous-module orphelin** (mode `160000`) pointant vers le commit `5576da9`, sans entrée dans un `.gitmodules` inexistant |
+| `infos.txt` | Notes d'installation obsolètes (multer, PostgreSQL local) |
+
+### Effet mesuré
+
+| Indicateur | Avant | Après |
+|---|---:|---:|
+| Pages | 31 | 29 |
+| Routes API | 50 | 47 |
+| Composants | 45 | 38 |
+| Lignes de code applicatif | 17 431 | 16 791 |
+| Dépendances de production | 51 | 41 |
+| Vulnérabilités `npm audit` | 50 | 47 |
+
+Le build de production, le typage (`tsc --noEmit`) et la suite de tests (162 tests)
+passent après nettoyage.

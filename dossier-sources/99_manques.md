@@ -91,7 +91,13 @@ Le fichier est lisible et suffit à illustrer la compétence.
 
 ### B1 — Réinitialisation de mot de passe
 
-**État : COQUILLES VIDES.** Les dossiers `app/api/auth/forgot-password/` et
+**État : NON IMPLÉMENTÉE — dossiers vides supprimés le 28/08/2026.**
+
+> Les dossiers `forgot-password/` et `reset-password/` ont été retirés du dépôt, ainsi que
+> la clé `RESEND_API_KEY` inutilisée. La fonctionnalité est désormais présentée en
+> perspective d'évolution plutôt qu'en chantier inachevé. Description conservée ci-dessous.
+
+**État initial :** Les dossiers `app/api/auth/forgot-password/` et
 `app/api/auth/reset-password/` existent mais **ne contiennent aucun fichier `route.ts`**.
 Une clé `RESEND_API_KEY` figure dans `.env.local`, mais aucune bibliothèque d'envoi
 d'e-mail n'est installée et aucun code ne lit cette variable.
@@ -131,7 +137,11 @@ l'e-mail transactionnel n'a pas été jugé prioritaire pour un projet de démon
 
 ### C1 — Identifiant de session incohérent pour les comptes Google
 
-**Gravité : élevée. État : NON CORRIGÉ.**
+**Gravité : élevée. État : CORRIGÉ le 28/08/2026.**
+
+> `resolveTokenSubject()` (`lib/domain/session.ts`) résout désormais l'identifiant en base
+> par e-mail pour les connexions Google, et conserve tel quel celui des connexions par
+> identifiants. 21 tests ajoutés. Description du défaut conservée ci-dessous.
 
 `lib/auth.ts` place `token.sub = user.id` : pour un compte Credentials c'est l'identifiant
 numérique en base, pour un compte Google c'est le `sub` OAuth. Or toutes les routes font
@@ -148,7 +158,7 @@ jeton. C'est une correction ciblée avec un impact fonctionnel fort. Si elle n'e
 
 ### C2 — Page `/Item_summary/[id]` avec une URL en dur
 
-**Gravité : moyenne. État : NON CORRIGÉ.**
+**Gravité : moyenne. État : SUPPRIMÉE le 28/08/2026** (aucun lien n'y menait).
 `app/Item_summary/[id]/page.tsx` appelle `fetch('http://localhost:3000/api/items/…')`.
 La page est cassée en production. Le nom du dossier viole en outre la convention de nommage
 du reste du projet.
@@ -237,22 +247,37 @@ Vérifié par recherche d'imports dans l'ensemble du code applicatif :
 | `infos.txt` | Notes d'installation obsolètes (mentionnent multer et PostgreSQL local) |
 
 > **Point de vigilance sur `app/api/messages/route.ts` :** bien que non appelée par
-> l'interface, cette route reste **déployée et accessible publiquement**. Elle permet de
-> créer un message au nom de n'importe quel utilisateur en passant simplement son
-> `senderId` dans le corps de la requête. La supprimer est une correction de sécurité,
+> l'interface, cette route restait **déployée et accessible publiquement**. Elle permettait
+> de créer un message au nom de n'importe quel utilisateur en passant simplement son
+> `senderId` dans le corps de la requête. La supprimer était une correction de sécurité,
 > pas seulement du nettoyage.
 
-**Recommandation : supprimer** avant de rendre le dossier. Un dépôt propre se lit mieux,
-et la route `messages` doit disparaître pour des raisons de sécurité.
+**État : TRAITÉ le 28/08/2026.** L'ensemble de ces éléments a été supprimé, ainsi que
+`app/Item_summary/` (page cassée) et les dossiers vides `forgot-password/` et
+`reset-password/`. Chaque suppression a été précédée d'une recherche de références
+(imports, `fetch`, `href`, configuration) : aucune n'a été trouvée. Détail complet en
+`00_inventaire.md` §9.
+
+`prisma-heroku` s'est révélé n'être pas un dossier vide mais un **gitlink de sous-module
+orphelin** (mode `160000`) pointant vers un commit inaccessible, sans `.gitmodules`.
+
+Effet mesuré : 45 → 38 composants, 50 → 47 routes API, 17 431 → 16 791 lignes de code.
 
 ### D2 — Dépendances déclarées mais jamais importées
 
-`talkjs`, `@talkjs/react`, `multer`, `formidable`, `next-connect`, `@tabler/icons-react`,
-`@faker-js/faker`, `@auth/prisma-adapter`, `babel-eslint`, `@babel/eslint-parser`.
-Détail et vérification en `00_inventaire.md` §5.
+**État : TRAITÉ le 28/08/2026.** Désinstallation de `talkjs`, `@talkjs/react`, `multer`,
+`formidable`, `next-connect`, `@tabler/icons-react`, `@faker-js/faker`,
+`@auth/prisma-adapter`, `babel-eslint`, `@babel/eslint-parser`, `@babel/core`,
+`@babel/preset-react`, `@types/multer`, `@types/formidable`, `@types/uuid`.
+`@types/canvas-confetti` déplacé en `devDependencies`.
 
-**Recommandation : à assumer**, en le citant comme dette technique identifiée. Les
-désinstaller réduirait aussi la surface de vulnérabilités remontée par `npm audit`.
+Résultat : 51 → 41 dépendances de production, et `npm audit` passe de **50 à 47**
+vulnérabilités (critiques 6 → 5). Détail en `00_inventaire.md` §5 et §8.
+
+> **Reste à arbitrer :** `framer-motion` et `react-intersection-observer` ne sont plus
+> importés nulle part depuis la suppression de `app/landing-page/`, qui était leur unique
+> point d'usage. Ils ont été conservés volontairement — leur retrait est une décision
+> à prendre selon que ces bibliothèques doivent resservir pour des animations.
 
 ### D3 — Modèle `Transaction` quasi inutilisé
 
@@ -328,19 +353,29 @@ démontre la maîtrise du modèle physique sans toucher à la production.
 
 ## F. Récapitulatif des priorités
 
+### Traité le 28 août 2026
+
+| Action | Référence |
+|---|---|
+| ~~Supprimer `app/api/messages/route.ts`~~ (création de message au nom d'autrui) | D1, F3 ter de `03_securite.md` |
+| ~~Corriger l'identifiant de session Google~~ | C1, F4 de `03_securite.md` |
+| ~~Supprimer le code mort et les dossiers vides~~ | D1, B1 |
+| ~~Désinstaller les dépendances inutilisées~~ | D2 |
+| ~~Supprimer la page `/Item_summary/[id]`~~ (URL localhost en dur) | C2 |
+
+### Reste à faire
+
 | Priorité | Action | Coût | Risque |
 |---|---|---|---|
-| **1** | Supprimer `app/api/messages/route.ts` (création de message au nom d'autrui) | Minime | Nul |
-| **2** | Corriger l'identifiant de session Google (C1) | Moyen | Faible, à tester |
-| **3** | Réécrire le README (D4) | Faible | Nul |
-| **4** | Diagramme de cas d'utilisation + diagramme de séquence (A2) | Moyen | Nul |
-| **5** | Appliquer la validation sur `PUT /api/items/[id]` (C4) | Minime | Nul |
-| **6** | Contrôler le canal Pusher `private-admin` (C5) | Faible | Nul |
-| **7** | Supprimer le code mort (D1) et les dossiers vides (B1) | Faible | Nul |
-| **8** | Ajouter `.github/workflows/ci.yml` (E1) | Faible | Nul |
-| **9** | Documenter le design system en guise de conception d'interface (A1) | Moyen | Nul |
-| **10** | Corriger l'encodage des messages d'erreur (C7) | Minime | Nul |
+| **1** | Réécrire le README (D4) | Faible | Nul |
+| **2** | Diagramme de cas d'utilisation + diagramme de séquence (A2) | Moyen | Nul |
+| **3** | Appliquer la validation sur `PUT /api/items/[id]` (C4) | Minime | Nul |
+| **4** | Contrôler le canal Pusher `private-admin` (C5) | Faible | Nul |
+| **5** | Ajouter `.github/workflows/ci.yml` (E1) | Faible | Nul |
+| **6** | Documenter le design system en guise de conception d'interface (A1) | Moyen | Nul |
+| **7** | Corriger l'encodage des messages d'erreur (C7) | Minime | Nul |
+| **8** | Supprimer la page fantôme `app/items/page.tsx` (C3) | Minime | Nul |
+| **9** | Arbitrer sur `framer-motion` et `react-intersection-observer`, devenus orphelins (D2) | Minime | Nul |
 | — | Rebaseliner les migrations Prisma (E2) | Élevé | **Touche la production — à ne pas faire dans l'urgence** |
 
-Les points 1, 3, 5, 6, 7 et 10 représentent moins d'une journée de travail cumulée et
-suppriment l'essentiel de ce qu'un jury pourrait relever comme négligence.
+Les points 1, 3, 4, 7, 8 et 9 représentent moins d'une demi-journée de travail cumulée.

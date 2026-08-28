@@ -39,6 +39,11 @@ La session est un **JWT signé** (pas de session en base). `token.sub` porte l'i
 utilisateur, réexposé en `session.user.id`. Le secret provient de `AUTH_SECRET`.
 `trustHost: true` est activé pour le déploiement Vercel.
 
+Le callback `jwt` délègue à `resolveTokenSubject()` (`lib/domain/session.ts`) : quel que
+soit le fournisseur, c'est **l'identifiant en base** qui est inscrit dans le jeton. Pour
+une connexion Google, il est résolu par e-mail, le `sub` OAuth n'étant pas un identifiant
+exploitable par l'application (voir F4).
+
 **Fichier :** `my-app/lib/getSession.ts` — wrapper `getSession()` utilisé par la quasi-totalité
 des routes API pour récupérer la session côté serveur.
 
@@ -286,20 +291,52 @@ essayer, prolongeant d'autant le verrouillage.
 **Correction :** lecture de `data.error` et affichage du message renvoyé par l'API, avec
 repli sur le message générique. Preuve visuelle : `captures/38_admin_rate_limit.png`.
 
-### F4 — Identifiant de session incohérent pour les comptes Google
+### F3 ter — Route de messagerie sans authentification (CORRIGÉE)
 
-**Gravité : moyenne. Non corrigée — limite assumée.**
+**Gravité : critique.** `app/api/messages/route.ts` créait un message à partir d'un
+`senderId` fourni dans le corps de la requête, **sans aucun appel à `getSession()`** :
+
+```ts
+const { content, senderId, conversationId, productId } = await req.json();
+const message = await prisma.message.create({
+  data: { content, user: { connect: { id: senderId } }, ... }
+```
+
+N'importe qui pouvait donc écrire un message en se faisant passer pour n'importe quel
+utilisateur, dans n'importe quelle conversation. La route n'était plus appelée par
+l'interface — la messagerie en service passe par `POST /api/conversations/[id]/messages`,
+qui vérifie la session — mais elle restait **déployée et accessible en production**.
+
+**Correction :** suppression de la route, ainsi que de `app/api/conversation/` (singulier),
+autre vestige de la même génération de code. Vérification préalable : aucune référence à
+`/api/messages` ni à `/api/conversation/` dans `app/`, `components/` et `lib/`.
+
+### F4 — Identifiant de session incohérent pour les comptes Google (CORRIGÉE)
+
+**Gravité : moyenne.**
 Pour un compte Credentials, `session.user.id` est l'identifiant numérique en base.
 Pour un compte Google, c'est le `sub` OAuth de Google (`lib/auth.ts`, callback `jwt` :
 `token.sub = user.id`). Or les routes font systématiquement `Number(session.user.id)` :
 la conversion donne `NaN` pour un utilisateur Google, et toutes les comparaisons de
 propriété (`product.userId !== Number(session.user.id)`) deviennent fausses.
 
-Conséquence : un utilisateur connecté via Google ne peut pas gérer ses propres annonces
-ni ses commandes. Le contrôle `canModifyProduct()` traite désormais ce cas en renvoyant 401
-plutôt qu'un comportement indéfini (test « refuse un identifiant de session non numérique »),
-mais **la cause racine reste** : il faudrait faire porter au JWT l'identifiant en base
-pour les deux providers.
+Conséquence : un utilisateur connecté via Google se connectait normalement (nom et photo
+affichés) mais ne pouvait gérer ni ses annonces ni ses commandes.
+
+**Correction :** extraction de `resolveTokenSubject()` dans `lib/domain/session.ts`, appelée
+par le callback `jwt` de `lib/auth.ts`. Pour une connexion Google, l'identifiant en base est
+résolu **par e-mail** ; pour une connexion par identifiants, l'identifiant renvoyé par
+`authorize()` est conservé tel quel. La stratégie reprend celle déjà employée par
+`app/api/pusher/auth/route.ts`, seul endroit du code qui fonctionnait pour les deux types
+de compte.
+
+Aucun risque de doublon : le callback `signIn` recherchait déjà l'utilisateur par e-mail et
+réutilise un compte existant, y compris créé par identifiants. La résolution n'a lieu qu'à
+la connexion (`user` **et** `account` présents), pas à chaque rafraîchissement du jeton.
+Si elle échoue, l'erreur est journalisée et le `sub` OAuth n'est jamais écrit dans le jeton.
+
+Couverte par 14 tests dans `tests/session.test.ts` et 7 tests de route dans
+`tests/api/items-delete.route.test.ts`.
 
 ### F5 — Limitation de débit en mémoire, inopérante en production serverless
 
@@ -351,7 +388,7 @@ Correction recommandée : ajouter une branche explicite pour `private-admin` vé
 le cookie `admin_token` via `isAdminRequest()`, et terminer la chaîne par un
 `else return 403` (refus par défaut plutôt qu'autorisation par défaut).
 
-### F10 — Vulnérabilités des dépendances (`npm audit` : 50, dont 6 critiques)
+### F10 — Vulnérabilités des dépendances (`npm audit` : 47, dont 5 critiques)
 
 **Gravité : variable.** Une seule concerne directement le périmètre de production :
 
@@ -379,7 +416,7 @@ intégrant le correctif `@auth/core` est l'action de veille prioritaire.
 |---|---|
 | Protection CSRF explicite sur les routes API | Atténuée par `sameSite: 'strict'` sur le cookie admin et par les JWT NextAuth, mais non traitée en propre |
 | En-têtes de sécurité (CSP, HSTS, X-Frame-Options) | Aucun `headers()` dans `next.config.mjs` ; seuls les défauts Vercel s'appliquent |
-| Réinitialisation de mot de passe | Routes `app/api/auth/forgot-password/` et `reset-password/` **vides** — voir `99_manques.md` |
+| Réinitialisation de mot de passe | Non implémentée. Les dossiers vides `forgot-password/` et `reset-password/` ont été supprimés ; la fonctionnalité est reprise en perspective d'évolution |
 | Vérification d'adresse e-mail | Colonne `emailVerified` présente au schéma mais jamais alimentée |
 | Analyse de dépendances automatisée (CI) | Aucun pipeline ; `npm audit` doit être lancé manuellement |
 | Validation des variables d'environnement au démarrage | Une variable mal nommée (cas réel : `GOOGLE_ID` en production contre `GOOGLE_CLIENT_ID` attendu par le code) échoue silencieusement |
