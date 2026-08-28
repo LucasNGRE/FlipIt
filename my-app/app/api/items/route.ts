@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db'; // Import de votre instance Prisma
 import { getSession } from '@/lib/getSession'; // Suppose que vous avez une fonction pour obtenir la session
+import { validateProductInput, MAX_IMAGES } from '@/lib/domain/products';
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,24 +13,31 @@ export async function POST(req: NextRequest) {
     }
 
     const formData = await req.formData();
-    const title = formData.get('title') as string;
-    const brand = formData.get('brand') as string;
-    const price = parseFloat(formData.get('price') as string);
-    const size = formData.get('size') as string;
-    const condition = formData.get('condition') as string;
-    const category = formData.get('category') as string;
-    const description = formData.get('description') as string;
     const photos = formData.getAll('photos') as File[];
 
+    // Validation serveur des champs de l'annonce (titre, prix, énumérations).
+    const validation = validateProductInput({
+      title: formData.get('title'),
+      price: formData.get('price'),
+      condition: formData.get('condition'),
+      category: formData.get('category'),
+      description: formData.get('description'),
+      brand: formData.get('brand'),
+      size: formData.get('size'),
+    });
 
-    // convert photos to base64
-    const photosBase64 = await Promise.all(photos.map(async (photo) => {
+    if (!validation.ok) {
+      return NextResponse.json({ error: 'Données invalides', details: validation.errors }, { status: 400 });
+    }
+
+    const { title, brand, price, size, condition, category, description } = validation.value!;
+
+
+    // convert photos to base64 (limitées au maximum autorisé côté formulaire)
+    const photosBase64 = await Promise.all(photos.slice(0, MAX_IMAGES).map(async (photo) => {
       const buffer = await photo.arrayBuffer();
       return Buffer.from(buffer).toString('base64');
     }));
-
-    console.log('photosBase64:', photosBase64[0]);
-
 
     // Creating the product
     const product = await prisma.product.create({
@@ -38,8 +46,8 @@ export async function POST(req: NextRequest) {
       brand,
       price,
       size,
-      condition: condition as any,
-      category: category as any,
+      condition,
+      category,
       description,
       userId: Number(session.user.id),
       images: {

@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { getSession } from "@/lib/getSession";
 import pusherServer from "@/lib/pusher-server";
+import { validateOfferInput } from "@/lib/domain/offers";
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,11 +13,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    const { offerPrice, productId } = await req.json();
+    const body = await req.json();
 
-    if (!offerPrice || !productId) {
-      return NextResponse.json({ error: "Invalid input" }, { status: 400 });
+    const validation = validateOfferInput(body);
+    if (!validation.ok) {
+      return NextResponse.json({ error: validation.error }, { status: 400 });
     }
+    const { offerPrice, productId } = validation.value!;
 
     // Récupérer le produit pour vérifier que l'utilisateur ne fait pas une offre sur son propre produit
     const product = await prisma.product.findUnique({
@@ -61,7 +64,7 @@ export async function POST(req: NextRequest) {
     // Enregistrement de l'offre dans la base de données
     const offer = await prisma.offer.create({
       data: {
-        offerPrice: parseFloat(offerPrice),
+        offerPrice,
         productId: productId,
         buyerId: Number(session.user.id), // Associe l'offre à l'utilisateur connecté
       },

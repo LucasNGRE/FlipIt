@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/getSession';
 import prisma from '@/lib/db';
+import { canModifyProduct } from '@/lib/domain/products';
 
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   const productId = parseInt(params.id, 10); // Vérifie que l'ID est récupéré correctement
@@ -11,6 +12,19 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
   }
 
   try {
+    // Contrôle d'accès : seul le propriétaire de l'annonce peut la supprimer.
+    const session = await getSession();
+    const currentUserId = session?.user?.id ? Number(session.user.id) : null;
+    const product = await prisma.product.findUnique({
+      where: { id: productId },
+      select: { userId: true },
+    });
+
+    const authorization = canModifyProduct(product, currentUserId);
+    if (!authorization.allowed) {
+      return NextResponse.json({ error: authorization.error }, { status: authorization.status });
+    }
+
     const deletedProduct = await prisma.product.delete({
       where: { id: productId },
     });

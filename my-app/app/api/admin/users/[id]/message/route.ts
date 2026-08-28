@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server'
 import prisma from '@/lib/db'
-import { cookies } from 'next/headers'
 import pusherServer from '@/lib/pusher-server'
 import { logAdmin } from '@/lib/adminLog'
+import { isAdminRequest } from '@/lib/adminAuth'
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
-  if (cookies().get('admin_token')?.value !== process.env.ADMIN_TOKEN)
+  if (!isAdminRequest())
     return NextResponse.json({ error: 'Accès refusé' }, { status: 403 })
 
   const { subject, body } = await req.json()
