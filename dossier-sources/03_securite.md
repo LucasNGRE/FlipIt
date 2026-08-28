@@ -259,6 +259,33 @@ Couverte par 24 tests dans `tests/products.test.ts`.
 Un `console.log('photosBase64:', …)` qui journalisait le contenu binaire des images
 à chaque création a également été supprimé.
 
+### F3 bis — Message de limitation de débit masqué à l'utilisateur (CORRIGÉE)
+
+**Gravité : moyenne.** Découverte lors de la génération des captures d'écran, et non par
+les tests unitaires : la règle métier est correctement couverte par `tests/rateLimit.test.ts`,
+le défaut se situait dans le rendu du message.
+
+Le gestionnaire de soumission de `app/admin/login/page.tsx` ignorait le corps de la réponse
+et affichait « Mot de passe incorrect » quel que soit le code HTTP, y compris sur un `429` :
+
+```ts
+if (res.ok) { router.push('/admin/disputes') }
+else { setError('Mot de passe incorrect'); setPassword('') }
+```
+
+Vérification directe contre l'API, qui bloquait bien de son côté :
+
+```text
+appel 1 status 429 -> {"error":"Trop de tentatives. Réessayez dans 30 min."}
+```
+
+Le verrouillage anti-force brute fonctionnait donc côté serveur, mais restait invisible :
+un administrateur bloqué 30 minutes croyait s'être trompé de saisie et continuait à
+essayer, prolongeant d'autant le verrouillage.
+
+**Correction :** lecture de `data.error` et affichage du message renvoyé par l'API, avec
+repli sur le message générique. Preuve visuelle : `captures/38_admin_rate_limit.png`.
+
 ### F4 — Identifiant de session incohérent pour les comptes Google
 
 **Gravité : moyenne. Non corrigée — limite assumée.**

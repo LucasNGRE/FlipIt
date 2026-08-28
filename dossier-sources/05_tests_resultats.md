@@ -319,6 +319,38 @@ détaillée, suppression des `as any`, plafonnement du nombre d'images à 5 côt
 Un `console.log('photosBase64:', …)` qui journalisait le contenu binaire des images à chaque
 création a également été supprimé.
 
+### A4 — Le message de limitation de débit n'atteignait jamais l'utilisateur (moyen, corrigé)
+
+Découverte lors de la **génération des captures d'écran** (voir `captures/`), et non par
+les tests unitaires — ce qui illustre la complémentarité des deux approches.
+
+**Symptôme observé.** La capture censée montrer le blocage après 5 tentatives de connexion
+administrateur affichait « Mot de passe incorrect » au lieu du message de limitation.
+Vérification directe contre l'API :
+
+```text
+appel 1 status 429 -> {"error":"Trop de tentatives. Réessayez dans 30 min."}
+...
+appel 8 status 429 -> {"error":"Trop de tentatives. Réessayez dans 30 min."}
+```
+
+Le serveur bloquait donc correctement : le défaut était côté interface.
+
+**Cause.** Le gestionnaire de soumission de `app/admin/login/page.tsx` ignorait le corps
+de la réponse et affichait un message générique quel que soit le code HTTP :
+
+```ts
+if (res.ok) { router.push('/admin/disputes') }
+else { setError('Mot de passe incorrect'); setPassword('') }
+```
+
+Un administrateur verrouillé 30 minutes croyait donc s'être trompé de saisie et
+continuait à essayer — ce qui prolongeait d'autant le verrouillage.
+
+**Correction.** Lecture du corps de la réponse et affichage du message renvoyé par l'API,
+avec repli sur le message générique. La capture `38_admin_rate_limit.png` montre l'état
+après correction : « Trop de tentatives. Réessayez dans 15 min. »
+
 ### Anomalies détectées mais non corrigées
 
 Documentées dans `03_securite.md` (F4 à F10) et `99_manques.md` : identifiant de session
@@ -332,6 +364,19 @@ Pusher `private-admin` non contrôlé, absence de validation sur `PUT /api/items
 | Types | `npx tsc --noEmit` | **Aucune erreur** |
 | Tests | `npx vitest run` | **141 / 141 réussis**, 8 fichiers |
 | Dépendances | `npm audit` | 50 vulnérabilités (6 critiques, 25 hautes, 15 modérées, 4 faibles) — détail en `03_securite.md` |
+| Parcours réels | `node scripts/captures.mjs` (Playwright) | **38 / 38 vues capturées** sur l'application en fonctionnement — voir `captures/` |
+
+### Tests exploratoires automatisés (Playwright)
+
+En complément des tests unitaires, un script Playwright parcourt l'application réelle et
+capture 38 vues (pages publiques, espace membre authentifié, administration, thème sombre,
+rendus mobiles). Il ne s'agit pas de tests assertifs mais d'une **campagne de vérification
+visuelle reproductible** : chaque exécution rejoue les mêmes parcours et signale les pages
+qui ne se chargent plus.
+
+Cette campagne a immédiatement révélé l'anomalie A4 ci-dessous, invisible pour les tests
+unitaires puisqu'elle se situe dans le rendu du message d'erreur et non dans la règle
+métier — laquelle est correctement couverte par `tests/rateLimit.test.ts`.
 
 ## 7. Limites de la campagne
 

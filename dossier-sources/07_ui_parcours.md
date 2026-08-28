@@ -230,10 +230,54 @@ Matière pour le diagramme de cas d'utilisation UML. Trois acteurs, plus un acte
 | Le planificateur Vercel confirme les commandes échues | `POST /api/cron/auto-confirm` (quotidien, 08:00 UTC) |
 | Pusher autorise l'abonnement à un canal privé | `POST /api/pusher/auth` |
 
-## 7. Captures d'écran à réaliser manuellement
+## 7. Captures d'écran
 
-Liste des captures à prendre pour les annexes du dossier. Le tableau précise la page **et
-l'état** à montrer, afin que chaque capture illustre une compétence identifiable.
+> **38 captures ont été générées automatiquement** avec Playwright et se trouvent dans
+> [`captures/`](captures/), accompagnées de leur index détaillé
+> ([`captures/README.md`](captures/README.md)). Script reproductible :
+> `my-app/scripts/captures.mjs`.
+>
+> Le tableau ci-dessous conserve la liste complète des vues souhaitées et indique
+> lesquelles sont **déjà disponibles** et lesquelles restent **à prendre manuellement**.
+
+### Déjà capturées automatiquement
+
+Pages publiques (accueil desktop / mobile / filtré / thème sombre, fiche annonce
+desktop / mobile / thème sombre, profil vendeur, connexion, inscription avec erreurs de
+validation, à propos, contact, confidentialité, modal portfolio), espace membre
+(signalement, messagerie desktop / mobile, dialogue d'offre, création d'annonce étape 1,
+favoris, commandes, paramètres, onboarding vendeur, menu mobile) et l'intégralité de
+l'espace d'administration (connexion, tableau de bord, utilisateurs, annonces,
+signalements, commandes, litiges, impayés, finances, journal, recherche, navigation
+mobile, **blocage après 5 tentatives**).
+
+### Restant à prendre manuellement
+
+| Vue | Pourquoi elle n'a pas pu être automatisée |
+|---|---|
+| Tunnel de paiement — adresse de livraison | Aucun vendeur de la base de développement n'a terminé l'onboarding Stripe Connect (`stripeOnboarded = false` sur les 11 comptes) |
+| Tunnel de paiement — Stripe Elements avec modal portfolio | Idem |
+| Page de remerciement après achat | Dépend du tunnel de paiement |
+| Commande `paid` côté vendeur, bouton « Expédier » | Les 3 commandes de la base sont `confirmed` ou `refunded` |
+| Commande `shipped` côté acheteur, échéance affichée | Idem |
+| Formulaire d'ouverture de litige | Nécessite une commande `paid` ou `shipped` |
+| Offre acceptée avec compte à rebours de 24 h | Les 8 offres de la base sont toutes `rejected` |
+| Création d'annonce — étape 6 (récapitulatif) | Nécessite de parcourir les 6 étapes avec upload de photos |
+| Tableau de bord Stripe en mode test | Service externe |
+| Console Neon — les deux points de terminaison | Service externe |
+| Tableau de bord Vercel — déploiements et cron | Service externe |
+| Terminal — sortie de `npm test` et de `tsc --noEmit` | À capturer depuis le terminal |
+| `ERD/diagram.svg` | Fichier déjà présent dans le dépôt |
+
+Pour obtenir les vues liées au paiement et aux commandes, la voie la plus simple est de
+faire un onboarding Stripe Connect en mode test sur un compte vendeur de développement,
+puis de jouer un achat complet avec une carte de test — le reste du parcours
+(expédition, confirmation, litige) devient alors accessible.
+
+### Liste de référence des vues souhaitées
+
+Le tableau précise la page **et l'état** à montrer, afin que chaque capture illustre une
+compétence identifiable.
 
 ### Parcours utilisateur
 

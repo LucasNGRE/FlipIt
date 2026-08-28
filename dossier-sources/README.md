@@ -23,6 +23,7 @@ dossier de projet pour le **Titre Professionnel Concepteur Développeur d'Applic
 | [`06_environnement.md`](06_environnement.md) | Variables d'environnement (noms uniquement), double base Neon, installation depuis zéro, contraintes, déploiement Vercel | Environnement de développement, déploiement |
 | [`07_ui_parcours.md`](07_ui_parcours.md) | 31 pages décrites, 3 parcours en diagrammes Mermaid, ~50 cas d'utilisation par acteur, **liste des captures d'écran à prendre** | Conception front-end, cas d'utilisation, annexes |
 | [`99_manques.md`](99_manques.md) | Ce qui manque au dépôt, classé par nature, avec recommandation « à produire » ou « à assumer », et récapitulatif de priorités | Préparation avant rédaction |
+| [`captures/`](captures/) | **38 captures d'écran** générées automatiquement avec Playwright depuis l'application en fonctionnement, avec index détaillé | Annexes visuelles |
 
 ---
 
@@ -44,13 +45,21 @@ et invalides, tous au vert. Détail en `05_tests_resultats.md`.
 3. **Aucune validation à la création d'annonce** (moyen) — champs bruts transmis à Prisma
    avec `as any`.
 
+**Un quatrième défaut découvert par la campagne de captures.** Le formulaire de connexion
+administrateur écrasait le message renvoyé par l'API et affichait « Mot de passe
+incorrect » même sur un `429` : le verrouillage anti-force brute fonctionnait côté
+serveur mais restait invisible côté utilisateur. Corrigé, et la preuve visuelle figure
+dans `captures/38_admin_rate_limit.png`.
+
 Ces découvertes constituent la meilleure matière du dossier pour les sections sécurité,
 tests et veille : elles montrent un plan de tests qui remplit son office plutôt qu'un
-plan de tests décoratif.
+plan de tests décoratif. Le fait qu'unitaires et exploratoires aient trouvé des défauts
+**différents** illustre en outre la complémentarité des deux approches.
 
-**Ce qui reste à faire manuellement.** Captures d'écran (liste détaillée en
-`07_ui_parcours.md` §7), diagrammes UML de cas d'utilisation et de séquence, et arbitrage
-sur les points listés en `99_manques.md` §F.
+**Ce qui reste à faire manuellement.** Les diagrammes UML de cas d'utilisation et de
+séquence (matière complète en `07_ui_parcours.md` §6), une douzaine de captures liées au
+paiement et aux commandes qui n'ont pas pu être automatisées (raisons détaillées en
+`captures/README.md`), et l'arbitrage sur les points listés en `99_manques.md` §F.
 
 ---
 
