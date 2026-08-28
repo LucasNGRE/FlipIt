@@ -3,6 +3,7 @@ import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 import prisma from "@/lib/db"; // Assurez-vous d'importer correctement votre client Prisma
 import { compare } from "bcryptjs"; // Si vous utilisez bcrypt pour hacher les mots de passe
+import { resolveTokenSubject } from "@/lib/domain/session";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   trustHost: true,
@@ -114,9 +115,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       return false; // Connexion échouée pour les autres fournisseurs
     },
-    async jwt({ token, user }) {
-      if (user) {
-        token.sub = user.id;
+    async jwt({ token, user, account }) {
+      // `user` et `account` ne sont fournis qu'au moment de la connexion.
+      // La résolution en base n'a donc lieu qu'une fois, et non à chaque
+      // rafraîchissement du jeton.
+      if (user && account) {
+        const { sub, error } = await resolveTokenSubject({
+          provider: account.provider,
+          user: { id: user.id, email: user.email },
+          findUserByEmail: (email) =>
+            prisma.user.findUnique({ where: { email }, select: { id: true } }),
+        });
+
+        if (sub) {
+          token.sub = sub;
+        } else {
+          console.error("[auth] Résolution de l'identifiant de session impossible:", error);
+        }
       }
       return token;
     },
