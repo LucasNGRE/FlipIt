@@ -339,15 +339,28 @@ génère aucune migration.
   une évolution de schéma poussée sur `main` produit un client Prisma désaligné de la base
   de production, sans échec de build. L'erreur n'apparaît qu'à l'exécution.
 
-**Recommandation : à assumer comme limite documentée**, sauf si le temps permet de
-rebaseliner proprement. Attention : toute opération de rebaselinage écrit dans la table
-`_prisma_migrations` de la base de **production** et doit impérativement être testée au
-préalable sur une branche Neon. Ne pas l'entreprendre dans l'urgence avant de rendre
-le dossier.
+**État : RÉSOLU EN DÉVELOPPEMENT le 23/09/2026 — application en production encore à faire.**
 
-Une alternative sans risque et déjà utile pour le dossier : le SQL complet de création de
-la base a été généré hors ligne et figure intégralement en `01_schema_bdd.md` §3. Il
-démontre la maîtrise du modèle physique sans toucher à la production.
+Le rebaselinage a été mené après un contrôle de dérive en lecture seule sur les deux bases :
+`prisma migrate diff --from-url <base> --to-schema-datamodel prisma/schema.prisma` renvoie
+une **migration vide** en développement **comme en production**. Les deux bases étaient donc
+parfaitement alignées sur `schema.prisma`, et la table `_prisma_migrations` n'existait sur
+aucune des deux — conséquence de l'usage exclusif de `db push`, donc aucun enregistrement
+contradictoire à réconcilier.
+
+Les trois migrations obsolètes ont été remplacées par une baseline unique `0_init`
+(382 lignes, 20 `CREATE TABLE`, générée hors ligne depuis un schéma vide), enregistrée sur
+la base de développement par `prisma migrate resolve --applied 0_init`. Cette commande
+n'écrit que dans la table de métadonnées `_prisma_migrations` : aucune donnée applicative
+n'est touchée. `prisma migrate status` confirme *« 1 migration found — Database schema is
+up to date! »*.
+
+**Reste à faire :** la même commande `migrate resolve --applied 0_init` sur la base de
+production. Opération de métadonnées, sans `DROP` ni `ALTER`, mais qui doit être lancée
+explicitement. Procédure détaillée en `01_schema_bdd.md` §4.
+
+Le SQL complet de création de la base figure par ailleurs intégralement en
+`01_schema_bdd.md` §3 — c'est désormais le contenu même de la baseline.
 
 ---
 

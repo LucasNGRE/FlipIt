@@ -98,7 +98,7 @@ FlipIt/
 | Énumérations Prisma | **6** |
 | Fichiers de tests | **10** |
 | Tests automatisés | **162** |
-| Migrations Prisma | 3 (toutes d'octobre 2024) |
+| Migrations Prisma | 1 (baseline `0_init` du 23/09/2026, 20 tables) |
 
 ### Volume de code (hors `node_modules`, `.next`, `.git`)
 

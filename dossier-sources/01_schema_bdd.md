@@ -810,15 +810,51 @@ ALTER TABLE "_UserConversations" ADD CONSTRAINT "_UserConversations_B_fkey" FORE
 
 ## 4. Migrations présentes dans le dépôt
 
-- `20241009125216_init` — 2024-10-09 12:52
-- `20241014092132_added_user_name_to_the_table_user` — 2024-10-14 09:21
-- `20241014092304_commented_user_name_until_its_implemented` — 2024-10-14 09:23
+- `0_init` — baseline du 23 septembre 2026, 382 lignes, 20 tables
 
-> **Point d'attention pour le dossier :** l'historique de migrations s'arrête en octobre 2024
-> alors que le schéma actuel contient des modèles ajoutés bien plus tard
-> (`Order`, `Report`, `Chargeback`, `AdminLog`, `AdminMessage`, `OrderDisputeImage`,
-> champs `suspended`, `stripeAccountId`…). Les évolutions ont été appliquées avec
-> `prisma db push`, qui ne génère pas de migration. Voir `99_manques.md`.
+### Historique et rebaselinage
+
+L'historique versionné du projet a connu deux régimes.
+
+**Jusqu'en octobre 2024**, trois migrations ont été produites avec `prisma migrate` :
+`20241009125216_init`, `20241014092132_added_user_name_to_the_table_user` et
+`20241014092304_commented_user_name_until_its_implemented`.
+
+**À partir de 2025**, les évolutions ont été appliquées avec `prisma db push`, qui ne
+génère aucune migration. Le schéma a gagné `Order`, `OrderDisputeImage`, `Report`,
+`Chargeback`, `AdminLog`, `AdminMessage`, ainsi que les champs `suspended`,
+`stripeAccountId` et `stripeOnboarded` — sans trace dans l'historique. Celui-ci avait donc
+divergé du schéma réel, rendant impossible toute reconstruction de la base depuis zéro et
+tout usage ultérieur de `prisma migrate deploy`.
+
+**Le 23 septembre 2026, l'historique a été rebaselisé.** La procédure suivie :
+
+1. Contrôle de dérive sur les deux bases, en lecture seule :
+   `prisma migrate diff --from-url <base> --to-schema-datamodel prisma/schema.prisma --script`
+   → migration vide sur la base de développement **comme sur celle de production** :
+   les deux étaient parfaitement alignées sur `schema.prisma`.
+2. Constat que la table `_prisma_migrations` n'existait sur aucune des deux bases,
+   conséquence directe de l'usage exclusif de `db push` — donc aucun enregistrement
+   contradictoire à réconcilier.
+3. Génération de la baseline depuis un schéma vide :
+   `prisma migrate diff --from-empty --to-schema-datamodel prisma/schema.prisma --script`
+   → 382 lignes, 20 `CREATE TABLE`, soit exactement le nombre de tables présentes en
+   production.
+4. Remplacement des trois migrations obsolètes par cette unique baseline `0_init`.
+5. `prisma migrate resolve --applied 0_init` sur chaque base : cette commande écrit
+   uniquement dans la table de métadonnées `_prisma_migrations`, sans toucher aux données
+   applicatives.
+
+`prisma migrate status` confirme désormais *« 1 migration found in prisma/migrations —
+Database schema is up to date! »*.
+
+Les évolutions futures peuvent donc repasser par `prisma migrate dev` en développement et
+`prisma migrate deploy` en déploiement, avec un historique versionné cohérent.
+
+> **Précision sur le déploiement :** `prisma migrate deploy` n'a volontairement **pas** été
+> ajouté au script de build. Tant que Vercel n'expose pas une `DATABASE_URL` distincte pour
+> les environnements Preview et Production, chaque déploiement de prévisualisation
+> migrerait la base de production. La forme sûre est un workflow à déclenchement manuel.
 
 ## 5. Diagramme Mermaid du schéma
 
