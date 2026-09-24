@@ -179,6 +179,8 @@ pourrait déclencher la libération anticipée de tous les fonds en séquestre.
 | Modifier une annonce | `app/api/items/[id]/route.ts` (PUT) | `where: { id, userId }` — la clause Prisma échoue si l'utilisateur n'est pas propriétaire |
 | Canal `private-conversation-<id>` | `app/api/pusher/auth/route.ts` | Abonnement refusé (403) si l'utilisateur n'est pas participant de la conversation |
 | Canal `private-user-<id>` | `app/api/pusher/auth/route.ts` | Abonnement refusé (403) si l'identifiant du canal ne correspond pas à l'utilisateur |
+| Canal `private-admin` | `app/api/pusher/auth/route.ts` | Abonnement refusé (403) sans cookie `admin_token` valide |
+| Tout autre canal | `app/api/pusher/auth/route.ts` | **Refus par défaut** (403) : aucun canal non reconnu n'atteint `authorizeChannel` |
 
 À noter : `app/api/pusher/auth/route.ts` résout l'utilisateur par **e-mail**
 (`prisma.user.findUnique({ where: { email: session.user.email } })`) et non par
@@ -370,23 +372,49 @@ saturation mémoire et de coût de transfert. Point de scalabilité principal du
 Prisma lit déjà cette variable à l'exécution : cette déclaration ne sert à rien et fait
 entrer la chaîne de connexion dans le périmètre du bundle de build.
 
-### F9 — Canal Pusher `private-admin` non contrôlé
+### F9 — Canal Pusher `private-admin` non contrôlé (CORRIGÉE)
 
-**Gravité : moyenne. Non corrigée — documentée.**
-`app/api/pusher/auth/route.ts` vérifie les canaux `private-conversation-*` et `private-user-*`,
-mais la chaîne de conditions ne comporte **pas de branche pour `private-admin`** ni de refus
-par défaut : tout canal ne correspondant à aucun préfixe connu tombe directement sur
-`pusherServer.authorizeChannel(...)`.
+**Gravité : moyenne.**
+`app/api/pusher/auth/route.ts` vérifiait les canaux `private-conversation-*` et
+`private-user-*`, mais la chaîne de conditions ne comportait **pas de branche pour
+`private-admin`** ni de refus par défaut : tout canal ne correspondant à aucun préfixe
+connu tombait directement sur `pusherServer.authorizeChannel(...)`.
 
 Or `private-admin` reçoit les événements `order-disputed`
 (`app/api/orders/[id]/dispute/route.ts`) et `chargeback-created`
 (`app/api/stripe/webhook/route.ts`), qui transportent `orderId`, `buyerId`, `sellerId`
-et `paymentIntentId`. **Tout utilisateur simplement authentifié peut donc s'y abonner**
+et `paymentIntentId`. **Tout utilisateur simplement authentifié pouvait donc s'y abonner**
 et observer en temps réel les litiges et impayés de la plateforme.
 
-Correction recommandée : ajouter une branche explicite pour `private-admin` vérifiant
-le cookie `admin_token` via `isAdminRequest()`, et terminer la chaîne par un
-`else return 403` (refus par défaut plutôt qu'autorisation par défaut).
+Le défaut relevait du modèle d'autorisation lui-même : la chaîne était construite en
+**liste d'exclusion** (interdire ce qui est connu comme interdit) alors qu'un contrôle
+d'accès doit être une **liste d'inclusion** (n'autoriser que ce qui est explicitement
+permis). Tout canal futur oublié dans la chaîne aurait hérité du même défaut.
+
+**Correction :**
+- branche explicite pour `private-admin`, autorisée uniquement si `isAdminRequest()`
+  (`lib/adminAuth.ts`) valide le cookie `admin_token` ;
+- chaque branche renvoie désormais elle-même sa réponse, et la fonction **se termine par
+  un refus** : aucun canal ne peut atteindre `authorizeChannel` sans avoir été vérifié ;
+- validation des paramètres Pusher (`socket_id`, `channel_name`) en entrée, et des
+  identifiants numériques extraits des noms de canaux.
+
+**Point de conception :** `private-admin` est traité **avant** la vérification de session
+NextAuth. L'espace d'administration s'appuie sur une session distincte (cookie
+`admin_token`) ; placer ce contrôle après la barrière NextAuth aurait rendu la branche
+inutilisable pour un administrateur non authentifié côté NextAuth.
+
+Vérification préalable à la correction : recherche exhaustive des abonnements côté client.
+Seules deux familles de canaux sont souscrites — `private-user-<id>`
+(`app/inbox/page.tsx`, `components/Header.tsx`) et `private-conversation-<id>`
+(`components/chat/MessageThread.tsx`). Aucun client ne s'abonnait à `private-admin` :
+le refus par défaut ne pouvait donc rompre aucun usage légitime.
+
+Couverte par 18 tests dans `tests/api/pusher-auth.route.test.ts` : refus d'un membre sur
+`private-admin`, refus d'un cookie forgé, autorisation d'un administrateur valide,
+autorisation sans session NextAuth, refus quand `ADMIN_TOKEN` est absent, refus par défaut
+sur canal inconnu et sur préfixes approchants (`private-adminx`, `private-users-14`), plus
+la non-régression complète des canaux de conversation et d'utilisateur.
 
 ### F10 — Vulnérabilités des dépendances (`npm audit` : 47, dont 5 critiques)
 
