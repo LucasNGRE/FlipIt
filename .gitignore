@@ -1,3 +1,8 @@
 node_modules
 *.json
 !vercel.json
+
+# Sources et captures du dossier de projet CDA — conservées en local,
+# hors du dépôt public (contiennent l'inventaire détaillé des faiblesses
+# de sécurité et 32 Mo de captures d'écran).
+dossier-sources/
